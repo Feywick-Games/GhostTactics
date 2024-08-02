@@ -1,0 +1,16 @@
+[gd_scene load_steps=3 format=3 uid="uid://dk85fb2a3ag81"]
+
+[ext_resource type="Script" path="res://entity/character/_behavior/character.gd" id="1_84jh7"]
+[ext_resource type="Script" path="res://node/animation/directional_animator.gd" id="2_vs4rm"]
+
+[node name="Character" type="CharacterBody2D"]
+y_sort_enabled = true
+collision_layer = 0
+script = ExtResource("1_84jh7")
+
+[node name="CharacterSprite" type="Sprite2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+
+[node name="ActionAnimator" type="AnimationPlayer" parent="."]
+script = ExtResource("2_vs4rm")

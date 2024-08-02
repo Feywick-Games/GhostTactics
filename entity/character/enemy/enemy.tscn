@@ -1,0 +1,22 @@
+[gd_scene load_steps=6 format=3 uid="uid://cqgaf4b8quup7"]
+
+[ext_resource type="PackedScene" uid="uid://dk85fb2a3ag81" path="res://entity/character/character.tscn" id="1_13rsw"]
+[ext_resource type="Texture2D" uid="uid://cv3qo1cdmwrek" path="res://entity/character/enemy/_sprite/enemy.png" id="2_8m4wr"]
+[ext_resource type="Script" path="res://entity/character/enemy/_behavior/enemy.gd" id="2_iqt36"]
+[ext_resource type="Script" path="res://node/state_machine/state.gd" id="3_vmtoo"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_p01wl"]
+size = Vector2(24, 12)
+
+[node name="Enemy" instance=ExtResource("1_13rsw")]
+script = ExtResource("2_iqt36")
+init_state = ExtResource("3_vmtoo")
+
+[node name="CharacterSprite" parent="." index="0"]
+position = Vector2(0, 4)
+texture = ExtResource("2_8m4wr")
+offset = Vector2(0, -20)
+
+[node name="CollisionShape2D" parent="." index="1"]
+position = Vector2(0, -2)
+shape = SubResource("RectangleShape2D_p01wl")
