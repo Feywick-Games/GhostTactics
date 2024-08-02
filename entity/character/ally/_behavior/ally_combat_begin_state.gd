@@ -1,6 +1,8 @@
 class_name AllyCombatBeginState
 extends State
 
+const SNAP_DISTANCE: float = .05
+
 var _target_position: Vector2
 var _ally: Ally
 
@@ -12,9 +14,10 @@ func enter() -> void:
 	)
 
 
-func update(_delta: float) -> void:
-	if _ally.global_position != _target_position:
-		_ally.position += (_target_position - _ally.global_position).normalized() * Global.PLAYER_SPEED
+func update(_delta: float) -> State:
+	if _ally.global_position.distance_to(_target_position) > SNAP_DISTANCE:
+		_ally.global_position += (_target_position - _ally.global_position).normalized() * 2.0
+		_ally.global_position = _ally.global_position.round()
 	else:
 		return AllyCombatIdleState.new()
 	

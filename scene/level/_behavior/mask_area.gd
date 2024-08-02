@@ -25,7 +25,10 @@ func _on_body_entered(_body: PhysicsBody2D) -> void:
 			tween.tween_property(child.sibling, "modulate", Color(1,1,1, child.sibling.wall_transaparency_value), child.sibling.modulate.a * .5)
 		elif child.modulate.a > child.wall_transaparency_value:
 			child.show()
-			#child.modulate.a = child.wall_transaparency_value
+
+			if child.sibling:
+				child.modulate = child.sibling.modulate
+
 			tween.tween_property(child, "modulate", Color(1,1,1,child.wall_transaparency_value), child.modulate.a * .5)
 		else:
 			child.show()
@@ -33,14 +36,16 @@ func _on_body_entered(_body: PhysicsBody2D) -> void:
 
 
 func _on_body_exited(_body: PhysicsBody2D) -> void:
-	var children: Array[Node] = get_children()
-	
-	var tween: Tween = get_tree().create_tween()
-	
-	for child: Node2D in children:
-		if child is Wall:
-			child.show()
-			tween.tween_property(child, "modulate", Color.WHITE, child.modulate.a * .5)
-			if child.sibling:
-				child.sibling.modulate.a = 1
-				child.sibling.show()
+	if not has_overlapping_bodies():
+		var children: Array[Node] = find_children("*", "Wall")
+		
+		var tween: Tween = get_tree().create_tween()
+		
+		for child: Wall in children:
+			if not child.sibling or not child.sibling.visible:
+				if child is Wall:
+					child.show()
+					tween.tween_property(child, "modulate", Color.WHITE, child.modulate.a * .5)
+					if child.sibling:
+						child.sibling.modulate.a = 1
+						child.sibling.show()

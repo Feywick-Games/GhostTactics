@@ -8,10 +8,14 @@ var neighbors: Array[int]
 var grid := AStarGrid2D.new()
 
 @onready
-var map: TileMap = $MapReference
+var map: TileMapLayer = $MapReference
 
 func _ready() -> void:
 	grid.region = Rect2i()
+	grid.cell_shape = AStarGrid2D.CELL_SHAPE_ISOMETRIC_DOWN
+	grid.default_compute_heuristic = AStarGrid2D.HEURISTIC_MANHATTAN
+	grid.default_estimate_heuristic = AStarGrid2D.HEURISTIC_MANHATTAN
+	grid.cell_size = Global.TILE_SIZE
 	grid.update()
 	GameState.current_level = self
 	EventBus.room_transitioned.connect(_populate_grid)
@@ -45,11 +49,14 @@ func _populate_grid(room: Room, loaded: bool) -> void:
 	var floor_layer: TileMapLayer = room.find_child("Floor")
 	var props: Array[Node] = get_tree().get_nodes_in_group("prop")
 	var o_rect: Rect2i = floor_layer.get_used_rect()
-
+	print(o_rect)
 	if loaded:
-		grid.region = grid.region.merge(o_rect)
+		if grid.region.size.x + grid.region.size.y == 0:
+			grid.region = o_rect
+		else:
+			grid.region = grid.region.merge(o_rect)
 		grid.update()
-		
+		print(grid.region)
 		for y:int in range(o_rect.position.y, o_rect.end.y):
 			for x:int in range(o_rect.position.x, o_rect.end.x):
 				if floor_layer.get_cell_source_id(Vector2i(x,y)) == -1:
@@ -69,5 +76,4 @@ func _populate_grid(room: Room, loaded: bool) -> void:
 		for y:int in range(o_rect.position.y, o_rect.end.y):
 			for x:int in range(o_rect.position.x, o_rect.end.x):
 				grid.set_point_solid(Vector2i(x,y))
-				
 	grid.update()

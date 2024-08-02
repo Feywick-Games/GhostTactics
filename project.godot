@@ -13,7 +13,7 @@ config_version=5
 config/name="Ghost Tactics"
 run/main_scene="res://scene/game/game.tscn"
 config/features=PackedStringArray("4.3", "GL Compatibility")
-config/icon="res://icon.svg"
+config/icon="res://scene/level/_sprite/isometric_tile_set.png"
 
 [autoload]
 

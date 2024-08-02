@@ -6,7 +6,7 @@
 [ext_resource type="Script" path="res://entity/character/ally/_behavior/ally_roam_state.gd" id="3_3q1en"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_p01wl"]
-size = Vector2(24, 12)
+size = Vector2(17, 12)
 
 [node name="Ally" instance=ExtResource("1_sdb2p")]
 collision_layer = 4
@@ -20,5 +20,5 @@ texture = ExtResource("2_momam")
 offset = Vector2(0, -20)
 
 [node name="CollisionShape2D" parent="." index="1"]
-position = Vector2(0, -2)
+position = Vector2(-0.5, -2)
 shape = SubResource("RectangleShape2D_p01wl")

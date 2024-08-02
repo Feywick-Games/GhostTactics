@@ -8,3 +8,4 @@ enum PhysicsLayers {
 }
 
 const PLAYER_SPEED: float = 50
+const TILE_SIZE := Vector2i(32, 16)
