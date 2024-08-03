@@ -6,17 +6,17 @@
 [ext_resource type="Script" path="res://node/state_machine/state.gd" id="3_vmtoo"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_p01wl"]
-size = Vector2(24, 12)
+size = Vector2(22, 10)
 
 [node name="Enemy" instance=ExtResource("1_13rsw")]
+position = Vector2(0, 5)
 script = ExtResource("2_iqt36")
 init_state = ExtResource("3_vmtoo")
 
 [node name="CharacterSprite" parent="." index="0"]
-position = Vector2(0, 4)
+position = Vector2(0, 9)
 texture = ExtResource("2_8m4wr")
 offset = Vector2(0, -20)
 
 [node name="CollisionShape2D" parent="." index="1"]
-position = Vector2(0, -2)
 shape = SubResource("RectangleShape2D_p01wl")
