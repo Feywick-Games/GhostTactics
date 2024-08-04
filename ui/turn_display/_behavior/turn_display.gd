@@ -54,6 +54,7 @@ func _process(delta: float) -> void:
 				_start_turn()
 	if _turn_pending:
 		if get_viewport().get_camera_2d().in_position:
+			_turn_pending = false
 			EventBus.turn_started.emit(_current_unit)
 
 
@@ -71,7 +72,14 @@ func _on_encounter_started(group: String) -> void:
 	
 	for unit: Character in combatants:
 		_units.append(unit)
+		unit.died.connect(_on_unit_died.bind(unit))
 		var turn_portrait: TurnPortrait = unit.turn_portrait_scene.instantiate()
 		_turn_portraits.append(turn_portrait)
 		add_child(turn_portrait)
 		
+
+func _on_unit_died(unit: Character) -> void:
+	var idx: int = _units.find(unit)
+	_units.remove_at(idx)
+	_turn_portraits[idx].queue_free()
+	_turn_portraits.remove_at(idx)

@@ -1,12 +1,14 @@
 class_name Character
 extends CharacterBody2D
 
+signal died
+
 @export
 var init_state: GDScript
 @export
 var turn_state: GDScript
 @export
-var special_state: GDScript
+var special: Special
 @export
 var turn_portrait_scene: PackedScene
 
@@ -37,3 +39,10 @@ func _ready() -> void:
 
 func get_tile() -> Vector2i:
 	return GameState.current_level.get_tile(global_position)
+
+
+func take_damage(damage: int) -> void:
+	health -= damage
+	if health <= 0:
+		died.emit()
+		queue_free()

@@ -84,15 +84,36 @@ func update(delta: float) -> State:
 	if Input.is_action_just_pressed("guard"):
 		_ally.get_viewport().set_input_as_handled()
 		_ally.facing = Vector2i.ZERO
+		EventBus.turn_ended.emit()
+		GameState.current_level.update_unit_registry(_ally.current_tile, _ally)
 		return CharacterCombatIdleState.new()
+	
+	if _selecting_facing:
+		if Input.is_action_just_pressed("cancel"):
+			_selecting_facing = false
+		elif Input.is_action_just_pressed("accept"):
+			var pos := _ally.get_global_mouse_position()
+			var tile := GameState.current_level.world_to_tile(pos)
+			
+			if tile in _attack_range.range_tiles:
+				var unit: Character = GameState.current_level.get_unit_from_tile(tile)
+				if unit:
+					_ally.facing = Vector2i(Vector2(tile - _ally.current_tile).normalized().round())
+					unit.take_damage(_ally.attack_damage)
+					print("atacked ", _ally.facing)
+					EventBus.turn_ended.emit()
+					GameState.current_level.update_unit_registry(_ally.current_tile, _ally)
+					return CharacterCombatIdleState.new()
+	elif Input.is_action_just_pressed("attack"):
+		_selecting_facing = true
+	
+	
+	if Input.is_action_just_pressed("special"):
+		pass
+	
+	
 	return
-
-func set_attack_range() -> void:
-	pass
-
 
 
 func exit() -> void:
-	EventBus.turn_ended.emit()
 	GameState.current_level.reset_map()
-	GameState.current_level.update_unit_registry(_ally.current_tile, _ally)

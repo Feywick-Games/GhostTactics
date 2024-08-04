@@ -41,13 +41,28 @@ func update_unit_registry(tile: Vector2i, unit: Character) -> void:
 	else:
 		_enemy_tiles.append(tile)
 	
+	if not unit.died.is_connected(_on_unit_died.bind(unit)):
+		unit.died.connect(_on_unit_died.bind(unit))
+	
 	for cur_tile: Vector2i in _unit_registry.keys():
 		if _unit_registry[cur_tile] == unit:
 			grid.set_point_solid(cur_tile, false)
+			_unit_registry.erase(cur_tile)
+			if unit is Ally:
+				_ally_tiles.remove_at(_ally_tiles.find(cur_tile))
+			else:
+				_enemy_tiles.remove_at(_enemy_tiles.find(cur_tile))
 	
 	grid.set_point_solid(tile)
 	_unit_registry[tile] = unit
 	
+
+func _on_unit_died(unit: Character) -> void:
+	for cur_tile: Vector2i in _unit_registry.keys():
+		if _unit_registry[cur_tile] == unit:
+			grid.set_point_solid(cur_tile, false)
+			_unit_registry.erase(cur_tile)
+
 
 
 func get_unit_from_tile(tile: Vector2i) -> Character:
@@ -183,7 +198,6 @@ can_pass := false, include_opponent_tiles := false) -> RangeStruct:
 					if tile_idx != -1:
 						range_struct.blocked_tiles.remove_at(tile_idx)
 						range_struct.range_tiles.append(tile)
-					
 		
 	return range_struct
 
