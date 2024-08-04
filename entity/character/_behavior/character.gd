@@ -4,6 +4,8 @@ extends CharacterBody2D
 signal died
 
 @export
+var is_animated := false
+@export
 var init_state: GDScript
 @export
 var turn_state: GDScript
@@ -46,3 +48,10 @@ func take_damage(damage: int) -> void:
 	if health <= 0:
 		died.emit()
 		queue_free()
+
+
+func end_turn() -> void:
+	GameState.current_level.update_unit_registry(current_tile, self)
+	EventBus.turn_ended.emit()
+	
+	

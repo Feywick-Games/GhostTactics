@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=4 uid="uid://cjgcm24o5gude"]
+[gd_scene load_steps=18 format=4 uid="uid://cjgcm24o5gude"]
 
 [ext_resource type="Script" path="res://scene/level/_behavior/level.gd" id="1_8ioep"]
 [ext_resource type="PackedScene" uid="uid://c3ow1ifjec62m" path="res://entity/character/ally/_packed_scene/izzy.tscn" id="2_g6be8"]
@@ -9,7 +9,6 @@
 [ext_resource type="PackedScene" uid="uid://bpo6p5rrl0hwl" path="res://entity/character/ally/_packed_scene/turn_portrait_ally_2.tscn" id="5_13f5y"]
 [ext_resource type="PackedScene" uid="uid://cqgaf4b8quup7" path="res://entity/character/enemy/enemy.tscn" id="5_txo8k"]
 [ext_resource type="Script" path="res://scene/level/_behavior/wall.gd" id="6_2m1ov"]
-[ext_resource type="Script" path="res://scene/level/_behavior/mask_area.gd" id="7_p2v3b"]
 [ext_resource type="Script" path="res://entity/character/enemy/_behavior/enemy_roam_state.gd" id="9_c8r4f"]
 [ext_resource type="PackedScene" uid="uid://bn875t12gh6w2" path="res://entity/character/enemy/_packed_scene/turn_portrait_enemy_1.tscn" id="9_nxwh3"]
 [ext_resource type="Script" path="res://node/camera/tracking_camera.gd" id="9_u6x2k"]
@@ -82,46 +81,6 @@ tile_map_data = PackedByteArray("AAAUAPj/AwAAAAgAAAASAPj/AwAAAAgAAAATAPj/AwAAAAg
 tile_set = ExtResource("3_m04si")
 script = ExtResource("6_2m1ov")
 
-[node name="MaskArea2" type="Area2D" parent="Room"]
-visible = false
-y_sort_enabled = true
-script = ExtResource("7_p2v3b")
-
-[node name="Wall" type="TileMapLayer" parent="Room/MaskArea2"]
-modulate = Color(1, 1, 1, 0.508)
-y_sort_enabled = true
-tile_map_data = PackedByteArray("AAAXAAMAAwAAAAQAAAAVAAMAAwACAAQAAAAVAAQAAwABAAgAAAAVAAUAAwABAAgAAAAVAAYAAwABAAgAAAAVAAcAAwABAAgAAAAVAAgAAwABAAgAAAAWAAMAAwAAAAgAAAAVAAkAAwABAAQAAAAUAAoAAwAAAAQAAAATAAoAAwAAAAgAAAASAAoAAwAAAAgAAAARAAoAAwAAAAgAAAAQAAoAAwAAAAgAAAAPAAoAAwAAAAgAAAAOAAoAAwAAAAgAAAAHAAcAAwAAAAgAAAANAAcAAwADABQAAAANAAoAAwADABAAABANAAkAAwADABgAAAANAAgAAwABABgAAAA=")
-tile_set = ExtResource("3_m04si")
-script = ExtResource("6_2m1ov")
-
-[node name="CollisionPolygon2D2" type="CollisionPolygon2D" parent="Room/MaskArea2"]
-z_index = -1
-polygon = PackedVector2Array(112, 72, 24, 120, 112, 168, 72, 192, 208, 256, 320, 208, 344, 216, 432, 184, 384, 160, 464, 120, 240, 8)
-
-[node name="MaskArea" type="Area2D" parent="Room"]
-visible = false
-y_sort_enabled = true
-script = ExtResource("7_p2v3b")
-
-[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Room/MaskArea"]
-z_index = -1
-polygon = PackedVector2Array(104, 72, 160, 40, 424, 184, 368, 208)
-
-[node name="Wall6" type="TileMapLayer" parent="Room/MaskArea" node_paths=PackedStringArray("sibling")]
-visibility_layer = 3
-y_sort_enabled = true
-tile_map_data = PackedByteArray("AAAYAAIAAwABAAQAAAA=")
-tile_set = ExtResource("3_m04si")
-script = ExtResource("6_2m1ov")
-sibling = NodePath("../../../Room2/Wall4")
-
-[node name="Wall5" type="TileMapLayer" parent="Room/MaskArea"]
-visibility_layer = 3
-y_sort_enabled = true
-tile_map_data = PackedByteArray("AAAVAP3/AwADABwAAAAVAPz/AwADAAgAAAAVAPv/AwABAAgAAAAVAP7/AwADAAQAAAAWAP7/AwAAABQAAAA=")
-tile_set = ExtResource("3_m04si")
-script = ExtResource("6_2m1ov")
-
 [node name="Prop" type="TileMapLayer" parent="Room"]
 y_sort_enabled = true
 tile_map_data = PackedByteArray("AAAIAAAAAgAAAAAAAQAJAAAAAgAAAAAAAQAJAAEAAgAAAAAAAQANAAMAAgAAAAAAAgA=")
@@ -148,44 +107,12 @@ y_sort_enabled = true
 tile_map_data = PackedByteArray("AAAZAP7/AwAAAAAAAAAZAP//AwAAAAAAAAAZAAAAAwAAAAAAAAAZAAEAAwAAAAAAAAAZAAIAAwAAAAAAAAAZAAMAAwAAAAAAAAAZAAQAAwAAAAAAAAAaAP7/AwAAAAAAAAAaAP//AwAAAAAAAAAaAAAAAwAAAAAAAAAaAAEAAwAAAAAAAAAaAAIAAwAAAAAAAAAaAAMAAwAAAAAAAAAaAAQAAwAAAAAAAAAbAP7/AwAAAAAAAAAbAP//AwAAAAAAAAAbAAAAAwAAAAAAAAAbAAEAAwAAAAAAAAAbAAIAAwAAAAAAAAAbAAMAAwAAAAAAAAAbAAQAAwAAAAAAAAAcAP7/AwAAAAAAAAAcAP//AwAAAAAAAAAcAAAAAwAAAAAAAAAcAAEAAwAAAAAAAAAcAAIAAwAAAAAAAAAcAAMAAwAAAAAAAAAcAAQAAwAAAAAAAAAdAP7/AwAAAAAAAAAdAP//AwAAAAAAAAAdAAAAAwAAAAAAAAAdAAEAAwAAAAAAAAAdAAIAAwAAAAAAAAAdAAMAAwAAAAAAAAAdAAQAAwAAAAAAAAAeAP7/AwAAAAAAAAAeAP//AwAAAAAAAAAeAAAAAwAAAAAAAAAeAAEAAwAAAAAAAAAeAAIAAwAAAAAAAAAeAAMAAwAAAAAAAAAeAAQAAwAAAAAAAAAfAP7/AwAAAAAAAAAfAP//AwAAAAAAAAAfAAAAAwAAAAAAAAAfAAEAAwAAAAAAAAAfAAIAAwAAAAAAAAAfAAMAAwAAAAAAAAAfAAQAAwAAAAAAAAAgAP7/AwAAAAAAAAAgAP//AwAAAAAAAAAgAAAAAwAAAAAAAAAgAAEAAwAAAAAAAAAgAAIAAwAAAAAAAAAgAAMAAwAAAAAAAAAgAAQAAwAAAAAAAAAhAP7/AwAAAAAAAAAhAP//AwAAAAAAAAAhAAAAAwAAAAAAAAAhAAEAAwAAAAAAAAAhAAIAAwAAAAAAAAAhAAMAAwAAAAAAAAAhAAQAAwAAAAAAAAAZAAUAAwAAAAIAAAAaAAUAAwAAAAIAAAAbAAUAAwAAAAIAAAAcAAUAAwAAAAIAAAAdAAUAAwAAAAIAAAAeAAUAAwAAAAAAAAAeAAYAAwAAAAAAAAAeAAcAAwAAAAAAAAAeAAgAAwAAAAAAAAAeAAkAAwAAAAAAAAAeAAoAAwAAAAAAAAAfAAUAAwAAAAAAAAAfAAYAAwAAAAAAAAAfAAcAAwAAAAAAAAAfAAgAAwAAAAAAAAAfAAkAAwAAAAAAAAAfAAoAAwAAAAAAAAAgAAUAAwAAAAAAAAAgAAYAAwAAAAAAAAAgAAcAAwAAAAAAAAAgAAgAAwAAAAAAAAAgAAkAAwAAAAAAAAAgAAoAAwAAAAAAAAAhAAUAAwAAAAAAAAAhAAYAAwAAAAAAAAAhAAcAAwAAAAAAAAAhAAgAAwAAAAAAAAAhAAkAAwAAAAAAAAAhAAoAAwAAAAAAAAAiAAUAAwAAAAAAAAAiAAYAAwAAAAAAAAAiAAcAAwAAAAAAAAAiAAgAAwAAAAAAAAAiAAkAAwAAAAAAAAAiAAoAAwAAAAAAAAAjAAUAAwAAAAAAAAAjAAYAAwAAAAAAAAAjAAcAAwAAAAAAAAAjAAgAAwAAAAAAAAAjAAkAAwAAAAAAAAAjAAoAAwAAAAAAAAAeAAsAAwAAAAAAAAAeAAwAAwAAAAAAAAAfAAsAAwAAAAAAAAAfAAwAAwAAAAAAAAAgAAsAAwAAAAAAAAAgAAwAAwAAAAAAAAAhAAsAAwAAAAAAAAAhAAwAAwAAAAAAAAAiAAsAAwAAAAAAAAAiAAwAAwAAAAAAAAAjAAsAAwAAAAAAAAAjAAwAAwAAAAAAAAAiAP7/AwAAAAAAAAAiAP//AwAAAAAAAAAiAAAAAwAAAAAAAAAiAAEAAwAAAAAAAAAiAAIAAwAAAAAAAAAiAAMAAwAAAAAAAAAiAAQAAwAAAAAAAAAjAP7/AwAAAAAAAAAjAP//AwAAAAAAAAAjAAAAAwAAAAAAAAAjAAEAAwAAAAAAAAAjAAIAAwAAAAAAAAAjAAMAAwAAAAAAAAAjAAQAAwAAAAAAAAAeAA0AAwAAAAIAAAAfAA0AAwAAAAIAAAAgAA0AAwAAAAIAAAAhAA0AAwAAAAIAAAAiAA0AAwAAAAIAAAAjAA0AAwACAAIAAAAkAAwAAwADAAIAAAAkAP7/AwABAAIAAAAkAP//AwABAAIAAAAkAAAAAwABAAIAAAAkAAEAAwABAAIAAAAkAAIAAwABAAIAAAAkAAMAAwABAAIAAAAkAAQAAwABAAIAAAAkAAUAAwABAAIAAAAkAAYAAwABAAIAAAAkAAcAAwABAAIAAAAkAAgAAwABAAIAAAAkAAkAAwABAAIAAAAkAAoAAwABAAIAAAAkAAsAAwABAAIAAAA=")
 tile_set = ExtResource("3_m04si")
 
-[node name="MaskArea2" type="Area2D" parent="Room2"]
-visible = false
-y_sort_enabled = true
-script = ExtResource("7_p2v3b")
-
-[node name="Wall3" type="TileMapLayer" parent="Room2/MaskArea2"]
-modulate = Color(1, 1, 1, 0.681)
-y_sort_enabled = true
-tile_map_data = PackedByteArray("AAAeAAUAAwABAAgAAAAdAAUAAwACAAwAAAAcAAUAAwAAAAwAAAAbAAUAAwACAAgAAAAaAAUAAwAAAAgAAAAZAAUAAwAAAAgAAAAYAAQAAwADAAwAAAAYAAUAAwAAAAgAAAA=")
-tile_set = ExtResource("3_m04si")
-script = ExtResource("6_2m1ov")
-
-[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Room2/MaskArea2"]
-visible = false
-z_index = -1
-polygon = PackedVector2Array(448, 176, 608, 256, 504, 312, 440, 280, 440, 280, 456, 272, 344, 216)
-
 [node name="Wall2" type="TileMapLayer" parent="Room2"]
 visible = false
 y_sort_enabled = true
 tile_map_data = PackedByteArray("AAAdAP7/AwAAAAgAAAAeAP7/AwAAAAgAAAAfAP7/AwAAAAgAAAAgAP7/AwAAAAgAAAAhAP7/AwAAAAgAAAAiAP7/AwAAAAgAAAAjAP7/AwAAAAgAAAAeAAYAAwABAAgAAAAeAAcAAwABAAgAAAAeAAgAAwABAAgAAAAeAAkAAwABAAgAAAAeAAoAAwABAAgAAAAeAAsAAwABAAgAAAAeAAwAAwABAAgAAAAaAP7/AwAAAAgAAAAbAP7/AwAAAAgAAAAcAP7/AwAAAAgAAAAZAP7/AwAAAAgAAAAYAP7/AwACAAQAAAAYAP//AwABAAgAAAA=")
 tile_set = ExtResource("3_m04si")
 script = ExtResource("6_2m1ov")
-
-[node name="MaskArea" type="Area2D" parent="Room2"]
-visible = false
-y_sort_enabled = true
-script = ExtResource("7_p2v3b")
-
-[node name="Wall" type="TileMapLayer" parent="Room2/MaskArea"]
-y_sort_enabled = true
-tile_map_data = PackedByteArray("AAAkAP7/AwABAAgAAAAkAP//AwABAAgAAAAkAAAAAwABAAgAAAAkAAEAAwABAAgAAAAkAAIAAwABAAgAAAAkAAMAAwABAAgAAAAkAAQAAwABAAgAAAAkAAUAAwABAAgAAAAkAAYAAwABAAgAAAAkAAcAAwABAAgAAAAkAAgAAwABAAgAAAAkAAkAAwABAAgAAAAkAAoAAwABAAgAAAAkAAsAAwABAAgAAAAjAA0AAwAAAAQAAAAiAA0AAwAAAAgAAAAfAA0AAwAAAAgAAAAgAA0AAwAAAAgAAAAeAA0AAwAAAAgAAAAkAAwAAwABAAQAAAAhAA0AAwAAAAgAAAA=")
-tile_set = ExtResource("3_m04si")
-script = ExtResource("6_2m1ov")
-
-[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Room2/MaskArea"]
-z_index = -1
-polygon = PackedVector2Array(304, 344, 544, 224, 624, 264, 384, 384)
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Room2"]
 z_index = -1

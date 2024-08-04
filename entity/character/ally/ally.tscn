@@ -7,7 +7,7 @@
 [ext_resource type="Script" path="res://entity/character/ally/_behavior/ally_combat_turn_state.gd" id="4_4us3o"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_p01wl"]
-size = Vector2(16, 8)
+size = Vector2(12, 6)
 
 [node name="Ally" groups=["ally"] instance=ExtResource("1_sdb2p")]
 collision_layer = 4

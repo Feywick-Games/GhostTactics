@@ -29,19 +29,20 @@ func _set_window_scale() -> void:
 
 
 func _process(delta: float) -> void:
-	if _in_encounter:
-		if leader.global_position.distance_to(global_position) > 40:
-			global_position =  global_position.lerp(leader.global_position, lerp_speed * .5 * delta)
-			var subpixel_position = global_position -  global_position.snapped(Vector2(2,1))
-			global_position = global_position.round()
-			in_position = false
+	if leader and is_instance_valid(leader):
+		if _in_encounter:
+			if leader.global_position.distance_to(global_position) > 40:
+				global_position =  global_position.lerp(leader.global_position, lerp_speed * .5 * delta)
+				var subpixel_position = global_position -  global_position.snapped(Vector2(2,1))
+				global_position = global_position.round()
+				in_position = false
+			else:
+				in_position = true
 		else:
-			in_position = true
-	else:
-		if leader.global_position.distance_to(global_position) > 20:
-			global_position =  global_position.lerp(leader.global_position, lerp_speed * delta)
-			var subpixel_position = global_position -  global_position.snapped(Vector2(2,1))
-			global_position = global_position.round()
+			if leader.global_position.distance_to(global_position) > 20:
+				global_position =  global_position.lerp(leader.global_position, lerp_speed * delta)
+				var subpixel_position = global_position -  global_position.snapped(Vector2(2,1))
+				global_position = global_position.round()
 
 func _on_cam_follow_requested(node: Node2D) -> void:
 	leader = node

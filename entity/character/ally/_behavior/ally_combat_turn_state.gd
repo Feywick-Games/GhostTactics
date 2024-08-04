@@ -4,6 +4,12 @@ extends State
 const SNAP_DISTANCE: int = 2.4
 const TIME_PER_MOVE: float = .03
 
+enum AttackState {
+	BASIC,
+	SPECIAL
+}
+
+
 var _ally: Ally
 var _movement_range: RangeStruct
 var _attack_range: RangeStruct = RangeStruct.new()
@@ -12,26 +18,35 @@ var _time_since_move: float = 0
 var _astar: AStarGrid2D
 var _selecting_facing := false
 var _start_tile: Vector2i
+var _attack_state: AttackState
 
 func enter() -> void:
 	_ally = state_machine.state_owner as Ally
 	_ally.global_position = GameState.current_level.tile_to_world(_ally.current_tile).round()
 	_start_tile = _ally.current_tile
 	_movement_range = GameState.current_level.request_range(_ally.current_tile, _ally.movement_range, true, [_start_tile])
-	
+	_attack_state = AttackState.BASIC
 	_create_movement_astar()
 	_draw_ranges()
 	
 	
 func _draw_ranges() -> void:
-	#GameState.current_level.draw_range(_attack_range.range_tiles, Global.BATTLE_MAP_ATLAS_COORDS)
-	#GameState.current_level.draw_range(_attack_range.blocked_tiles, Global.BATTLE_MAP_ATLAS_COORDS)
+	var attack_altas_coords: Vector2i
+	if _attack_state == AttackState.BASIC:
+		_attack_range = GameState.current_level.request_range(_ally.current_tile, _ally.attack_range, true, [_start_tile], true, true)
+		attack_altas_coords = Global.RETICLE_ATTACK_ALTAS_COORDS
+	else:
+		_attack_range =  GameState.current_level.request_range(_ally.current_tile, _ally.special.range, true, [_start_tile], true, true)
+		if _ally.special.damage > 0:
+			attack_altas_coords = Global.RETICLE_SPECIAL_1_ALTAS_COORDS
+		else:
+			attack_altas_coords = Global.RETICLE_CURE_1_ATLAS_COORD
+	_attack_range.range_tiles.remove_at(_attack_range.range_tiles.find(_ally.current_tile))
 	GameState.current_level.reset_map()
-	_attack_range = GameState.current_level.request_range(_ally.current_tile, _ally.attack_range, true, [_start_tile], true, true)
 	GameState.current_level.draw_range(_movement_range.range_tiles, Global.RETICLE_MOVE_ALTAS_COORDS)
 	GameState.current_level.draw_range(_attack_range.blocked_tiles, Global.RETICLE_BLOCKED_ALTAS_COORDS)
 	GameState.current_level.draw_range(_movement_range.blocked_tiles, Global.RETICLE_BLOCKED_ALTAS_COORDS)
-	GameState.current_level.draw_range(_attack_range.range_tiles, Global.RETICLE_ATTACK_ALTAS_COORDS)
+	GameState.current_level.draw_range(_attack_range.range_tiles, attack_altas_coords)
 	GameState.current_level.map.set_cell(_ally.current_tile, 0, Global.RETICLE_MOVE_ALTAS_COORDS)
 	GameState.current_level.select_tile(_ally.current_tile)
 
@@ -51,15 +66,7 @@ func _create_movement_astar() -> void:
 			if not Vector2i(x,y) in _movement_range.range_tiles:
 				_astar.set_point_solid(Vector2i(x,y))
 
-
-func update(delta: float) -> State:
-	if Input.is_action_just_pressed("move"):
-		var pos := _ally.to_global(_ally.get_local_mouse_position())
-		var tile := GameState.current_level.world_to_tile(pos)
-		if tile in _movement_range.range_tiles:
-			_tile_path = _astar.get_id_path(_ally.current_tile, tile)
-			#_tile_path.pop_front()
-			
+func _process_movement(delta: float) -> void:
 	_ally.velocity = Vector2.ZERO
 	if not _tile_path.is_empty():
 		_time_since_move += delta
@@ -71,6 +78,10 @@ func update(delta: float) -> State:
 				var dir: Vector2 = (path_position - _ally.global_position).normalized()
 				_ally.global_position += dir * Global.PLAYER_SPEED * 4.0 * delta
 				_ally.global_position = _ally.global_position.snapped(Vector2(2,1))
+				
+				if _ally.is_animated:
+					var anim_dir := Vector2(_tile_path[0] - _ally.current_tile).normalized()
+					_ally.animator.play_directional("idle", anim_dir)
 			if not path_position.distance_to(_ally.global_position) > SNAP_DISTANCE:
 				if len(_tile_path) == 1:
 					_ally.global_position = path_position.round()
@@ -79,39 +90,70 @@ func update(delta: float) -> State:
 			path_position.distance_to(_ally.global_position) < map_position.distance_to(_ally.global_position):
 				_ally.current_tile = _tile_path[0]
 				_draw_ranges()
-				
-				
-	if Input.is_action_just_pressed("guard"):
-		_ally.get_viewport().set_input_as_handled()
-		_ally.facing = Vector2i.ZERO
-		EventBus.turn_ended.emit()
-		GameState.current_level.update_unit_registry(_ally.current_tile, _ally)
-		return CharacterCombatIdleState.new()
-	
-	if _selecting_facing:
-		if Input.is_action_just_pressed("cancel"):
-			_selecting_facing = false
-		elif Input.is_action_just_pressed("accept"):
-			var pos := _ally.get_global_mouse_position()
-			var tile := GameState.current_level.world_to_tile(pos)
-			
-			if tile in _attack_range.range_tiles:
-				var unit: Character = GameState.current_level.get_unit_from_tile(tile)
-				if unit:
+
+
+func _process_select_facing() -> State:
+	if Input.is_action_just_pressed("cancel"):
+		_selecting_facing = false
+		for tile in _attack_range.range_tiles:
+			GameState.current_level.select_tile(tile, false)
+	elif Input.is_action_just_pressed("accept"):
+		var pos := _ally.get_global_mouse_position()
+		var tile := GameState.current_level.world_to_tile(pos)
+		
+		if _ally.is_animated:
+			var dir := Vector2(tile - _ally.current_tile).normalized()
+			_ally.animator.play_directional("idle", dir)
+		
+		
+		if tile in _attack_range.range_tiles:
+			var unit: Character = GameState.current_level.get_unit_from_tile(tile)
+			if unit and unit != _ally:
+				if _attack_state == AttackState.BASIC:
 					_ally.facing = Vector2i(Vector2(tile - _ally.current_tile).normalized().round())
 					unit.take_damage(_ally.attack_damage)
 					print("atacked ", _ally.facing)
-					EventBus.turn_ended.emit()
-					GameState.current_level.update_unit_registry(_ally.current_tile, _ally)
+					_ally.end_turn()
 					return CharacterCombatIdleState.new()
-	elif Input.is_action_just_pressed("attack"):
-		_selecting_facing = true
+				else:
+					return _ally.special.state.new(unit.current_tile)
+				
+	return
+
+
+func update(delta: float) -> State:
+	if Input.is_action_just_pressed("move") and not _selecting_facing:
+		var pos := _ally.get_global_mouse_position()
+		var tile := GameState.current_level.world_to_tile(pos)
+		if tile in _movement_range.range_tiles:
+			_tile_path = _astar.get_id_path(_ally.current_tile, tile)
 	
+	elif _selecting_facing:
+		return _process_select_facing()
+	else:
+		if Input.is_action_just_pressed("guard"):
+			_ally.get_viewport().set_input_as_handled()
+			_ally.facing = Vector2i.ZERO
+			_ally.end_turn()
+			return CharacterCombatIdleState.new()
+		elif Input.is_action_just_pressed("attack"):
+			if _attack_state == AttackState.BASIC:
+				_selecting_facing = true
+				for tile in _attack_range.range_tiles:
+					GameState.current_level.select_tile(tile)
+			else:
+				_attack_state = AttackState.BASIC
+				_draw_ranges()
+		if Input.is_action_just_pressed("special"):
+			if _attack_state == AttackState.SPECIAL:
+				_selecting_facing = true
+				for tile in _attack_range.range_tiles:
+					GameState.current_level.select_tile(tile)
+			else:
+				_attack_state = AttackState.SPECIAL
+				_draw_ranges()
 	
-	if Input.is_action_just_pressed("special"):
-		pass
-	
-	
+	_process_movement(delta)
 	return
 
 

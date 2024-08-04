@@ -1,7 +1,7 @@
 class_name DirectionalAnimator
 extends AnimationPlayer
 
-var current_direction : String
+var current_direction : String = "down"
 
 
 # if playing an eight directional animation we do not want to cache it as not all animations 
@@ -19,36 +19,36 @@ custom_blend: float = -1,custom_speed: float = 1.0, from_end: bool = false) -> v
 			current_direction = "left"
 			if eight_direction:
 				if theta > -PI * 7.0/8.0:
-					eight_direction_str = "up_left"
+					eight_direction_str = "cardinal_up"
 		elif (theta < -PI * 1.0/4.0 and not is_equal_approx(theta, -PI *  1.0/4.0)) \
 		or (current_direction == "up" and is_equal_approx(theta, -PI *  1.0/4.0)):
 			current_direction = "up"
 			if eight_direction:
 				if theta < -PI * 5.0/8.0:
-					eight_direction_str = "up_left"
+					eight_direction_str = "cardinal_up"
 				elif theta > -PI * 3.0/8.0:
-					eight_direction_str = "up_right"
+					eight_direction_str = "cardinal_right"
 		elif (theta < PI * 1.0/4.0 and not is_equal_approx(theta, PI *  1.0/4.0)) \
 		or (current_direction == "right" and is_equal_approx(theta, PI *  1.0/4.0)):
 			current_direction = "right"
 			if eight_direction:
 				if theta < -PI * 7.0/8.0:
-					eight_direction_str = "up_right"
+					eight_direction_str = "cardinal_right"
 				elif theta > PI * 1.0/8.0:
-					eight_direction_str = "down_right"
+					eight_direction_str = "cardinal_down"
 		elif (theta < PI * 3.0/4.0 and not is_equal_approx(theta, PI *  3.0/4.0)) \
 		or (current_direction == "down" and is_equal_approx(theta, PI * 3.0/4.0)):
 			current_direction = "down"
 			if eight_direction:
 				if theta < PI * 3.0/8.0:
-					eight_direction_str = "down_right"
+					eight_direction_str = "cardinal_down"
 				elif theta > PI * 5.0/8.0:
-					eight_direction_str = "down_left"
+					eight_direction_str = "cardinal_left"
 		else:
 			current_direction = "left"
 			if eight_direction:
 				if theta < PI * 7.0/8.0:
-					eight_direction_str = "down_left"
+					eight_direction_str = "cardinal_left"
 	
 	var anim_direction_str := eight_direction_str if not eight_direction_str.is_empty() else current_direction
 	anim_direction_str += alt_ext

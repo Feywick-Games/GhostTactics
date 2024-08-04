@@ -64,6 +64,19 @@ func _on_unit_died(unit: Character) -> void:
 			_unit_registry.erase(cur_tile)
 
 
+func get_id_path(start_tile: Vector2i, end_tile: Vector2i, pass_start := false) -> Array[Vector2i]:
+	var reset := false
+	if pass_start and grid.is_point_solid(start_tile):
+		grid.set_point_solid(start_tile, false)
+		reset = true
+	
+	var out: Array[Vector2i] = grid.get_id_path(start_tile, end_tile)
+	
+	if reset:
+		grid.set_point_solid(start_tile, true)
+	
+	return out
+
 
 func get_unit_from_tile(tile: Vector2i) -> Character:
 	if _unit_registry.has(tile):
