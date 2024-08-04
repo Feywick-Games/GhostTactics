@@ -18,6 +18,7 @@ var _target_unit: Character
 var _exiting := false
 var _time_since_exiting: float = 0
 var _max_is_collision := false
+var _o_target: Character
 
 func enter() -> void:
 	super.enter()
@@ -31,8 +32,15 @@ func enter() -> void:
 		else:
 			break
 	
-	if GameState.current_level.grid.is_point_solid(_target_tile + (_direction * (_max_push_distance + 1))):
+	var collision_point := _target_tile + (_direction * (_max_push_distance + 1))
+	if GameState.current_level.grid.is_point_solid(collision_point):
 		_max_is_collision = true
+		
+		var unit := GameState.current_level.get_unit_from_tile(collision_point)
+		
+		if unit:
+			_o_target = unit
+		
 	
 	_tile_path = GameState.current_level.get_id_path(_target_tile, _target_tile + (_direction * _max_push_distance))
 	
@@ -67,8 +75,10 @@ func _push(delta: float) -> void:
 	else:
 		_exiting = true
 		GameState.current_level.update_unit_registry(_target_unit.current_tile, _target_unit)
-		if increment ==  _max_push_distance:
+		if increment ==  _max_push_distance and _max_is_collision:
 			_target_unit.take_damage(_character.special.damage * 2.0)
+			if _o_target:
+				_o_target.take_damage(_character.special.damage)
 		else:
 			_target_unit.take_damage(_character.special.damage)
 

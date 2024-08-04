@@ -1,12 +1,10 @@
-[gd_scene load_steps=18 format=4 uid="uid://cjgcm24o5gude"]
+[gd_scene load_steps=21 format=4 uid="uid://cjgcm24o5gude"]
 
 [ext_resource type="Script" path="res://scene/level/_behavior/level.gd" id="1_8ioep"]
-[ext_resource type="PackedScene" uid="uid://c3ow1ifjec62m" path="res://entity/character/ally/_packed_scene/izzy.tscn" id="2_g6be8"]
+[ext_resource type="PackedScene" uid="uid://c3ow1ifjec62m" path="res://entity/character/ally/izzy/izzy.tscn" id="2_g6be8"]
 [ext_resource type="Script" path="res://scene/level/_behavior/room.gd" id="2_uhukl"]
 [ext_resource type="TileSet" uid="uid://ph0vvwjj2fg4" path="res://scene/level/_sprite/test_tile_set.tres" id="3_m04si"]
 [ext_resource type="Script" path="res://node/encounter/encounter_area.gd" id="4_iqwne"]
-[ext_resource type="PackedScene" uid="uid://cm7s3l5cikm6u" path="res://entity/character/ally/ally.tscn" id="4_t755v"]
-[ext_resource type="PackedScene" uid="uid://bpo6p5rrl0hwl" path="res://entity/character/ally/_packed_scene/turn_portrait_ally_2.tscn" id="5_13f5y"]
 [ext_resource type="PackedScene" uid="uid://cqgaf4b8quup7" path="res://entity/character/enemy/enemy.tscn" id="5_txo8k"]
 [ext_resource type="Script" path="res://scene/level/_behavior/wall.gd" id="6_2m1ov"]
 [ext_resource type="Script" path="res://entity/character/enemy/_behavior/enemy_roam_state.gd" id="9_c8r4f"]
@@ -14,7 +12,12 @@
 [ext_resource type="Script" path="res://node/camera/tracking_camera.gd" id="9_u6x2k"]
 [ext_resource type="PackedScene" uid="uid://dv7e0vinp6o76" path="res://entity/character/enemy/_packed_scene/turn_portrait_enemy_2.tscn" id="10_vx8qn"]
 [ext_resource type="Script" path="res://ui/turn_display/_behavior/turn_display.gd" id="12_j0cx4"]
+[ext_resource type="Texture2D" uid="uid://dnkx7jyewlkxh" path="res://ui/battle_timer/battle_timer_under.png" id="16_cm0ie"]
 [ext_resource type="TileSet" uid="uid://5dfqqlx3fkjg" path="res://ui/battle_grid/_sprite/battle_map_tile_set.tres" id="16_tj148"]
+[ext_resource type="Texture2D" uid="uid://caqbtr4v8posy" path="res://ui/battle_timer/battle_timer_over.png" id="17_23jsa"]
+[ext_resource type="Texture2D" uid="uid://cycr83c35trtu" path="res://ui/battle_timer/battle_timer_fill.png" id="17_d06g4"]
+[ext_resource type="PackedScene" uid="uid://bctkkdhwjgs0u" path="res://entity/character/ally/mei/mei.tscn" id="18_2ibeb"]
+[ext_resource type="Script" path="res://ui/battle_timer/_behavior/battle_timer.gd" id="19_53hip"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_sk38x"]
 radius = 30.0
@@ -33,11 +36,11 @@ metadata/_edit_horizontal_guides_ = [391.0]
 [node name="Izzy" parent="." instance=ExtResource("2_g6be8")]
 position = Vector2(497, 252)
 
-[node name="Ally2" parent="." instance=ExtResource("4_t755v")]
-position = Vector2(202, 176)
-turn_portrait_scene = ExtResource("5_13f5y")
+[node name="Mei" parent="." instance=ExtResource("18_2ibeb")]
+position = Vector2(529, 283)
 
 [node name="EncounterArea" type="Area2D" parent="." node_paths=PackedStringArray("rooms")]
+position = Vector2(-24, -19)
 script = ExtResource("4_iqwne")
 group = "enemies_a"
 rooms = [NodePath("../Room")]
@@ -57,7 +60,7 @@ z_index = -1
 polygon = PackedVector2Array(112, 72, 24, 120, 112, 168, 72, 192, 208, 256, 320, 208, 344, 216, 432, 184, 384, 160, 464, 120, 240, 8)
 
 [node name="Enemy" parent="Room" groups=["enemies_a"] instance=ExtResource("5_txo8k")]
-position = Vector2(250, 165)
+position = Vector2(250, 130)
 collision_layer = 1
 init_state = ExtResource("9_c8r4f")
 turn_portrait_scene = ExtResource("9_nxwh3")
@@ -137,3 +140,22 @@ theme_override_constants/margin_top = 4
 layout_mode = 2
 vertical = true
 script = ExtResource("12_j0cx4")
+
+[node name="MarginContainer2" type="MarginContainer" parent="CanvasLayer"]
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -40.0
+offset_bottom = 40.0
+grow_horizontal = 0
+
+[node name="BattleTimer" type="TextureProgressBar" parent="CanvasLayer/MarginContainer2"]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 20.0
+step = 0.001
+fill_mode = 4
+texture_under = ExtResource("16_cm0ie")
+texture_over = ExtResource("17_23jsa")
+texture_progress = ExtResource("17_d06g4")
+script = ExtResource("19_53hip")

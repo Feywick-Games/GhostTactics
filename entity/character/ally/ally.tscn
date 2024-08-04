@@ -13,6 +13,7 @@ size = Vector2(12, 6)
 collision_layer = 4
 collision_mask = 3
 script = ExtResource("2_dd86s")
+follow_order = 0
 init_state = ExtResource("3_3q1en")
 turn_state = ExtResource("4_4us3o")
 
@@ -24,3 +25,7 @@ offset = Vector2(0, -20)
 [node name="CollisionShape2D" parent="." index="1"]
 position = Vector2(-0.5, -2)
 shape = SubResource("RectangleShape2D_p01wl")
+
+[node name="NavigationAgent2D" type="NavigationAgent2D" parent="." index="3"]
+target_desired_distance = 32.0
+avoidance_enabled = true

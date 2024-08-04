@@ -44,6 +44,11 @@ func get_tile() -> Vector2i:
 
 
 func take_damage(damage: int) -> void:
+	if GameState.battle_timer.value < GameState.battle_timer.max_value * .25:
+		damage *= 2
+	elif GameState.battle_timer.value > GameState.battle_timer.max_value * .75:
+		damage *= .5
+	
 	health -= damage
 	if health <= 0:
 		died.emit()

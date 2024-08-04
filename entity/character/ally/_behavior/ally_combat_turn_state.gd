@@ -19,6 +19,7 @@ var _astar: AStarGrid2D
 var _selecting_facing := false
 var _start_tile: Vector2i
 var _attack_state: AttackState
+var _exiting := false
 
 func enter() -> void:
 	_ally = state_machine.state_owner as Ally
@@ -28,8 +29,13 @@ func enter() -> void:
 	_attack_state = AttackState.BASIC
 	_create_movement_astar()
 	_draw_ranges()
-	
-	
+	EventBus.timed_out.connect(_on_timed_out)
+
+
+func _on_timed_out() -> void:
+	_exiting = true
+
+
 func _draw_ranges() -> void:
 	var attack_altas_coords: Vector2i
 	if _attack_state == AttackState.BASIC:
@@ -122,6 +128,11 @@ func _process_select_facing() -> State:
 
 
 func update(delta: float) -> State:
+	
+	if _exiting:
+		_ally.end_turn()
+		return CharacterCombatIdleState.new()
+	
 	if Input.is_action_just_pressed("move") and not _selecting_facing:
 		var pos := _ally.get_global_mouse_position()
 		var tile := GameState.current_level.world_to_tile(pos)
@@ -154,6 +165,7 @@ func update(delta: float) -> State:
 				_draw_ranges()
 	
 	_process_movement(delta)
+	
 	return
 
 

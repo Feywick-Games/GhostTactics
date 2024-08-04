@@ -96,16 +96,7 @@ func tile_to_world(tile: Vector2i) -> Vector2:
 func get_nearest_available_tile(world_position: Vector2) -> Vector2i:
 	var tile := world_to_tile(world_position)
 	
-	if not grid.is_point_solid(tile):
-		return tile
-	else:
-		var alternates : Array[Vector2i] = [Vector2i.UP, Vector2i.DOWN, Vector2i.LEFT, Vector2i.RIGHT]
-		alternates.shuffle()
-		for dir: Vector2i in alternates:
-			if not grid.is_point_solid(tile + dir):
-				return tile + dir
-	printerr("no available tile found at ", world_position)
-	return tile
+	return grid.get_id_path(tile, tile, true)[-1]
 
 
 func _on_encounter_started(rooms: Array[Room]) -> void:

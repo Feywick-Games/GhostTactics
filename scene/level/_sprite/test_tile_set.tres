@@ -1,4 +1,4 @@
-[gd_resource type="TileSet" load_steps=9 format=3 uid="uid://ph0vvwjj2fg4"]
+[gd_resource type="TileSet" load_steps=10 format=3 uid="uid://ph0vvwjj2fg4"]
 
 [ext_resource type="Texture2D" uid="uid://difcignuluahh" path="res://scene/level/_sprite/test_isometric_tile_set.png" id="1_2sdns"]
 [ext_resource type="PackedScene" uid="uid://d0tl4xn5wsemf" path="res://scene/level/common/_prop/prop_cube.tscn" id="2_4cgii"]
@@ -76,6 +76,12 @@ texture_region_size = Vector2i(32, 16)
 scenes/1/scene = ExtResource("2_4cgii")
 scenes/2/scene = ExtResource("3_2gblo")
 
+[sub_resource type="NavigationPolygon" id="NavigationPolygon_fj4qw"]
+vertices = PackedVector2Array(16, 0, 0, 8, -16, 0, 0, -8)
+polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3)])
+outlines = Array[PackedVector2Array]([PackedVector2Array(0, -8, -16, 0, 0, 8, 16, 0)])
+agent_radius = 0.0
+
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_rc1bc"]
 texture = ExtResource("4_83oe5")
 texture_region_size = Vector2i(32, 16)
@@ -96,6 +102,7 @@ texture_region_size = Vector2i(32, 16)
 2:4/0/physics_layer_0/polygon_0/points = PackedVector2Array(0, -8, -16, 0, 0, 8, 16, 0)
 0:0/next_alternative_id = 4
 0:0/0 = 0
+0:0/0/navigation_layer_0/polygon = SubResource("NavigationPolygon_fj4qw")
 0:0/3 = 3
 0:0/3/custom_data_0 = true
 3:0/0 = 0

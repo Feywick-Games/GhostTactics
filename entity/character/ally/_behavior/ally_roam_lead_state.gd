@@ -1,9 +1,12 @@
 class_name AllyRoamLeadState
 extends AllyRoamState
 
+func enter() -> void:
+	super.enter()
+	
+
 func update(delta: float) -> State:
 	var direction := Vector2.ZERO
-
 	if Input.is_action_pressed("move"):
 		direction = _ally.get_local_mouse_position().normalized()
 	

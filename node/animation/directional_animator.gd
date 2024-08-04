@@ -10,6 +10,13 @@ var current_direction : String = "down"
 # alt_ext can be used when dependent other animations
 func play_directional(anim: String, direction:= Vector2.ZERO, eight_direction:bool = false, alt_ext := "",
 custom_blend: float = -1,custom_speed: float = 1.0, from_end: bool = false) -> void:
+	var anim_direction_str = get_current_direction(direction, eight_direction)
+	anim_direction_str += alt_ext
+	
+	play(anim + "_" + anim_direction_str, custom_blend, custom_speed, from_end)
+
+
+func get_current_direction(direction: Vector2, eight_direction:= false) -> String:
 	var theta : float = direction.angle()
 	var eight_direction_str := ""
 	if direction != Vector2.ZERO:
@@ -51,6 +58,5 @@ custom_blend: float = -1,custom_speed: float = 1.0, from_end: bool = false) -> v
 					eight_direction_str = "cardinal_left"
 	
 	var anim_direction_str := eight_direction_str if not eight_direction_str.is_empty() else current_direction
-	anim_direction_str += alt_ext
 	
-	play(anim + "_" + anim_direction_str, custom_blend, custom_speed, from_end)
+	return anim_direction_str
