@@ -19,6 +19,7 @@ func update(_delta: float) -> State:
 	else:
 		_character.ready_for_battle = true
 		_character.global_position = GameState.current_level.tile_to_world(_character.current_tile)
+		GameState.current_level.update_unit_registry(_character.current_tile, _character)
 		return CharacterCombatIdleState.new()
 	
 	return

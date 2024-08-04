@@ -1,0 +1,15 @@
+[gd_scene load_steps=5 format=3 uid="uid://c3ow1ifjec62m"]
+
+[ext_resource type="PackedScene" uid="uid://cm7s3l5cikm6u" path="res://entity/character/ally/ally.tscn" id="1_abh6s"]
+[ext_resource type="Script" path="res://entity/character/ally/_behavior/ally_roam_lead_state.gd" id="2_ood67"]
+[ext_resource type="PackedScene" uid="uid://f4x7mg2o6cwa" path="res://entity/character/ally/_packed_scene/turn_portrait_ally_1.tscn" id="3_lxf21"]
+[ext_resource type="Texture2D" uid="uid://chfg67t7nwyc2" path="res://entity/character/ally/izzy/_sprite/izzy_idle_down.png" id="3_sk6vo"]
+
+[node name="Izzy" instance=ExtResource("1_abh6s")]
+position = Vector2(0, -2)
+init_state = ExtResource("2_ood67")
+turn_portrait_scene = ExtResource("3_lxf21")
+
+[node name="CharacterSprite" parent="." index="0"]
+position = Vector2(0, 7)
+texture = ExtResource("3_sk6vo")

@@ -1,35 +1,39 @@
 class_name AllyCombatTurnState
 extends State
 
-const SNAP_DISTANCE: int = 2
-const TIME_PER_MOVE: float = .025
+const SNAP_DISTANCE: int = 2.4
+const TIME_PER_MOVE: float = .03
 
 var _ally: Ally
-var _movement_range: Array[Vector2i]
-var _attack_range: Array[Vector2i]
+var _movement_range: RangeStruct
+var _attack_range: RangeStruct = RangeStruct.new()
 var _tile_path: Array[Vector2i]
 var _time_since_move: float = 0
 var _astar: AStarGrid2D
+var _selecting_facing := false
+var _start_tile: Vector2i
 
 func enter() -> void:
 	_ally = state_machine.state_owner as Ally
-	
-	_movement_range = GameState.current_level.request_range(_ally.current_tile, _ally.movement_range)
-	
-	for tile: Vector2i in _movement_range:
-		if not tile + Vector2i.RIGHT in _movement_range or not tile + Vector2i.LEFT in _movement_range or\
-		not tile + Vector2i.UP in _movement_range or not tile + Vector2i.DOWN in _movement_range:
-			var valid_range : Array[Vector2i] = GameState.current_level.request_range(
-				tile, _ally.attack_range, true
-			)
-			for attack_tile in valid_range:
-				if not attack_tile in _attack_range and not attack_tile in _movement_range:
-					_attack_range.append(attack_tile)
+	_ally.global_position = GameState.current_level.tile_to_world(_ally.current_tile).round()
+	_start_tile = _ally.current_tile
+	_movement_range = GameState.current_level.request_range(_ally.current_tile, _ally.movement_range, true, [_start_tile])
 	
 	_create_movement_astar()
+	_draw_ranges()
 	
-	GameState.current_level.draw_range(_attack_range, Global.RETICLE_ATTACK_ALTAS_COORDS)
-	GameState.current_level.draw_range(_movement_range, Global.RETICLE_MOVE_ALTAS_COORDS)
+	
+func _draw_ranges() -> void:
+	#GameState.current_level.draw_range(_attack_range.range_tiles, Global.BATTLE_MAP_ATLAS_COORDS)
+	#GameState.current_level.draw_range(_attack_range.blocked_tiles, Global.BATTLE_MAP_ATLAS_COORDS)
+	GameState.current_level.reset_map()
+	_attack_range = GameState.current_level.request_range(_ally.current_tile, _ally.attack_range, true, [_start_tile], true, true)
+	GameState.current_level.draw_range(_movement_range.range_tiles, Global.RETICLE_MOVE_ALTAS_COORDS)
+	GameState.current_level.draw_range(_attack_range.blocked_tiles, Global.RETICLE_BLOCKED_ALTAS_COORDS)
+	GameState.current_level.draw_range(_movement_range.blocked_tiles, Global.RETICLE_BLOCKED_ALTAS_COORDS)
+	GameState.current_level.draw_range(_attack_range.range_tiles, Global.RETICLE_ATTACK_ALTAS_COORDS)
+	GameState.current_level.map.set_cell(_ally.current_tile, 0, Global.RETICLE_MOVE_ALTAS_COORDS)
+	GameState.current_level.select_tile(_ally.current_tile)
 
 
 func _create_movement_astar() -> void:
@@ -44,7 +48,7 @@ func _create_movement_astar() -> void:
 	
 	for y in range(_astar.region.position.y, _astar.region.end.y):
 		for x in range(_astar.region.position.x, _astar.region.end.x):
-			if not Vector2i(x,y) in _movement_range:
+			if not Vector2i(x,y) in _movement_range.range_tiles:
 				_astar.set_point_solid(Vector2i(x,y))
 
 
@@ -52,9 +56,9 @@ func update(delta: float) -> State:
 	if Input.is_action_just_pressed("move"):
 		var pos := _ally.to_global(_ally.get_local_mouse_position())
 		var tile := GameState.current_level.world_to_tile(pos)
-		if tile in _movement_range:
+		if tile in _movement_range.range_tiles:
 			_tile_path = _astar.get_id_path(_ally.current_tile, tile)
-			_tile_path.pop_front()
+			#_tile_path.pop_front()
 			
 	_ally.velocity = Vector2.ZERO
 	if not _tile_path.is_empty():
@@ -62,11 +66,33 @@ func update(delta: float) -> State:
 		if _time_since_move >= TIME_PER_MOVE:
 			_time_since_move = 0
 			var path_position :=  GameState.current_level.tile_to_world(_tile_path[0])
+			var map_position := GameState.current_level.tile_to_world(_ally.current_tile)
 			if path_position.distance_to(_ally.global_position) > SNAP_DISTANCE:
 				var dir: Vector2 = (path_position - _ally.global_position).normalized()
 				_ally.global_position += dir * Global.PLAYER_SPEED * 4.0 * delta
 				_ally.global_position = _ally.global_position.snapped(Vector2(2,1))
 			if not path_position.distance_to(_ally.global_position) > SNAP_DISTANCE:
-				_ally.global_position = path_position.round()
-				_ally.current_tile = _tile_path.pop_front()
+				if len(_tile_path) == 1:
+					_ally.global_position = path_position.round()
+				_tile_path.pop_front()
+			if not _tile_path.is_empty() and \
+			path_position.distance_to(_ally.global_position) < map_position.distance_to(_ally.global_position):
+				_ally.current_tile = _tile_path[0]
+				_draw_ranges()
+				
+				
+	if Input.is_action_just_pressed("guard"):
+		_ally.get_viewport().set_input_as_handled()
+		_ally.facing = Vector2i.ZERO
+		return CharacterCombatIdleState.new()
 	return
+
+func set_attack_range() -> void:
+	pass
+
+
+
+func exit() -> void:
+	EventBus.turn_ended.emit()
+	GameState.current_level.reset_map()
+	GameState.current_level.update_unit_registry(_ally.current_tile, _ally)

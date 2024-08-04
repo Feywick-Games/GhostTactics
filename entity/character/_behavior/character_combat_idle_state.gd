@@ -11,5 +11,4 @@ func enter() -> void:
 
 func _on_turn_started(unit: Character) -> void:
 	if unit == _character:
-		if unit is Ally:
-			state_machine.change_state(AllyCombatTurnState.new())
+		state_machine.change_state(_character.turn_state.new())

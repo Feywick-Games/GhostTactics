@@ -4,19 +4,22 @@ extends CharacterBody2D
 @export
 var init_state: GDScript
 @export
+var turn_state: GDScript
+@export
+var special_state: GDScript
+@export
 var turn_portrait_scene: PackedScene
 
 @export
 var health: int = 10
 @export
-var movement_range: int = 10
+var movement_range: int = 5
 @export
 var attack_range: int = 1
 @export
 var attack_damage: int = 2
-@export
-var special_state: GDScript
 
+var facing: Vector2i
 var ready_for_battle := false
 var current_tile: Vector2i
 

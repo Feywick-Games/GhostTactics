@@ -9,6 +9,8 @@ func update(delta: float) -> State:
 
 	_ally.velocity = direction * Global.PLAYER_SPEED
 	
+	EventBus.cam_follow_requested.emit(_ally)
+	
 	return super.update(delta)
 	
 	
