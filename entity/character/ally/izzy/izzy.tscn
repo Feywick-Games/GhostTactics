@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=3 uid="uid://c3ow1ifjec62m"]
+[gd_scene load_steps=22 format=3 uid="uid://c3ow1ifjec62m"]
 
 [ext_resource type="PackedScene" uid="uid://cm7s3l5cikm6u" path="res://entity/character/ally/ally.tscn" id="1_abh6s"]
 [ext_resource type="Script" path="res://entity/character/ally/_behavior/ally_roam_lead_state.gd" id="2_ood67"]
@@ -8,6 +8,7 @@
 [ext_resource type="Texture2D" uid="uid://bel6ycldg65i6" path="res://entity/character/ally/izzy/_sprite/izzy_idle_up.png" id="6_wmewt"]
 [ext_resource type="Texture2D" uid="uid://bsa4qbod60we" path="res://entity/character/ally/izzy/_sprite/izzy_idle_cardinal_down.png" id="8_134m7"]
 [ext_resource type="Texture2D" uid="uid://dkgjktshrs3vf" path="res://entity/character/ally/izzy/_sprite/izzy_idle_cardinal_up.png" id="9_ce5tx"]
+[ext_resource type="Texture2D" uid="uid://b4ecpqhivu5tk" path="res://entity/character/ally/izzy/_sprite/izzy_basic_attack_down.png" id="10_71qqk"]
 [ext_resource type="Texture2D" uid="uid://dphldatphshsn" path="res://entity/character/ally/izzy/_sprite/izzy_idle_cardinal_left.png" id="10_ondk7"]
 
 [sub_resource type="Animation" id="Animation_tjtew"]
@@ -469,9 +470,62 @@ tracks/3/keys = {
 "values": [ExtResource("6_wmewt")]
 }
 
+[sub_resource type="Animation" id="Animation_hbpdg"]
+resource_name = "basic_attack_down"
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("CharacterSprite:hframes")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [10]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("CharacterSprite:flip_h")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("CharacterSprite:frame")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.001, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [0, 9, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("CharacterSprite:texture")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [ExtResource("10_71qqk")]
+}
+
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_bcpvy"]
 _data = {
 "RESET": SubResource("Animation_tjtew"),
+"basic_attack_down": SubResource("Animation_hbpdg"),
 "idle_cardinal_down": SubResource("Animation_17pf0"),
 "idle_cardinal_left": SubResource("Animation_2r22t"),
 "idle_cardinal_right": SubResource("Animation_rte58"),
