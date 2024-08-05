@@ -127,7 +127,11 @@ func _process_action() -> State:
 			if unit and unit != _ally:
 				_ally.facing = Vector2i(Vector2(tile - _ally.current_tile).normalized().round())
 				if _attack_state == AttackState.BASIC:
-					unit.take_damage(_ally.attack_damage, _ally.facing)
+					if _ally.name == "Izzy":
+						_ally.animator.play("basic_attack_down")
+						_ally.animator.queue("idle_" + _ally.animator.get_current_direction(dir))
+					
+					unit.take_damage(_ally.attack_damage, _ally.facing, _ally.target_hit)
 					print("atacked ", _ally.facing)
 					_ally.end_turn()
 					return CharacterCombatIdleState.new()

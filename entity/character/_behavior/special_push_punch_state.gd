@@ -76,11 +76,11 @@ func _push(delta: float) -> void:
 		_exiting = true
 		GameState.current_level.update_unit_registry(_target_unit.current_tile, _target_unit)
 		if increment ==  _max_push_distance and _max_is_collision:
-			_target_unit.take_damage(_character.special.damage * 2.0, _character.facing)
+			_target_unit.take_damage(_character.special.damage * 2.0, _character.facing, _character.target_hit)
 			if _o_target:
-				_o_target.take_damage(_character.special.damage, _character.facing)
+				_o_target.take_damage(_character.special.damage, _character.facing, _character.target_hit)
 		else:
-			_target_unit.take_damage(_character.special.damage, _direction)
+			_target_unit.take_damage(_character.special.damage, _direction, _character.target_hit)
 
 
 func update(delta: float) -> State:
@@ -93,7 +93,7 @@ func update(delta: float) -> State:
 				increment += 1
 				if increment > _max_push_distance:
 					var unit = GameState.current_level.get_unit_from_tile(_target_tile)
-					unit.take_damage(_character.special.damage, _character.facing)
+					unit.take_damage(_character.special.damage, _character.facing, _character.target_hit)
 					_character.end_turn()
 					return CharacterCombatIdleState.new()
 				else:
