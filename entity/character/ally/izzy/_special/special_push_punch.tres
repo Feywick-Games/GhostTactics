@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="Special" load_steps=3 format=3 uid="uid://dcwe1an4rcnnf"]
+
+[ext_resource type="Script" path="res://entity/character/_behavior/special.gd" id="1_2uiny"]
+[ext_resource type="Script" path="res://entity/character/_behavior/special_push_punch_state.gd" id="2_ho7ur"]
+
+[resource]
+script = ExtResource("1_2uiny")
+damage = 5
+range = 1
+state = ExtResource("2_ho7ur")
+custom_values = {
+"push_distance": 4
+}

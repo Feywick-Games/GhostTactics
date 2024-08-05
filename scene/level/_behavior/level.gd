@@ -14,6 +14,10 @@ var _grid_cells: Array[Vector2i]
 var _time_since_grid_tile: float = 0
 var _current_cell_x: int = 0
 var _time_per_grid_tile
+var _unit_registry: Dictionary
+var _enemy_tiles: Array[Vector2i]
+var _ally_tiles: Array[Vector2i]
+var _prop_tiles: Array[Vector2i]
 
 @onready
 var map: TileMapLayer = $Map
@@ -31,6 +35,56 @@ func _ready() -> void:
 	EventBus.build_battle_map.connect(_on_encounter_started)
 
 
+func update_unit_registry(tile: Vector2i, unit: Character) -> void:
+	if unit is Ally:
+		_ally_tiles.append(tile)
+	else:
+		_enemy_tiles.append(tile)
+	
+	if not unit.died.is_connected(_on_unit_died.bind(unit)):
+		unit.died.connect(_on_unit_died.bind(unit))
+	
+	for cur_tile: Vector2i in _unit_registry.keys():
+		if _unit_registry[cur_tile] == unit:
+			grid.set_point_solid(cur_tile, false)
+			_unit_registry.erase(cur_tile)
+			if unit is Ally:
+				_ally_tiles.remove_at(_ally_tiles.find(cur_tile))
+			else:
+				_enemy_tiles.remove_at(_enemy_tiles.find(cur_tile))
+	
+	grid.set_point_solid(tile)
+	_unit_registry[tile] = unit
+	
+
+func _on_unit_died(unit: Character) -> void:
+	for cur_tile: Vector2i in _unit_registry.keys():
+		if _unit_registry[cur_tile] == unit:
+			grid.set_point_solid(cur_tile, false)
+			_unit_registry.erase(cur_tile)
+
+
+func get_id_path(start_tile: Vector2i, end_tile: Vector2i, pass_start := false) -> Array[Vector2i]:
+	var reset := false
+	if pass_start and grid.is_point_solid(start_tile):
+		grid.set_point_solid(start_tile, false)
+		reset = true
+	
+	var out: Array[Vector2i] = grid.get_id_path(start_tile, end_tile)
+	
+	if reset:
+		grid.set_point_solid(start_tile, true)
+	
+	return out
+
+
+func get_unit_from_tile(tile: Vector2i) -> Character:
+	if _unit_registry.has(tile):
+		return _unit_registry[tile]
+	else:
+		return null
+
+
 func world_to_tile(world_position: Vector2) -> Vector2i:
 	return map.local_to_map(map.to_local(world_position))
 
@@ -42,16 +96,7 @@ func tile_to_world(tile: Vector2i) -> Vector2:
 func get_nearest_available_tile(world_position: Vector2) -> Vector2i:
 	var tile := world_to_tile(world_position)
 	
-	if not grid.is_point_solid(tile):
-		return tile
-	else:
-		var alternates : Array[Vector2i] = [Vector2i.UP, Vector2i.DOWN, Vector2i.LEFT, Vector2i.RIGHT]
-		alternates.shuffle()
-		for dir: Vector2i in alternates:
-			if not grid.is_point_solid(tile + dir):
-				return tile + dir
-	printerr("no available tile found at ", world_position)
-	return tile
+	return grid.get_id_path(tile, tile, true)[-1]
 
 
 func _on_encounter_started(rooms: Array[Room]) -> void:
@@ -92,22 +137,73 @@ func reset_map() -> void:
 			map.set_cell(tile, 0 , Vector2.RIGHT)
 
 
-func request_range(unit_tile: Vector2i, distance: float, can_pass := false) -> Array[Vector2i]:
+func request_range(unit_tile: Vector2i, distance: float, is_ally: bool, exceptions: Array[Vector2i] = [],
+can_pass := false, include_opponent_tiles := false) -> RangeStruct:
+	var range_struct := RangeStruct.new()
+	var _pass_tiles: Array[Vector2i]
+	
+	for tile in _unit_registry.keys():
+		if _unit_registry[tile] is Ally and is_ally:
+			grid.set_point_solid(tile, false)
+			_pass_tiles.append(tile)
+		elif _unit_registry[tile] is Enemy and not is_ally:
+			grid.set_point_solid(tile, false)
+			_pass_tiles.append(tile)
+	
+	if can_pass:
+		for tile in _prop_tiles:
+			grid.set_point_solid(tile, false)
+			_pass_tiles.append(tile)
+	
 	var range_rect: Rect2i
 	range_rect.position = unit_tile - Vector2i(distance, distance)
 	range_rect.end = unit_tile + Vector2i(distance, distance)
-	
-	var out_range: Array[Vector2i]
-	
+		
 	
 	for y in range(range_rect.position.y, range_rect.end.y + 1):
 		for x in range(range_rect.position.x, range_rect.end.x + 1):
 			var tile = Vector2i(x,y)
-			if grid.region.has_point(tile) and not grid.is_point_solid(tile):
-				if grid.get_point_path(unit_tile, tile).size() <= distance + 1:
-					out_range.append(tile)
-	
-	return out_range
+			if grid.region.has_point(tile):
+				var id_path: Array[Vector2i] = grid.get_id_path(unit_tile, tile)
+				if id_path.size() <= distance + 1:
+					if not grid.is_point_solid(tile):
+						range_struct.range_tiles.append(tile)
+					elif tile in _grid_cells:
+						grid.set_point_solid(tile, false)
+						var check_path := grid.get_id_path(unit_tile, tile)
+						if check_path.size() <= distance + 1:
+							range_struct.blocked_tiles.append(tile)
+						grid.set_point_solid(tile)
+
+	for tile in _pass_tiles:
+		if tile not in exceptions:
+			var tile_idx: int = range_struct.range_tiles.find(tile)
+			
+			if tile_idx != -1:
+				range_struct.range_tiles.remove_at(tile_idx)
+				range_struct.blocked_tiles.append(tile)
+			
+		grid.set_point_solid(tile)
+		
+	if include_opponent_tiles:
+		if is_ally:
+			for tile in _enemy_tiles:
+				var dist: int = abs(tile.y - unit_tile.y) + abs(tile.x - unit_tile.x)
+				if dist <= distance:
+					var tile_idx: int = range_struct.blocked_tiles.find(tile)
+					if tile_idx != -1:
+						range_struct.blocked_tiles.remove_at(tile_idx)
+						range_struct.range_tiles.append(tile)
+		else:
+			for tile in _ally_tiles:
+				var dist: int = abs(tile.y - unit_tile.y) + abs(tile.x - unit_tile.x)
+				if dist <= distance:
+					var tile_idx: int = range_struct.blocked_tiles.find(tile)
+					if tile_idx != -1:
+						range_struct.blocked_tiles.remove_at(tile_idx)
+						range_struct.range_tiles.append(tile)
+		
+	return range_struct
 
 
 func draw_range(tiles: Array[Vector2i], atlas_coords: Vector2i) -> void:
@@ -116,13 +212,13 @@ func draw_range(tiles: Array[Vector2i], atlas_coords: Vector2i) -> void:
 
 
 
-func select_tile(tile: Vector2i, deselect := false) -> void:
+func select_tile(tile: Vector2i, select := true) -> void:
 	
 	var atlas_coords: Vector2i = map.get_cell_atlas_coords(tile)
-	if not deselect:
-		map.set_cell(tile, 0, tile + Vector2i.RIGHT)
+	if select:
+		map.set_cell(tile, 0, atlas_coords + Vector2i.RIGHT)
 	else:
-		map.set_cell(tile, 0, tile - Vector2i.RIGHT)
+		map.set_cell(tile, 0, atlas_coords - Vector2i.RIGHT)
 
 
 func _populate_grid(room: Room) -> void:
@@ -143,6 +239,7 @@ func _populate_grid(room: Room) -> void:
 				var source_id = floor_layer.get_cell_source_id(Vector2i(x,y))
 				if source_id == -1 or floor_layer.get_cell_tile_data(Vector2i(x,y)).get_custom_data("border"):
 					grid.set_point_solid(Vector2i(x,y))
+				else:
 					_grid_cells.append(Vector2i(x,y))
 		for prop: Prop in props:
 			var prop_tile: Vector2i = floor_layer.local_to_map(floor_layer.to_local(prop.global_position))
@@ -151,4 +248,5 @@ func _populate_grid(room: Room) -> void:
 					for x: int in range(rect.position.x, rect.end.x):
 						var tile := Vector2i(x,y) + prop_tile
 						grid.set_point_solid(tile)
+						_prop_tiles.append(tile)
 		grid.update()
