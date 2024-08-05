@@ -38,21 +38,35 @@ func _on_timed_out() -> void:
 
 func _draw_ranges() -> void:
 	var attack_altas_coords: Vector2i
+	var overlap_atlas_coords: Vector2i
 	if _attack_state == AttackState.BASIC:
 		_attack_range = GameState.current_level.request_range(_ally.current_tile, _ally.attack_range, true, [_start_tile], true, true)
 		attack_altas_coords = Global.RETICLE_ATTACK_ALTAS_COORDS
+		overlap_atlas_coords = Global.RETICLE_SPECIAL_2_ATLAS_COORDS
 	else:
 		_attack_range =  GameState.current_level.request_range(_ally.current_tile, _ally.special.range, true, [_start_tile], true, true)
-		if _ally.special.damage > 0:
-			attack_altas_coords = Global.RETICLE_SPECIAL_1_ALTAS_COORDS
+		attack_altas_coords = Global.RETICLE_SPECIAL_1_ALTAS_COORDS
+		overlap_atlas_coords = Global.RETICLE_CURE_2_ATLAS_COORDS
+
+	
+	# color tiles differently when attacks overlap with movement 
+	var overlap_tiles: Array[Vector2i]
+	var attack_only_tiles: Array[Vector2i]
+	
+	for tile in _attack_range.range_tiles:
+		if tile in _movement_range.range_tiles:
+			overlap_tiles.append(tile)
 		else:
-			attack_altas_coords = Global.RETICLE_CURE_1_ATLAS_COORD
+			attack_only_tiles.append(tile)
+	
+	
 	_attack_range.range_tiles.remove_at(_attack_range.range_tiles.find(_ally.current_tile))
 	GameState.current_level.reset_map()
 	GameState.current_level.draw_range(_movement_range.range_tiles, Global.RETICLE_MOVE_ALTAS_COORDS)
 	GameState.current_level.draw_range(_attack_range.blocked_tiles, Global.RETICLE_BLOCKED_ALTAS_COORDS)
 	GameState.current_level.draw_range(_movement_range.blocked_tiles, Global.RETICLE_BLOCKED_ALTAS_COORDS)
-	GameState.current_level.draw_range(_attack_range.range_tiles, attack_altas_coords)
+	GameState.current_level.draw_range(attack_only_tiles, attack_altas_coords)
+	GameState.current_level.draw_range(overlap_tiles, overlap_atlas_coords)
 	GameState.current_level.map.set_cell(_ally.current_tile, 0, Global.RETICLE_MOVE_ALTAS_COORDS)
 	GameState.current_level.select_tile(_ally.current_tile)
 
@@ -98,12 +112,8 @@ func _process_movement(delta: float) -> void:
 				_draw_ranges()
 
 
-func _process_select_facing() -> State:
-	if Input.is_action_just_pressed("cancel"):
-		_selecting_facing = false
-		for tile in _attack_range.range_tiles:
-			GameState.current_level.select_tile(tile, false)
-	elif Input.is_action_just_pressed("accept"):
+func _process_action() -> State:
+	if Input.is_action_just_pressed("accept"):
 		var pos := _ally.get_global_mouse_position()
 		var tile := GameState.current_level.world_to_tile(pos)
 		
@@ -115,13 +125,14 @@ func _process_select_facing() -> State:
 		if tile in _attack_range.range_tiles:
 			var unit: Character = GameState.current_level.get_unit_from_tile(tile)
 			if unit and unit != _ally:
+				_ally.facing = Vector2i(Vector2(tile - _ally.current_tile).normalized().round())
 				if _attack_state == AttackState.BASIC:
-					_ally.facing = Vector2i(Vector2(tile - _ally.current_tile).normalized().round())
-					unit.take_damage(_ally.attack_damage)
+					unit.take_damage(_ally.attack_damage, _ally.facing)
 					print("atacked ", _ally.facing)
 					_ally.end_turn()
 					return CharacterCombatIdleState.new()
 				else:
+					EventBus.timer_stopped.emit()
 					return _ally.special.state.new(unit.current_tile)
 				
 	return
@@ -138,35 +149,24 @@ func update(delta: float) -> State:
 		var tile := GameState.current_level.world_to_tile(pos)
 		if tile in _movement_range.range_tiles:
 			_tile_path = _astar.get_id_path(_ally.current_tile, tile)
-	
-	elif _selecting_facing:
-		return _process_select_facing()
 	else:
 		if Input.is_action_just_pressed("guard"):
 			_ally.get_viewport().set_input_as_handled()
 			_ally.facing = Vector2i.ZERO
 			_ally.end_turn()
 			return CharacterCombatIdleState.new()
-		elif Input.is_action_just_pressed("attack"):
-			if _attack_state == AttackState.BASIC:
-				_selecting_facing = true
-				for tile in _attack_range.range_tiles:
-					GameState.current_level.select_tile(tile)
-			else:
+		elif Input.is_action_just_pressed("cancel"):
+			if not _attack_state == AttackState.BASIC:
 				_attack_state = AttackState.BASIC
 				_draw_ranges()
 		if Input.is_action_just_pressed("special"):
-			if _attack_state == AttackState.SPECIAL:
-				_selecting_facing = true
-				for tile in _attack_range.range_tiles:
-					GameState.current_level.select_tile(tile)
-			else:
+			if not _attack_state == AttackState.SPECIAL:
 				_attack_state = AttackState.SPECIAL
 				_draw_ranges()
 	
 	_process_movement(delta)
 	
-	return
+	return _process_action()
 
 
 func exit() -> void:

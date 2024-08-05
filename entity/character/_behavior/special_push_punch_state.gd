@@ -2,7 +2,7 @@ class_name PushPunchSpecialState
 extends SpecialState
 
 const SNAP_DISTANCE: float = 2.4
-const TIME_PER_INCREMENT: float = .5
+const TIME_PER_INCREMENT: float = .3
 const TIME_PER_MOVE: float = 0.03
 const TIME_TO_EXIT: float = 1.0
 
@@ -76,11 +76,11 @@ func _push(delta: float) -> void:
 		_exiting = true
 		GameState.current_level.update_unit_registry(_target_unit.current_tile, _target_unit)
 		if increment ==  _max_push_distance and _max_is_collision:
-			_target_unit.take_damage(_character.special.damage * 2.0)
+			_target_unit.take_damage(_character.special.damage * 2.0, _character.facing)
 			if _o_target:
-				_o_target.take_damage(_character.special.damage)
+				_o_target.take_damage(_character.special.damage, _character.facing)
 		else:
-			_target_unit.take_damage(_character.special.damage)
+			_target_unit.take_damage(_character.special.damage, _direction)
 
 
 func update(delta: float) -> State:
@@ -93,7 +93,7 @@ func update(delta: float) -> State:
 				increment += 1
 				if increment > _max_push_distance:
 					var unit = GameState.current_level.get_unit_from_tile(_target_tile)
-					unit.take_damage(_character.special.damage)
+					unit.take_damage(_character.special.damage, _character.facing)
 					_character.end_turn()
 					return CharacterCombatIdleState.new()
 				else:

@@ -484,15 +484,16 @@ _data = {
 
 [node name="Izzy" instance=ExtResource("1_abh6s")]
 position = Vector2(0, -2)
-follow_order = 0
 is_animated = true
 init_state = ExtResource("2_ood67")
 special = ExtResource("3_27mrg")
 turn_portrait_scene = ExtResource("3_lxf21")
+movement_range = 4
 
 [node name="CharacterSprite" parent="." index="0"]
-position = Vector2(0, 7)
+position = Vector2(0, 3)
 texture = ExtResource("3_sk6vo")
+offset = Vector2(0, -16)
 
 [node name="CollisionShape2D" parent="." index="1"]
 position = Vector2(-1, 0)

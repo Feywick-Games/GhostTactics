@@ -488,13 +488,13 @@ is_animated = true
 init_state = ExtResource("2_6is5v")
 special = ExtResource("2_ca4g7")
 turn_portrait_scene = ExtResource("3_qngi6")
-movement_range = 4
+movement_range = 3
 attack_range = 3
 
 [node name="CharacterSprite" parent="." index="0"]
-position = Vector2(0, -14)
+position = Vector2(0, 2)
 texture = ExtResource("2_446ld")
-offset = Vector2(0, 0)
+offset = Vector2(0, -16)
 
 [node name="CollisionShape2D" parent="." index="1"]
 position = Vector2(-1, -1)

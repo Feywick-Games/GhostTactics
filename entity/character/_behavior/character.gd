@@ -43,11 +43,18 @@ func get_tile() -> Vector2i:
 	return GameState.current_level.get_tile(global_position)
 
 
-func take_damage(damage: int) -> void:
+func take_damage(damage: int, direction: Vector2) -> void:
+	var damage_multiplier: int = 1
+	if facing != Vector2i.ZERO:
+		if is_equal_approx(direction.normalized().dot(Vector2(facing).normalized()), -1):
+			damage_multiplier += 2
+	
 	if GameState.battle_timer.value < GameState.battle_timer.max_value * .25:
-		damage *= 2
+		damage_multiplier += 2
 	elif GameState.battle_timer.value > GameState.battle_timer.max_value * .75:
-		damage *= .5
+		damage_multiplier += -.5
+	
+	damage *= damage_multiplier
 	
 	health -= damage
 	if health <= 0:
