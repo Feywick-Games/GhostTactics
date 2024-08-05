@@ -13,6 +13,8 @@ custom_blend: float = -1,custom_speed: float = 1.0, from_end: bool = false) -> v
 	var anim_direction_str = get_current_direction(direction, eight_direction)
 	anim_direction_str += alt_ext
 	
+	current_direction = anim_direction_str
+	
 	play(anim + "_" + anim_direction_str, custom_blend, custom_speed, from_end)
 
 
@@ -58,5 +60,5 @@ func get_current_direction(direction: Vector2, eight_direction:= false) -> Strin
 					eight_direction_str = "cardinal_left"
 	
 	var anim_direction_str := eight_direction_str if not eight_direction_str.is_empty() else current_direction
-	
+
 	return anim_direction_str

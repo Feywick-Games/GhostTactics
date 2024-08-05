@@ -58,16 +58,16 @@ script = ExtResource("2_uhukl")
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Room"]
 z_index = -1
-polygon = PackedVector2Array(112, 72, -8, 137, 140, 215, 97, 246, 248, 333, 387, 254, 449, 285, 540, 231, 482, 200, 596, 143, 283, -19)
+polygon = PackedVector2Array(112, 72, 24, 120, 112, 168, 72, 192, 208, 256, 320, 208, 344, 216, 432, 184, 384, 160, 464, 120, 240, 8)
 
 [node name="Enemy" parent="Room" groups=["enemies_a"] instance=ExtResource("5_txo8k")]
-position = Vector2(295, 130)
+position = Vector2(250, 130)
 collision_layer = 1
 init_state = ExtResource("9_c8r4f")
 turn_portrait_scene = ExtResource("9_nxwh3")
 
 [node name="Enemy2" parent="Room" groups=["enemies_a"] instance=ExtResource("5_txo8k")]
-position = Vector2(343, 90)
+position = Vector2(208, 107)
 collision_layer = 1
 init_state = ExtResource("9_c8r4f")
 turn_portrait_scene = ExtResource("10_vx8qn")
@@ -80,7 +80,7 @@ tile_set = ExtResource("3_m04si")
 [node name="Wall3" type="TileMapLayer" parent="Room"]
 visibility_layer = 3
 y_sort_enabled = true
-tile_map_data = PackedByteArray("AAAUAPj/AwAAAAgAAAASAPj/AwAAAAgAAAATAPj/AwAAAAgAAAARAPj/AwAAAAgAAAAQAPj/AwAAAAgAAAAPAPj/AwAAAAgAAAAOAPj/AwAAAAgAAAANAPj/AwAAAAgAAAAMAPj/AwAAAAgAAAALAPj/AwAAAAgAAAAKAPj/AwAAAAgAAAAJAPj/AwAAAAgAAAAIAPj/AwAAAAgAAAAHAPj/AwAAAAgAAAAFAPr/AwABAAgAAAAFAPv/AwABAAgAAAAFAPz/AwABAAgAAAAFAP3/AwABAAgAAAAFAP7/AwABAAgAAAAFAP//AwABAAgAAAAFAAAAAwABAAgAAAAFAAEAAwABAAgAAAAFAAIAAwABAAgAAAAFAAMAAwABAAgAAAAFAPj/AwACAAQAAAAGAPj/AwAAAAgAAAAFAPn/AwABAAQAAAAFAAYAAwABAAgAAAAFAAUAAwABAAgAAAAFAAQAAwABAAgAAAA=")
+tile_map_data = PackedByteArray("AAAUAPj/AwAAAAgAAAASAPj/AwAAAAgAAAATAPj/AwAAAAgAAAARAPj/AwAAAAgAAAAQAPj/AwAAAAgAAAAPAPj/AwAAAAgAAAAOAPj/AwAAAAgAAAANAPj/AwAAAAgAAAAMAPj/AwAAAAgAAAALAPj/AwAAAAgAAAAKAPj/AwAAAAgAAAAJAPj/AwAAAAgAAAAIAPj/AwAAAAgAAAAHAPj/AwAAAAgAAAAFAPr/AwABAAgAAAAFAPv/AwABAAgAAAAFAPz/AwABAAgAAAAFAP3/AwABAAgAAAAFAP7/AwABAAgAAAAFAP//AwABAAgAAAAFAAAAAwABAAgAAAAFAAEAAwABAAgAAAAFAAIAAwABAAgAAAAFAAMAAwABAAgAAAAFAAQAAwABAAgAAAAFAAUAAwABAAgAAAAFAAYAAwABAAgAAAAFAPj/AwACAAQAAAAGAPj/AwAAAAgAAAAFAPn/AwABAAQAAAA=")
 tile_set = ExtResource("3_m04si")
 script = ExtResource("6_2m1ov")
 
@@ -97,8 +97,10 @@ y_sort_enabled = true
 script = ExtResource("2_uhukl")
 
 [node name="Wall4" type="TileMapLayer" parent="Room2"]
+visible = false
 visibility_layer = 3
 y_sort_enabled = true
+tile_map_data = PackedByteArray("AAAYAAMAAwABAAwAAAAYAAIAAwADAAgAAAA=")
 tile_set = ExtResource("3_m04si")
 script = ExtResource("6_2m1ov")
 
@@ -108,15 +110,15 @@ tile_map_data = PackedByteArray("AAAZAP7/AwAAAAAAAAAZAP//AwAAAAAAAAAZAAAAAwAAAAA
 tile_set = ExtResource("3_m04si")
 
 [node name="Wall2" type="TileMapLayer" parent="Room2"]
+visible = false
 y_sort_enabled = true
-tile_map_data = PackedByteArray("AAAdAP7/AwAAAAgAAAAeAP7/AwAAAAgAAAAfAP7/AwAAAAgAAAAgAP7/AwAAAAgAAAAhAP7/AwAAAAgAAAAiAP7/AwAAAAgAAAAjAP7/AwAAAAgAAAAeAAgAAwABAAgAAAAeAAkAAwABAAgAAAAeAAoAAwABAAgAAAAeAAsAAwABAAgAAAAeAAwAAwABAAgAAAAaAP7/AwAAAAgAAAAbAP7/AwAAAAgAAAAcAP7/AwAAAAgAAAAZAP7/AwAAAAgAAAAYAP7/AwACAAQAAAAYAP//AwABAAgAAAAeAAcAAwABAAgAAAA=")
+tile_map_data = PackedByteArray("AAAdAP7/AwAAAAgAAAAeAP7/AwAAAAgAAAAfAP7/AwAAAAgAAAAgAP7/AwAAAAgAAAAhAP7/AwAAAAgAAAAiAP7/AwAAAAgAAAAjAP7/AwAAAAgAAAAeAAYAAwABAAgAAAAeAAcAAwABAAgAAAAeAAgAAwABAAgAAAAeAAkAAwABAAgAAAAeAAoAAwABAAgAAAAeAAsAAwABAAgAAAAeAAwAAwABAAgAAAAaAP7/AwAAAAgAAAAbAP7/AwAAAAgAAAAcAP7/AwAAAAgAAAAZAP7/AwAAAAgAAAAYAP7/AwACAAQAAAAYAP//AwABAAgAAAA=")
 tile_set = ExtResource("3_m04si")
 script = ExtResource("6_2m1ov")
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Room2"]
 z_index = -1
-position = Vector2(135, 77)
-polygon = PackedVector2Array(230, 360, 381, 282, 280, 228, 413, 146, 650, 270, 345, 426)
+polygon = PackedVector2Array(304, 344, 400, 285, 312, 236, 448, 176, 624, 264, 384, 384)
 
 [node name="TrackingCamera" type="Camera2D" parent="."]
 script = ExtResource("9_u6x2k")

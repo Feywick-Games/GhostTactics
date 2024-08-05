@@ -2,6 +2,7 @@ class_name Character
 extends CharacterBody2D
 
 signal died
+signal target_hit
 
 @export
 var is_animated := false
@@ -38,16 +39,28 @@ func _ready() -> void:
 	add_child(state_machine)
 
 
+func notify_impact() -> void:
+	target_hit.emit()
+
 
 func get_tile() -> Vector2i:
 	return GameState.current_level.get_tile(global_position)
 
 
-func take_damage(damage: int) -> void:
+func take_damage(damage: int, direction: Vector2, hit_signal: Signal) -> void:
+	await hit_signal
+	
+	var damage_multiplier: int = 1
+	if facing != Vector2i.ZERO:
+		if is_equal_approx(direction.normalized().dot(Vector2(facing).normalized()), -1):
+			damage_multiplier += 2
+	
 	if GameState.battle_timer.value < GameState.battle_timer.max_value * .25:
-		damage *= 2
+		damage_multiplier += 2
 	elif GameState.battle_timer.value > GameState.battle_timer.max_value * .75:
-		damage *= .5
+		damage_multiplier += -.5
+	
+	damage *= damage_multiplier
 	
 	health -= damage
 	if health <= 0:
