@@ -1,11 +1,18 @@
-[gd_scene load_steps=5 format=3 uid="uid://biudwwsx1di8t"]
+[gd_scene load_steps=4 format=3 uid="uid://biudwwsx1di8t"]
 
 [ext_resource type="Script" path="res://scene/game/_behavior/game.gd" id="1_h64b8"]
-[ext_resource type="Shader" path="res://scene/game/_material/camera_offset.gdshader" id="2_74yfv"]
 [ext_resource type="PackedScene" uid="uid://cjgcm24o5gude" path="res://scene/level/level.tscn" id="2_hc2sd"]
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_1tqrk"]
-shader = ExtResource("2_74yfv")
+[sub_resource type="GDScript" id="GDScript_42g76"]
+script/source = "extends SubViewportContainer
+var previous_screen_buffer: ImageTexture = ImageTexture.new()
+
+#func _process(delta: float) -> void:
+	#material.set_shader_parameter(\"residual_image_tex\", previous_screen_buffer)
+	#var image:Image = $LevelViewport.get_texture( ).get_image( )
+	##image.flip_y( )
+	#self.previous_screen_buffer = ImageTexture.create_from_image( image)
+"
 
 [node name="Game" type="Node"]
 script = ExtResource("1_h64b8")
@@ -19,12 +26,14 @@ grow_vertical = 2
 color = Color(0.0605303, 0.0605303, 0.0605303, 1)
 
 [node name="LevelViewportContainer" type="SubViewportContainer" parent="."]
-material = SubResource("ShaderMaterial_1tqrk")
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+stretch = true
+stretch_shrink = 3
+script = SubResource("GDScript_42g76")
 
 [node name="LevelViewport" type="SubViewport" parent="LevelViewportContainer"]
 transparent_bg = true
@@ -49,5 +58,5 @@ stretch = true
 transparent_bg = true
 handle_input_locally = false
 canvas_cull_mask = 4294967294
-size = Vector2i(640, 360)
+size = Vector2i(1920, 1080)
 render_target_update_mode = 0

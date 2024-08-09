@@ -37,6 +37,10 @@ func _input(event: InputEvent) -> void:
 
 func change_state(state : State) -> void:
 	_current_state.exit()
+	for connection in _current_state.get_incoming_connections():
+		connection["signal"].disconnect(connection["callable"])
+	
+	
 	state.state_machine = self
 	state.enter()
 	_current_state = state
