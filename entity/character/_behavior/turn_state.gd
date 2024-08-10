@@ -22,10 +22,10 @@ func enter() -> void:
 func end_turn() -> void:
 	_exiting = true
 	
-	
 func exit() -> void:
 	GameState.current_level.reset_map()
 	
 	
 func _on_encounter_ended() -> void:
 	_encounter_ended = true
+	_character.end_encounter()

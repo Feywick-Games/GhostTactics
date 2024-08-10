@@ -19,6 +19,7 @@ func enter() -> void:
 	_direction = (_character.global_position - GameState.current_level.tile_to_world(_character.current_tile)).normalized()
 	GameState.current_level.update_unit_registry(_character.current_tile, _character)
 	_target_position = GameState.current_level.tile_to_world(_character.current_tile)
+	_character.start_encounter()
 
 
 func update(_delta: float) -> State:
@@ -28,7 +29,8 @@ func update(_delta: float) -> State:
 	else:
 		_character.ready_for_battle = true
 		_character.global_position = GameState.current_level.tile_to_world(_character.current_tile)
-		_character.animator.play_directional("idle", _direction)
+		if _character.is_animated:
+			_character.animator.play_directional("idle", _direction)
 		return CharacterCombatIdleState.new()
 	
 	return

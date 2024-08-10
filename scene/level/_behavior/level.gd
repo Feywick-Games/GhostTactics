@@ -18,6 +18,7 @@ var _unit_registry: Dictionary
 var _enemy_tiles: Array[Vector2i]
 var _ally_tiles: Array[Vector2i]
 var _prop_tiles: Array[Vector2i]
+var _reverse_build_grid := false
 
 @onready
 var map: TileMapLayer = $Map
@@ -33,6 +34,14 @@ func _ready() -> void:
 	grid.update()
 	GameState.current_level = self
 	EventBus.build_battle_map.connect(_on_encounter_started)
+	EventBus.encounter_ended.connect(_on_encounter_ended)
+
+
+func _on_encounter_ended() -> void:
+	_reverse_build_grid = true
+	_current_cell_x = grid.region.end.x
+	_encounter_started = false
+	grid_complete = false
 
 
 func update_unit_registry(tile: Vector2i, unit: Character) -> void:
@@ -123,6 +132,7 @@ func get_nearest_available_tile(world_position: Vector2) -> Vector2i:
 func _on_encounter_started(rooms: Array[Room]) -> void:
 	grid.clear()
 	grid_complete = false
+	_reverse_build_grid = false
 	for room in rooms:
 		_populate_grid(room)
 	
@@ -132,22 +142,37 @@ func _on_encounter_started(rooms: Array[Room]) -> void:
 
 
 func _process(delta: float) -> void:
-	
-	if _encounter_started and not grid_complete:
+	#_encounter_started = 0
+	#_current_cell_x = grid.region.end.x
+	#grid_complete = false
+	if (_encounter_started or _reverse_build_grid) and not grid_complete:
 		_time_since_grid_tile += delta
 		
 		if _time_since_grid_tile > _time_per_grid_tile:
 			_time_since_grid_tile = 0
-			for y in range(grid.region.position.y, grid.region.end.y):
-				if not grid.is_point_solid(Vector2i(_current_cell_x,y)):
-					if Vector2i(_current_cell_x,y) + Vector2i.UP in _grid_cells:
-						map.set_cell(Vector2i(_current_cell_x,y), 0, Vector2.RIGHT)
-					else:
-						map.set_cell(Vector2i(_current_cell_x,y), 0, Vector2i.ZERO)
-			_current_cell_x +=  1
+			if not _reverse_build_grid:
+				for y in range(grid.region.position.y, grid.region.end.y):
+					if not grid.is_point_solid(Vector2i(_current_cell_x,y)):
+						if Vector2i(_current_cell_x,y) + Vector2i.UP in _grid_cells:
+							map.set_cell(Vector2i(_current_cell_x,y), 0, Vector2.RIGHT)
+						else:
+							map.set_cell(Vector2i(_current_cell_x,y), 0, Vector2i.ZERO)
+				
+				_current_cell_x +=  1
 			
-		if _current_cell_x == grid.region.end.x:
-				grid_complete = true
+				if _current_cell_x == grid.region.end.x:
+					grid_complete = true
+			else:
+				for y in range(grid.region.position.y, grid.region.end.y):
+					if Vector2i(_current_cell_x,y) in _grid_cells:
+						#if Vector2i(_current_cell_x,y) + Vector2i.UP in _grid_cells:
+						map.set_cell(Vector2i(_current_cell_x,y))
+				
+				_current_cell_x -=  1
+				
+				if _current_cell_x == grid.region.position.x:
+					_reverse_build_grid = false
+					grid_complete = true
 
 
 func reset_map() -> void:

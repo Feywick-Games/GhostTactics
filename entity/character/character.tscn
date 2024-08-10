@@ -1,7 +1,9 @@
-[gd_scene load_steps=3 format=3 uid="uid://dk85fb2a3ag81"]
+[gd_scene load_steps=5 format=3 uid="uid://dk85fb2a3ag81"]
 
 [ext_resource type="Script" path="res://entity/character/_behavior/character.gd" id="1_84jh7"]
 [ext_resource type="Script" path="res://node/animation/directional_animator.gd" id="2_vs4rm"]
+[ext_resource type="Texture2D" uid="uid://b8k687sb6a6rk" path="res://ui/health_bar/_sprite/health_bar_background.png" id="3_ccsml"]
+[ext_resource type="Texture2D" uid="uid://b34r5h2blmmla" path="res://ui/health_bar/_sprite/health_bar_progress.png" id="4_5lxke"]
 
 [node name="Character" type="CharacterBody2D"]
 y_sort_enabled = true
@@ -9,6 +11,18 @@ collision_layer = 0
 script = ExtResource("1_84jh7")
 
 [node name="CharacterSprite" type="Sprite2D" parent="."]
+
+[node name="HealthBar" type="TextureProgressBar" parent="CharacterSprite"]
+z_index = 1
+z_as_relative = false
+offset_left = -16.0
+offset_top = -50.0
+offset_right = 24.0
+offset_bottom = -10.0
+value = 99.0
+rounded = true
+texture_under = ExtResource("3_ccsml")
+texture_progress = ExtResource("4_5lxke")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 

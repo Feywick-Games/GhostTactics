@@ -2,7 +2,8 @@ class_name CharacterCombatIdleState
 extends State
 
 var _character: Character
-var _exiting := false
+var _encounter_ended := false
+var _turn_started := false
 
 func enter() -> void:
 	_character = state_machine.state_owner as Character
@@ -11,9 +12,17 @@ func enter() -> void:
 
 
 func _on_encounter_ended() -> void:
-	state_machine.change_state(_character.init_state.new())
-
+	_encounter_ended = true
 
 func _on_turn_started(unit: Character) -> void:
 	if unit == _character:
-		state_machine.change_state(_character.turn_state.new())
+		_turn_started = true
+
+
+func update(_delta: float) -> State:
+	if _encounter_ended:
+		_character.end_encounter()
+		return _character.init_state.new()
+	elif _turn_started:
+		return _character.turn_state.new()
+	return

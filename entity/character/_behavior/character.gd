@@ -13,6 +13,7 @@ enum AttackState {
 
 const SNAP_DISTANCE := 2.4
 const TIME_PER_MOVE := .03
+const HEALTH_BAR_PIXEL_WIDTH := 25
 
 @export_category("Debug")
 @export
@@ -33,7 +34,7 @@ var special: Special
 
 @export_category("Unit Stats")
 @export
-var health: int = 10
+var max_health: int = 10
 @export
 var movement_range: int = 5
 @export
@@ -47,7 +48,7 @@ var evasion: int = 4
 @export
 var accuracy: int = 4
 
-
+var health: int
 var facing: Vector2i
 var ready_for_battle := false
 var current_tile: Vector2i
@@ -57,11 +58,29 @@ var sprite: Sprite2D = $CharacterSprite
 @onready
 var animator: DirectionalAnimator = $ActionAnimator
 
+@onready
+var _health_bar: TextureProgressBar = $CharacterSprite/HealthBar
 
 func _ready() -> void:
+	_health_bar.hide()
+	
 	var state_machine := StateMachine.new(self, init_state.new())
 	add_child(state_machine)
 	print(self.get_class())
+
+
+func start_encounter() -> void:
+	if special:
+		special.cool_down_status = special.cool_down
+	health = max_health
+	_health_bar.show()
+	_health_bar.max_value = max_health
+	_health_bar.value = _health_bar.max_value
+	_health_bar.step = float(_health_bar.max_value) / HEALTH_BAR_PIXEL_WIDTH
+
+
+func end_encounter() -> void:
+	_health_bar.hide()
 
 
 func notify_impact() -> void:
@@ -98,6 +117,7 @@ func take_damage(damage: int, direction: Vector2, hit_chance: int, hit_signal: S
 	else:
 		print("attack missed " + name)
 
+	_health_bar.value = health
 	action_processed.emit()
 
 
@@ -132,7 +152,8 @@ func process_action(tile: Vector2i, attack_range: RangeStruct, attack_state: Att
 					animator.queue("idle_" + animator.get_current_direction(dir))
 					animator.play("basic_attack_down")
 				
-				unit.action_processed.connect(state.end_turn)
+				if not unit.action_processed.is_connected(state.end_turn):
+					unit.action_processed.connect(state.end_turn)
 				unit.take_damage(attack_damage, facing, accuracy, target_hit)
 				if name != "Izzy":
 					notify_impact()

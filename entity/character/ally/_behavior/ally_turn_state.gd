@@ -21,15 +21,15 @@ func _on_timed_out() -> void:
 
 
 func update(delta: float) -> State:
-	if _encounter_ended:
-		return _ally.init_state.new()
-	
 	var current_tile: Vector2i = _ally.current_tile
 	var force_redraw := false
 	
-	if _exiting:
+	if _encounter_ended:
+		return _ally.init_state.new()
+	elif _exiting:
 		_ally.end_turn()
-		return CharacterCombatIdleState.new()
+		if not _encounter_ended: 
+			return CharacterCombatIdleState.new()
 	
 	if Input.is_action_just_pressed("move"):
 		var pos := _ally.get_global_mouse_position()
