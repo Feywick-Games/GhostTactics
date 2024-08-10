@@ -9,6 +9,9 @@ func enter() -> void:
 	
 	
 func update(delta: float) -> State:
+	if _ally.follow_order == 0:
+		return AllyRoamLeadState.new()
+	
 	if _ally.is_animated:
 		var direction := _ally.animator.get_current_direction(_ally.velocity)
 		if direction != _current_direction:

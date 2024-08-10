@@ -1,7 +1,6 @@
-[gd_scene load_steps=20 format=3 uid="uid://bctkkdhwjgs0u"]
+[gd_scene load_steps=19 format=3 uid="uid://bctkkdhwjgs0u"]
 
 [ext_resource type="PackedScene" uid="uid://cm7s3l5cikm6u" path="res://entity/character/ally/ally.tscn" id="1_2hyto"]
-[ext_resource type="Script" path="res://entity/character/ally/_behavior/ally_roam_follow_state.gd" id="2_6is5v"]
 [ext_resource type="Texture2D" uid="uid://hqtvgvbj0hk6" path="res://entity/character/ally/mei/_sprite/mei_idle_down.png" id="2_446ld"]
 [ext_resource type="Resource" uid="uid://dcwe1an4rcnnf" path="res://entity/character/ally/izzy/_special/special_push_punch.tres" id="2_ca4g7"]
 [ext_resource type="Texture2D" uid="uid://gj5ykhi8ncdt" path="res://entity/character/ally/mei/_sprite/mei_idle_up.png" id="3_in48b"]
@@ -483,13 +482,13 @@ _data = {
 }
 
 [node name="Mei" instance=ExtResource("1_2hyto")]
-follow_order = 1
 is_animated = true
-init_state = ExtResource("2_6is5v")
-special = ExtResource("2_ca4g7")
+character_name = "Mei"
 turn_portrait_scene = ExtResource("3_qngi6")
+special = ExtResource("2_ca4g7")
 movement_range = 3
 attack_range = 3
+minimum_attack_range = 2
 
 [node name="CharacterSprite" parent="." index="0"]
 position = Vector2(0, 2)

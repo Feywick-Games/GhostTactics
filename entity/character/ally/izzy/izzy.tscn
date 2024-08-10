@@ -1,13 +1,13 @@
-[gd_scene load_steps=20 format=3 uid="uid://c3ow1ifjec62m"]
+[gd_scene load_steps=21 format=3 uid="uid://c3ow1ifjec62m"]
 
 [ext_resource type="PackedScene" uid="uid://cm7s3l5cikm6u" path="res://entity/character/ally/ally.tscn" id="1_abh6s"]
-[ext_resource type="Script" path="res://entity/character/ally/_behavior/ally_roam_lead_state.gd" id="2_ood67"]
 [ext_resource type="Resource" uid="uid://dcwe1an4rcnnf" path="res://entity/character/ally/izzy/_special/special_push_punch.tres" id="3_27mrg"]
 [ext_resource type="PackedScene" uid="uid://f4x7mg2o6cwa" path="res://entity/character/ally/_packed_scene/turn_portrait_ally_1.tscn" id="3_lxf21"]
 [ext_resource type="Texture2D" uid="uid://chfg67t7nwyc2" path="res://entity/character/ally/izzy/_sprite/izzy_idle_down.png" id="3_sk6vo"]
 [ext_resource type="Texture2D" uid="uid://bel6ycldg65i6" path="res://entity/character/ally/izzy/_sprite/izzy_idle_up.png" id="6_wmewt"]
 [ext_resource type="Texture2D" uid="uid://bsa4qbod60we" path="res://entity/character/ally/izzy/_sprite/izzy_idle_cardinal_down.png" id="8_134m7"]
 [ext_resource type="Texture2D" uid="uid://dkgjktshrs3vf" path="res://entity/character/ally/izzy/_sprite/izzy_idle_cardinal_up.png" id="9_ce5tx"]
+[ext_resource type="Texture2D" uid="uid://b4ecpqhivu5tk" path="res://entity/character/ally/izzy/_sprite/izzy_basic_attack_down.png" id="10_71qqk"]
 [ext_resource type="Texture2D" uid="uid://dphldatphshsn" path="res://entity/character/ally/izzy/_sprite/izzy_idle_cardinal_left.png" id="10_ondk7"]
 
 [sub_resource type="Animation" id="Animation_tjtew"]
@@ -119,7 +119,7 @@ tracks/4/path = NodePath(".")
 tracks/4/interp = 1
 tracks/4/loop_wrap = true
 tracks/4/keys = {
-"times": PackedFloat32Array(0.6),
+"times": PackedFloat32Array(0.5),
 "transitions": PackedFloat32Array(1),
 "values": [{
 "args": [],
@@ -538,6 +538,7 @@ tracks/3/keys = {
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_bcpvy"]
 _data = {
 "RESET": SubResource("Animation_tjtew"),
+"basic_attack_down": SubResource("Animation_hbpdg"),
 "idle_cardinal_down": SubResource("Animation_17pf0"),
 "idle_cardinal_left": SubResource("Animation_2r22t"),
 "idle_cardinal_right": SubResource("Animation_rte58"),
@@ -550,10 +551,11 @@ _data = {
 
 [node name="Izzy" instance=ExtResource("1_abh6s")]
 position = Vector2(0, -2)
+follow_order = 1
 is_animated = true
-init_state = ExtResource("2_ood67")
-special = ExtResource("3_27mrg")
+character_name = "Izzy"
 turn_portrait_scene = ExtResource("3_lxf21")
+special = ExtResource("3_27mrg")
 movement_range = 4
 
 [node name="CharacterSprite" parent="." index="0"]
