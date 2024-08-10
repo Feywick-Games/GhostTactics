@@ -9,7 +9,7 @@ func enter() -> void:
 	_ally.global_position = GameState.current_level.tile_to_world(_ally.current_tile).round()
 	_start_tile = _ally.current_tile
 	_movement_range = GameState.current_level.request_range(_ally.current_tile, 0, _ally.movement_range, true, [_start_tile])
-	_attack_state = Character.AttackState.BASIC
+	_ally.attack_state = Character.AttackState.BASIC
 	_astar = _ally.create_range_astar(_movement_range, _ally.movement_range)
 	_attack_range = GameState.current_level.request_range(_ally.current_tile, _ally.minimum_attack_range, _ally.attack_range, true, [_start_tile], true, true)
 	_ally.draw_ranges(_attack_range, _movement_range, Global.RETICLE_ATTACK_ALTAS_COORDS, Global.RETICLE_SPECIAL_2_ATLAS_COORDS)
@@ -21,15 +21,15 @@ func _on_timed_out() -> void:
 
 
 func update(delta: float) -> State:
-	if _encounter_ended:
-		return _ally.init_state.new()
-	
 	var current_tile: Vector2i = _ally.current_tile
 	var force_redraw := false
 	
-	if _exiting:
+	if _encounter_ended:
+		return _ally.init_state.new()
+	elif _exiting:
 		_ally.end_turn()
-		return CharacterCombatIdleState.new()
+		if not _encounter_ended: 
+			return CharacterCombatIdleState.new()
 	
 	if Input.is_action_just_pressed("move"):
 		var pos := _ally.get_global_mouse_position()
@@ -43,12 +43,12 @@ func update(delta: float) -> State:
 			_ally.end_turn()
 			return CharacterCombatIdleState.new()
 		elif Input.is_action_just_pressed("cancel"):
-			if not _attack_state == Character.AttackState.BASIC:
-				_attack_state = Character.AttackState.BASIC
+			if not _ally.attack_state == Character.AttackState.BASIC:
+				_ally.attack_state = Character.AttackState.BASIC
 				force_redraw = true
 		if Input.is_action_just_pressed("special") and _ally.special.is_ready():
-			if not _attack_state == Character.AttackState.SPECIAL:
-				_attack_state = Character.AttackState.SPECIAL
+			if not _ally.attack_state == Character.AttackState.SPECIAL:
+				_ally.attack_state = Character.AttackState.SPECIAL
 				force_redraw = true
 	
 	
@@ -58,17 +58,17 @@ func update(delta: float) -> State:
 		_tile_path =  _ally.process_movement(delta, _tile_path)
 	
 	if current_tile != _ally.current_tile or force_redraw:
-		if _attack_state == Character.AttackState.BASIC:
+		if _ally.attack_state == Character.AttackState.BASIC:
 			_attack_range = GameState.current_level.request_range(_ally.current_tile, _ally.minimum_attack_range, _ally.attack_range, true, [_start_tile], true, true)
 			_ally.draw_ranges(_attack_range, _movement_range, Global.RETICLE_ATTACK_ALTAS_COORDS, Global.RETICLE_SPECIAL_2_ATLAS_COORDS)
-		elif _attack_state == Character.AttackState.SPECIAL:
+		elif _ally.attack_state == Character.AttackState.SPECIAL:
 			_attack_range = GameState.current_level.request_range(_ally.current_tile, _ally.special.min_range, _ally.special.range, true, [_start_tile], true, true)
 			_ally.draw_ranges(_attack_range, _movement_range, Global.RETICLE_SPECIAL_1_ALTAS_COORDS, Global.RETICLE_CURE_1_ATLAS_COORDS)
 	
 	if Input.is_action_just_pressed("accept"):
 		var pos := _ally.get_global_mouse_position()
 		var tile: Vector2i = GameState.current_level.world_to_tile(pos)
-		return _ally.process_action(tile, _attack_range, _attack_state, self)
+		return _ally.process_action(tile, _attack_range, self)
 
 		
 	return
