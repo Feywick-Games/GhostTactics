@@ -8,7 +8,6 @@ var _tile_path: Array[Vector2i]
 var _time_since_move: float = 0
 var _astar: AStarGrid2D
 var _start_tile: Vector2i
-var _attack_state: Character.AttackState
 var _exiting := false
 var _encounter_ended := false
 

@@ -2,6 +2,8 @@ class_name Special
 extends Resource
 
 @export
+var sticker: Texture2D
+@export
 var damage: int
 @export
 var range: int

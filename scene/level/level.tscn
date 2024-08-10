@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=4 uid="uid://cjgcm24o5gude"]
+[gd_scene load_steps=23 format=4 uid="uid://cjgcm24o5gude"]
 
 [ext_resource type="Script" path="res://scene/level/_behavior/level.gd" id="1_8ioep"]
 [ext_resource type="PackedScene" uid="uid://c3ow1ifjec62m" path="res://entity/character/ally/izzy/izzy.tscn" id="2_g6be8"]
@@ -16,7 +16,10 @@
 [ext_resource type="Texture2D" uid="uid://caqbtr4v8posy" path="res://ui/battle_timer/battle_timer_over.png" id="17_23jsa"]
 [ext_resource type="Texture2D" uid="uid://cycr83c35trtu" path="res://ui/battle_timer/battle_timer_fill.png" id="17_d06g4"]
 [ext_resource type="PackedScene" uid="uid://bctkkdhwjgs0u" path="res://entity/character/ally/mei/mei.tscn" id="18_2ibeb"]
+[ext_resource type="Texture2D" uid="uid://c4l71vu7ixwsl" path="res://ui/sticker/_sprite/sticker_basic_attack.png" id="18_ibyr3"]
+[ext_resource type="Script" path="res://ui/sticker/_behavior/sticker_layout.gd" id="18_yssww"]
 [ext_resource type="Script" path="res://ui/battle_timer/_behavior/battle_timer.gd" id="19_53hip"]
+[ext_resource type="Texture2D" uid="uid://c1xbsgyj5cgwq" path="res://ui/sticker/_sprite/sticker_push_punch.png" id="19_ojt75"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_sk38x"]
 radius = 30.0
@@ -123,28 +126,30 @@ z_index = -1
 y_sort_enabled = true
 tile_set = ExtResource("16_tj148")
 
-[node name="CanvasLayer" type="CanvasLayer" parent="."]
+[node name="CombatUI" type="CanvasLayer" parent="."]
 
-[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer"]
+[node name="MarginContainer" type="MarginContainer" parent="CombatUI"]
+texture_filter = 1
 offset_right = 40.0
 offset_bottom = 40.0
 theme_override_constants/margin_left = 4
 theme_override_constants/margin_top = 4
 
-[node name="TurnDisplay" type="BoxContainer" parent="CanvasLayer/MarginContainer"]
+[node name="TurnDisplay" type="BoxContainer" parent="CombatUI/MarginContainer"]
 layout_mode = 2
 vertical = true
 script = ExtResource("12_j0cx4")
 
-[node name="MarginContainer2" type="MarginContainer" parent="CanvasLayer"]
+[node name="MarginContainer2" type="MarginContainer" parent="CombatUI"]
+texture_filter = 1
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -40.0
-offset_bottom = 40.0
+offset_left = -64.0
+offset_bottom = 64.0
 grow_horizontal = 0
 
-[node name="BattleTimer" type="TextureProgressBar" parent="CanvasLayer/MarginContainer2"]
+[node name="BattleTimer" type="TextureProgressBar" parent="CombatUI/MarginContainer2"]
 unique_name_in_owner = true
 layout_mode = 2
 max_value = 16.0
@@ -154,3 +159,43 @@ texture_under = ExtResource("16_cm0ie")
 texture_over = ExtResource("17_23jsa")
 texture_progress = ExtResource("17_d06g4")
 script = ExtResource("19_53hip")
+
+[node name="MarginContainer3" type="MarginContainer" parent="CombatUI"]
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -40.0
+offset_right = 72.0
+grow_vertical = 0
+theme_override_constants/margin_left = 4
+
+[node name="StickerLayout" type="HBoxContainer" parent="CombatUI/MarginContainer3"]
+texture_filter = 1
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+script = ExtResource("18_yssww")
+
+[node name="BasicAttackSticker" type="TextureRect" parent="CombatUI/MarginContainer3/StickerLayout"]
+layout_mode = 2
+texture = ExtResource("18_ibyr3")
+
+[node name="StickerHighlight" type="ReferenceRect" parent="CombatUI/MarginContainer3/StickerLayout/BasicAttackSticker"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -16.0
+offset_top = -20.0
+offset_right = 16.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+editor_only = false
+
+[node name="SpecialSticker" type="TextureRect" parent="CombatUI/MarginContainer3/StickerLayout"]
+layout_mode = 2
+texture = ExtResource("19_ojt75")

@@ -52,6 +52,7 @@ var health: int
 var facing: Vector2i
 var ready_for_battle := false
 var current_tile: Vector2i
+var attack_state: AttackState
 
 @onready
 var sprite: Sprite2D = $CharacterSprite
@@ -135,7 +136,7 @@ func end_turn() -> void:
 	EventBus.turn_ended.emit()
 	
 
-func process_action(tile: Vector2i, attack_range: RangeStruct, attack_state: AttackState, state: TurnState) -> State:
+func process_action(tile: Vector2i, attack_range: RangeStruct, state: TurnState) -> State:
 	var dir := Vector2(tile - current_tile).normalized()
 	facing = Vector2i(dir)
 	
