@@ -11,7 +11,6 @@ var _battle_started := false
 var _turn_pending := false
 
 func _ready() -> void:
-	EventBus.encounter_ended.connect(_on_encounter_ended)
 	EventBus.turn_ended.connect(_start_turn)
 	EventBus.encounter_started.connect(_on_encounter_started)
 	hide()
@@ -24,9 +23,29 @@ func _on_encounter_ended() -> void:
 		queue_free()
 	_units.clear()
 	_turn_pending = false
+	EventBus.encounter_ended.emit()
 
 
 func _start_turn() -> void:
+	var enemies_remaining := false
+	var allies_remaining := false
+	for unit in _units:
+		if unit is Enemy:
+			enemies_remaining = true
+			break
+	
+	for unit in _units:
+		if unit is Ally:
+			allies_remaining = true
+			break
+	
+	if not enemies_remaining:
+		_on_encounter_ended()
+		return
+	elif not allies_remaining:
+		get_tree().reload_current_scene()
+	
+	
 	_turn_portraits[_current_unit_idx].reset_portrait()
 	move_child(_turn_portraits[_current_unit_idx], -1)
 	if _current_unit_idx < len(_units) - 1:
@@ -79,7 +98,9 @@ func _on_encounter_started(group: String) -> void:
 		
 
 func _on_unit_died(unit: Character) -> void:
-	var idx: int = _units.find(unit)
-	_units.remove_at(idx)
-	_turn_portraits[idx].queue_free()
-	_turn_portraits.remove_at(idx)
+	if not _units.is_empty():
+		var idx: int = _units.find(unit)
+		_units.remove_at(idx)
+		var child = _turn_portraits[idx]
+		_turn_portraits.remove_at(idx)
+		child.queue_free()

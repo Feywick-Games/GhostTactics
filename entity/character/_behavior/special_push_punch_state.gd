@@ -1,9 +1,7 @@
 class_name PushPunchSpecialState
 extends SpecialState
 
-const SNAP_DISTANCE: float = 2.4
 const TIME_PER_INCREMENT: float = .3
-const TIME_PER_MOVE: float = 0.03
 const TIME_TO_EXIT: float = 1.0
 
 var _push_range: Array[Vector2i]
@@ -11,11 +9,8 @@ var _time_since_increment: float = 0
 var _direction: Vector2i
 var increment: int = 0
 var pushing := false
-var _tile_path: Array[Vector2i]
-var _time_since_move: float = 0
 var _max_push_distance: int = 0
 var _target_unit: Character
-var _exiting := false
 var _time_since_exiting: float = 0
 var _max_is_collision := false
 var _o_target: Character
@@ -57,15 +52,15 @@ func _push(delta: float) -> void:
 	_target_unit.velocity = Vector2.ZERO
 	if not _tile_path.is_empty():
 		_time_since_move += delta
-		if _time_since_move >= TIME_PER_MOVE:
+		if _time_since_move >= Character.TIME_PER_MOVE:
 			_time_since_move = 0
 			var path_position :=  GameState.current_level.tile_to_world(_tile_path[0])
 			var map_position := GameState.current_level.tile_to_world(_character.current_tile)
-			if path_position.distance_to(_target_unit.global_position) > SNAP_DISTANCE:
+			if path_position.distance_to(_target_unit.global_position) > Character.SNAP_DISTANCE:
 				var dir: Vector2 = (path_position - _target_unit.global_position).normalized()
 				_target_unit.global_position += dir * Global.PLAYER_SPEED * 4.0 * delta
 				_target_unit.global_position = _target_unit.global_position.snapped(Vector2(2,1))
-			if not path_position.distance_to(_target_unit.global_position) > SNAP_DISTANCE:
+			if not path_position.distance_to(_target_unit.global_position) > Character.SNAP_DISTANCE:
 				if len(_tile_path) == 1:
 					_target_unit.global_position = path_position.round()
 				_tile_path.pop_front()
@@ -76,11 +71,12 @@ func _push(delta: float) -> void:
 		_exiting = true
 		GameState.current_level.update_unit_registry(_target_unit.current_tile, _target_unit)
 		if increment ==  _max_push_distance and _max_is_collision:
-			_target_unit.take_damage(_character.special.damage * 2.0, _character.facing)
+			# guaranteed as impact was precalculated
+			_target_unit.take_damage(_character.special.damage * 2.0, _character.facing, INF, _character.target_hit)
 			if _o_target:
-				_o_target.take_damage(_character.special.damage, _character.facing)
+				_o_target.take_damage(_character.special.damage, _character.facing, INF, _character.target_hit)
 		else:
-			_target_unit.take_damage(_character.special.damage, _direction)
+			_target_unit.take_damage(_character.special.damage, _direction, INF, _character.target_hit)
 
 
 func update(delta: float) -> State:
@@ -93,20 +89,23 @@ func update(delta: float) -> State:
 				increment += 1
 				if increment > _max_push_distance:
 					var unit = GameState.current_level.get_unit_from_tile(_target_tile)
-					unit.take_damage(_character.special.damage, _character.facing)
-					_character.end_turn()
-					return CharacterCombatIdleState.new()
+					unit.take_damage(_character.special.damage, _character.facing,  _character.accuracy, _character.target_hit)
 				else:
 					_push_range.append(_target_tile + (_direction * increment))
 					_draw_range()
 			
-			
+		# TODO account for push animation
 		elif Input.is_action_just_released("accept"):
 			_target_unit = GameState.current_level.get_unit_from_tile(_target_tile)
-			EventBus.cam_follow_requested.emit(_target_unit)
-			pushing = true
-			_tile_path = _tile_path.slice(0, increment + 1)
-		
+			var is_hit = _target_unit.is_hit(_character.accuracy)
+			if is_hit:
+				EventBus.cam_follow_requested.emit(_target_unit)
+				pushing = true
+				_tile_path = _tile_path.slice(0, increment + 1)
+			else:
+				_character.end_turn()
+				return CharacterCombatIdleState.new()
+				
 	elif not _exiting:
 		_push(delta)
 	elif _exiting:

@@ -6,7 +6,17 @@ var battle_timer: BattleTimer
 var ally_order: Array[Ally]
 
 func add_to_ally_order(ally: Character, index: int) -> void:
-	if index > len(ally_order):
-		ally_order.append(ally)
-	else:
-		ally_order.insert(index, ally)
+	if not ally in ally_order:
+		if index > len(ally_order):
+			ally_order.append(ally)
+		else:
+			ally_order.insert(index, ally)
+		ally.died.connect(_on_ally_died.bind(ally))
+
+
+func _on_ally_died(ally: Ally) -> void:
+	var idx: int = ally_order.find(ally)
+	ally_order.remove_at(idx)
+	
+	for i in range(len(ally_order)):
+		ally_order[i].follow_order = i

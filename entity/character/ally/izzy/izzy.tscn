@@ -1,7 +1,6 @@
 [gd_scene load_steps=22 format=3 uid="uid://c3ow1ifjec62m"]
 
 [ext_resource type="PackedScene" uid="uid://cm7s3l5cikm6u" path="res://entity/character/ally/ally.tscn" id="1_abh6s"]
-[ext_resource type="Script" path="res://entity/character/ally/_behavior/ally_roam_lead_state.gd" id="2_ood67"]
 [ext_resource type="Resource" uid="uid://dcwe1an4rcnnf" path="res://entity/character/ally/izzy/_special/special_push_punch.tres" id="3_27mrg"]
 [ext_resource type="PackedScene" uid="uid://f4x7mg2o6cwa" path="res://entity/character/ally/_packed_scene/turn_portrait_ally_1.tscn" id="3_lxf21"]
 [ext_resource type="Texture2D" uid="uid://chfg67t7nwyc2" path="res://entity/character/ally/izzy/_sprite/izzy_idle_down.png" id="3_sk6vo"]
@@ -60,6 +59,72 @@ tracks/3/keys = {
 "transitions": PackedFloat32Array(1),
 "update": 1,
 "values": [ExtResource("3_sk6vo")]
+}
+
+[sub_resource type="Animation" id="Animation_hbpdg"]
+resource_name = "basic_attack_down"
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("CharacterSprite:hframes")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [10]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("CharacterSprite:flip_h")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("CharacterSprite:frame")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.001, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [0, 9, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("CharacterSprite:texture")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [ExtResource("10_71qqk")]
+}
+tracks/4/type = "method"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath(".")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0.5),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"notify_impact"
+}]
 }
 
 [sub_resource type="Animation" id="Animation_17pf0"]
@@ -470,8 +535,10 @@ tracks/3/keys = {
 "values": [ExtResource("6_wmewt")]
 }
 
-[sub_resource type="Animation" id="Animation_hbpdg"]
-resource_name = "basic_attack_down"
+[sub_resource type="Animation" id="Animation_lorct"]
+resource_name = "angle_test"
+length = 0.8
+loop_mode = 1
 step = 0.1
 tracks/0/type = "value"
 tracks/0/imported = false
@@ -483,7 +550,7 @@ tracks/0/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 1,
-"values": [10]
+"values": [1]
 }
 tracks/1/type = "value"
 tracks/1/imported = false
@@ -492,10 +559,10 @@ tracks/1/path = NodePath("CharacterSprite:flip_h")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
+"times": PackedFloat32Array(0, 0.2, 0.3, 0.5, 0.7),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
 "update": 1,
-"values": [false]
+"values": [false, true, false, true, false]
 }
 tracks/2/type = "value"
 tracks/2/imported = false
@@ -504,10 +571,10 @@ tracks/2/path = NodePath("CharacterSprite:frame")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/keys = {
-"times": PackedFloat32Array(0, 0.001, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9),
-"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
 "update": 1,
-"values": [0, 9, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+"values": [0]
 }
 tracks/3/type = "value"
 tracks/3/imported = false
@@ -516,15 +583,16 @@ tracks/3/path = NodePath("CharacterSprite:texture")
 tracks/3/interp = 1
 tracks/3/loop_wrap = true
 tracks/3/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1),
 "update": 1,
-"values": [ExtResource("10_71qqk")]
+"values": [ExtResource("3_sk6vo"), ExtResource("10_ondk7"), ExtResource("6_wmewt"), ExtResource("9_ce5tx"), ExtResource("6_wmewt"), ExtResource("10_ondk7"), ExtResource("3_sk6vo"), ExtResource("8_134m7")]
 }
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_bcpvy"]
 _data = {
 "RESET": SubResource("Animation_tjtew"),
+"angle_test": SubResource("Animation_lorct"),
 "basic_attack_down": SubResource("Animation_hbpdg"),
 "idle_cardinal_down": SubResource("Animation_17pf0"),
 "idle_cardinal_left": SubResource("Animation_2r22t"),
@@ -538,10 +606,11 @@ _data = {
 
 [node name="Izzy" instance=ExtResource("1_abh6s")]
 position = Vector2(0, -2)
+follow_order = 1
 is_animated = true
-init_state = ExtResource("2_ood67")
-special = ExtResource("3_27mrg")
+character_name = "Izzy"
 turn_portrait_scene = ExtResource("3_lxf21")
+special = ExtResource("3_27mrg")
 movement_range = 4
 
 [node name="CharacterSprite" parent="." index="0"]

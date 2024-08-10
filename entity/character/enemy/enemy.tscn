@@ -2,8 +2,8 @@
 
 [ext_resource type="PackedScene" uid="uid://dk85fb2a3ag81" path="res://entity/character/character.tscn" id="1_13rsw"]
 [ext_resource type="Script" path="res://entity/character/enemy/_behavior/enemy.gd" id="2_iqt36"]
-[ext_resource type="Script" path="res://node/state_machine/state.gd" id="3_vmtoo"]
-[ext_resource type="Script" path="res://entity/character/enemy/_behavior/enemy_combat_turn_state.gd" id="4_msbb5"]
+[ext_resource type="Script" path="res://entity/character/enemy/_behavior/enemy_roam_state.gd" id="3_yk16s"]
+[ext_resource type="Script" path="res://entity/character/enemy/_behavior/enemy_turn_state.gd" id="4_w2x43"]
 [ext_resource type="Texture2D" uid="uid://cw11km5rkxisp" path="res://entity/character/enemy/_sprite/wendigo_idle_down.png" id="5_6eqwe"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_p01wl"]
@@ -12,8 +12,12 @@ size = Vector2(22, 10)
 [node name="Enemy" instance=ExtResource("1_13rsw")]
 position = Vector2(0, 5)
 script = ExtResource("2_iqt36")
-init_state = ExtResource("3_vmtoo")
-turn_state = ExtResource("4_msbb5")
+damage_priortization = 0.0
+kill_prioritization = 0.0
+custom_priorization = 0.0
+init_state = ExtResource("3_yk16s")
+turn_state = ExtResource("4_w2x43")
+movement_range = 2
 
 [node name="CharacterSprite" parent="." index="0"]
 position = Vector2(0, 9)
