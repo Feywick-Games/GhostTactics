@@ -26,8 +26,8 @@ func physics_update(_delta: float) -> State:
 	if _ally.nav_agent.is_navigation_finished():
 		return
 	
-	
-	_ally.nav_agent.velocity = (GameState.ally_order[_ally.follow_order - 1].global_position - _ally.global_position).normalized()
+	var target_position := _ally.nav_agent.get_next_path_position()
+	_ally.nav_agent.velocity = (target_position - _ally.global_position).normalized()
 	_ally.nav_agent.velocity *= Global.PLAYER_SPEED
 
 	return

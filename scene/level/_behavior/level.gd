@@ -3,9 +3,6 @@ extends Node2D
 
 const GRID_DRAW_TIME: float = 1
 
-@export
-var neighbors: Array[int]
-
 var grid := AStarGrid2D.new()
 var grid_complete: bool
 var _active_floor_layers: Array[TileMapLayer]
@@ -33,8 +30,10 @@ func _ready() -> void:
 	grid.diagonal_mode = AStarGrid2D.DIAGONAL_MODE_NEVER
 	grid.update()
 	GameState.current_level = self
-	EventBus.build_battle_map.connect(_on_encounter_started)
 	EventBus.encounter_ended.connect(_on_encounter_ended)
+	await get_tree().create_timer(2).timeout
+	_on_encounter_started()
+	EventBus.encounter_started.emit()
 
 
 func _on_encounter_ended() -> void:
@@ -74,7 +73,7 @@ func _on_unit_died(unit: Character) -> void:
 
 
 func get_id_path(start_tile: Vector2i, end_tile: Vector2i,  is_ally := false, 
-can_pass := false, pass_start := false, get_nearest := false) -> Array[Vector2i]:
+can_pass := false, get_nearest := false) -> Array[Vector2i]:
 	var _pass_tiles: Array[Vector2i]
 	
 	for tile in _unit_registry.keys():
@@ -91,20 +90,13 @@ can_pass := false, pass_start := false, get_nearest := false) -> Array[Vector2i]
 			_pass_tiles.append(tile)
 	
 	
-	var reset := false
-	if pass_start and grid.is_point_solid(start_tile):
-		grid.set_point_solid(start_tile, false)
-		reset = true
 	
 	var out: Array[Vector2i] = grid.get_id_path(start_tile, end_tile, get_nearest)
 	
 	
 	for tile in _pass_tiles:
 		grid.set_point_solid(tile, true)
-	
-	if reset:
-		grid.set_point_solid(start_tile, true)
-	
+
 	return out
 
 
@@ -129,22 +121,19 @@ func get_nearest_available_tile(world_position: Vector2) -> Vector2i:
 	return grid.get_id_path(tile, tile, true)[-1]
 
 
-func _on_encounter_started(rooms: Array[Room]) -> void:
+func _on_encounter_started() -> void:
 	grid.clear()
-	grid_complete = false
+	if not _encounter_started:
+		grid_complete = false
 	_reverse_build_grid = false
-	for room in rooms:
-		_populate_grid(room)
-	
+	_populate_grid()
 	_encounter_started = true
 	_current_cell_x = grid.region.position.x
 	_time_per_grid_tile =  GRID_DRAW_TIME/ grid.size.x
 
 
+
 func _process(delta: float) -> void:
-	#_encounter_started = 0
-	#_current_cell_x = grid.region.end.x
-	#grid_complete = false
 	if (_encounter_started or _reverse_build_grid) and not grid_complete:
 		_time_since_grid_tile += delta
 		
@@ -267,32 +256,26 @@ func select_tile(tile: Vector2i, select := true) -> void:
 		map.set_cell(tile, 0, atlas_coords - Vector2i.RIGHT)
 
 
-func _populate_grid(room: Room) -> void:
-	
-	var floor_layer: TileMapLayer = room.find_child("Floor")
-	var props: Array[Node] = get_tree().get_nodes_in_group("prop")
+func _populate_grid() -> void:
+	var floor_layer: TileMapLayer = $Floor
+	var prop_layer: TileMapLayer = $Props
 	var o_rect: Rect2i = floor_layer.get_used_rect()
-	if not floor_layer in _active_floor_layers:
-		_active_floor_layers.append(floor_layer)
-		if grid.region.size.x + grid.region.size.y == 0:
-			grid.region = o_rect
-		else:
-			grid.region = grid.region.merge(o_rect)
-		grid.update()
-		print(grid.region)
-		for y:int in range(o_rect.position.y, o_rect.end.y):
-			for x:int in range(o_rect.position.x, o_rect.end.x):
-				var source_id = floor_layer.get_cell_source_id(Vector2i(x,y))
-				if source_id == -1 or floor_layer.get_cell_tile_data(Vector2i(x,y)).get_custom_data("border"):
-					grid.set_point_solid(Vector2i(x,y))
-				else:
-					_grid_cells.append(Vector2i(x,y))
-		for prop: Prop in props:
-			var prop_tile: Vector2i = floor_layer.local_to_map(floor_layer.to_local(prop.global_position))
-			for rect: Rect2i in prop.collision_rects:
-				for y in range(rect.position.y, rect.end.y):
-					for x: int in range(rect.position.x, rect.end.x):
-						var tile := Vector2i(x,y) + prop_tile
-						grid.set_point_solid(tile)
-						_prop_tiles.append(tile)
-		grid.update()
+	_active_floor_layers.append(floor_layer)
+	if grid.region.size.x + grid.region.size.y == 0:
+		grid.region = o_rect
+	else:
+		grid.region = grid.region.merge(o_rect)
+	grid.update()
+	print(grid.region)
+	for y:int in range(o_rect.position.y, o_rect.end.y):
+		for x:int in range(o_rect.position.x, o_rect.end.x):
+			var tile := Vector2i(x,y)
+			var source_id = floor_layer.get_cell_source_id(tile)
+			var prop_source_id = prop_layer.get_cell_source_id(tile)
+			if source_id == -1 or floor_layer.get_cell_tile_data(Vector2i(x,y)).get_custom_data("border"):
+				grid.set_point_solid(tile)
+			else:
+				_grid_cells.append(tile)
+				if prop_source_id != -1:
+					grid.set_point_solid(tile, true)
+					_prop_tiles.append(tile)

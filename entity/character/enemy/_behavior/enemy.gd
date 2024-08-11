@@ -10,7 +10,7 @@ var kill_prioritization: float
 var custom_priorization: float
 
 
-func take_damage(damage: int, direction: Vector2, hit_chance: int, hit_signal: Signal) -> void:
+func take_damage(damage: int, direction: Vector2, hit_chance: float, hit_signal: Signal) -> void:
 	if GameState.battle_timer.value < GameState.battle_timer.max_value * .25:
 		damage *= 2
 	elif GameState.battle_timer.value > GameState.battle_timer.max_value * .75:

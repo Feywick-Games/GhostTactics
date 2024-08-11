@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://biudwwsx1di8t"]
 
 [ext_resource type="Script" path="res://scene/game/_behavior/game.gd" id="1_h64b8"]
-[ext_resource type="PackedScene" uid="uid://cjgcm24o5gude" path="res://scene/level/level.tscn" id="2_hc2sd"]
+[ext_resource type="PackedScene" uid="uid://dq1qwclm7p5ki" path="res://scene/level/variant/music_district/convenience_store/music_district_convenience_store.tscn" id="2_xe0ob"]
 
 [sub_resource type="GDScript" id="GDScript_42g76"]
 script/source = "extends SubViewportContainer
@@ -41,7 +41,7 @@ canvas_cull_mask = 4294967293
 size = Vector2i(640, 360)
 render_target_update_mode = 4
 
-[node name="Level" parent="LevelViewportContainer/LevelViewport" instance=ExtResource("2_hc2sd")]
+[node name="MusicDistrictConvenienceStore" parent="LevelViewportContainer/LevelViewport" instance=ExtResource("2_xe0ob")]
 
 [node name="PeekViewportContainer" type="SubViewportContainer" parent="."]
 visible = false

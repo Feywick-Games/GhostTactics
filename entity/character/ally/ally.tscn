@@ -3,7 +3,7 @@
 [ext_resource type="PackedScene" uid="uid://dk85fb2a3ag81" path="res://entity/character/character.tscn" id="1_sdb2p"]
 [ext_resource type="Script" path="res://entity/character/ally/_behavior/ally.gd" id="2_dd86s"]
 [ext_resource type="Texture2D" uid="uid://c5ummn06gg4w3" path="res://entity/character/ally/_sprite/ally.png" id="2_momam"]
-[ext_resource type="Script" path="res://entity/character/ally/_behavior/ally_roam_follow_state.gd" id="3_fsmw1"]
+[ext_resource type="Script" path="res://entity/character/ally/_behavior/ally_roam_state.gd" id="3_8jy3i"]
 [ext_resource type="Script" path="res://entity/character/ally/_behavior/ally_turn_state.gd" id="4_4us3o"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_p01wl"]
@@ -14,7 +14,7 @@ collision_layer = 4
 collision_mask = 3
 script = ExtResource("2_dd86s")
 follow_order = 0
-init_state = ExtResource("3_fsmw1")
+init_state = ExtResource("3_8jy3i")
 turn_state = ExtResource("4_4us3o")
 
 [node name="CharacterSprite" parent="." index="0"]
@@ -29,3 +29,4 @@ shape = SubResource("RectangleShape2D_p01wl")
 [node name="NavigationAgent2D" type="NavigationAgent2D" parent="." index="3"]
 target_desired_distance = 32.0
 avoidance_enabled = true
+radius = 20.0

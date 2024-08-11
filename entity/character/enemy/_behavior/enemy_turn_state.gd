@@ -42,7 +42,7 @@ func pick_target(target_list: Array[Ally], all_allys: Array[Ally]) -> Ally:
 	if target_list.is_empty():
 		var min_distance: float = INF
 		for target in all_allys:
-			var dist: int = GameState.current_level.get_id_path(target.current_tile, _enemy.current_tile, false, true, true).size()
+			var dist: int = GameState.current_level.get_id_path(target.current_tile, _enemy.current_tile, false, true).size()
 			if dist < min_distance:
 				current_target = target
 				min_distance = dist
@@ -61,10 +61,10 @@ func pick_tile() -> Vector2i:
 	var ideal_distance: int = _enemy.attack_range
 	var desired_tile: Vector2i = _start_tile
 	var desired_distance: int 
-	var start_distance: int = GameState.current_level.get_id_path(_start_tile, _target.current_tile, false, true, true, true).size() - 1
+	var start_distance: int = GameState.current_level.get_id_path(_start_tile, _target.current_tile, false, true, true).size() - 1
 	desired_distance = abs(start_distance - ideal_distance)
 	for tile in _movement_range.range_tiles:
-		var dist: int = GameState.current_level.get_id_path(tile, _target.current_tile, false, true, true, true).size()
+		var dist: int = GameState.current_level.get_id_path(tile, _target.current_tile, false, true, true).size()
 		# deduct 1 for start tile
 		dist -= 1
 		if abs(dist - ideal_distance) <= desired_distance:

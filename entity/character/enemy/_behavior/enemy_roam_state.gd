@@ -15,6 +15,5 @@ func update(_delta: float) -> State:
 
 	return
 
-func _on_encounter_started(group: String) -> void:
-	if _enemy.is_in_group(group):
-		_encounter_starting = true
+func _on_encounter_started() -> void:
+	_encounter_starting = true

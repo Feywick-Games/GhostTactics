@@ -13,6 +13,6 @@ func _ready() -> void:
 	
 	
 func _on_area_entered(body: Node2D) -> void:
-	EventBus.encounter_started.emit(group)
 	EventBus.build_battle_map.emit(rooms)
+	EventBus.encounter_started.emit()
 	queue_free()

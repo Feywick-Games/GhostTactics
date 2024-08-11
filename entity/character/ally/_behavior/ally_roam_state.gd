@@ -16,5 +16,5 @@ func update(_delta: float) -> State:
 
 	return
 
-func _on_encounter_started(_group: String) -> void:
+func _on_encounter_started() -> void:
 	_encounter_starting = true

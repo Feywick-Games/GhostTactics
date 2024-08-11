@@ -92,11 +92,11 @@ func get_tile() -> Vector2i:
 	return GameState.current_level.get_tile(global_position)
 
 
-func is_hit(hit_chance: int) -> bool:
+func is_hit(hit_chance: float) -> bool:
 	return (float(hit_chance) / float(evasion)) > randf()
 
 
-func take_damage(damage: int, direction: Vector2, hit_chance: int, hit_signal: Signal) -> void:
+func take_damage(damage: int, direction: Vector2, hit_chance: float, hit_signal: Signal) -> void:
 	await hit_signal
 	var hit_connected: bool
 	var damage_multiplier: float = 1

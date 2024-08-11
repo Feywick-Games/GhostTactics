@@ -132,8 +132,8 @@ tile_set = ExtResource("16_tj148")
 texture_filter = 1
 offset_right = 40.0
 offset_bottom = 40.0
-theme_override_constants/margin_left = 4
-theme_override_constants/margin_top = 4
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
 
 [node name="TurnDisplay" type="BoxContainer" parent="CombatUI/MarginContainer"]
 layout_mode = 2
@@ -148,6 +148,8 @@ anchor_right = 1.0
 offset_left = -64.0
 offset_bottom = 64.0
 grow_horizontal = 0
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
 
 [node name="BattleTimer" type="TextureProgressBar" parent="CombatUI/MarginContainer2"]
 unique_name_in_owner = true
@@ -168,6 +170,7 @@ offset_top = -40.0
 offset_right = 72.0
 grow_vertical = 0
 theme_override_constants/margin_left = 4
+theme_override_constants/margin_bottom = 8
 
 [node name="StickerLayout" type="HBoxContainer" parent="CombatUI/MarginContainer3"]
 texture_filter = 1

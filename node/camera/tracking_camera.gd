@@ -20,7 +20,7 @@ func _ready() -> void:
 	EventBus.encounter_started.connect(_on_encounter_started)
 
 
-func _on_encounter_started(_group: String) -> void:
+func _on_encounter_started() -> void:
 	_in_encounter = true
 
 

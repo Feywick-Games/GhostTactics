@@ -1,0 +1,140 @@
+[gd_scene load_steps=17 format=4 uid="uid://dq1qwclm7p5ki"]
+
+[ext_resource type="Script" path="res://scene/level/_behavior/level.gd" id="1_lxdcq"]
+[ext_resource type="TileSet" uid="uid://bilapom7gwcxe" path="res://scene/level/variant/music_district/convenience_store/_sprite/music_district_convenience_store_tile_set.tres" id="2_6w1bj"]
+[ext_resource type="PackedScene" uid="uid://cqgaf4b8quup7" path="res://entity/character/enemy/enemy.tscn" id="3_qyw2t"]
+[ext_resource type="PackedScene" uid="uid://c3ow1ifjec62m" path="res://entity/character/ally/izzy/izzy.tscn" id="3_xrfhg"]
+[ext_resource type="PackedScene" uid="uid://bctkkdhwjgs0u" path="res://entity/character/ally/mei/mei.tscn" id="4_bx06k"]
+[ext_resource type="Script" path="res://node/camera/tracking_camera.gd" id="4_osyqw"]
+[ext_resource type="PackedScene" uid="uid://bn875t12gh6w2" path="res://entity/character/enemy/_packed_scene/turn_portrait_enemy_1.tscn" id="4_vjqmh"]
+[ext_resource type="Script" path="res://ui/turn_display/_behavior/turn_display.gd" id="5_theaw"]
+[ext_resource type="TileSet" uid="uid://5dfqqlx3fkjg" path="res://ui/battle_grid/_sprite/battle_map_tile_set.tres" id="6_etfh4"]
+[ext_resource type="Texture2D" uid="uid://dnkx7jyewlkxh" path="res://ui/battle_timer/battle_timer_under.png" id="6_u88q7"]
+[ext_resource type="Texture2D" uid="uid://caqbtr4v8posy" path="res://ui/battle_timer/battle_timer_over.png" id="7_mt6ma"]
+[ext_resource type="Texture2D" uid="uid://cycr83c35trtu" path="res://ui/battle_timer/battle_timer_fill.png" id="8_5pl3x"]
+[ext_resource type="Script" path="res://ui/battle_timer/_behavior/battle_timer.gd" id="9_x3o0l"]
+[ext_resource type="Script" path="res://ui/sticker/_behavior/sticker_layout.gd" id="10_07fc3"]
+[ext_resource type="Texture2D" uid="uid://c4l71vu7ixwsl" path="res://ui/sticker/_sprite/sticker_basic_attack.png" id="11_khhba"]
+[ext_resource type="Texture2D" uid="uid://c1xbsgyj5cgwq" path="res://ui/sticker/_sprite/sticker_push_punch.png" id="12_8degu"]
+
+[node name="MusicDistrictConvenienceStore" type="Node2D"]
+y_sort_enabled = true
+script = ExtResource("1_lxdcq")
+
+[node name="Wall" type="TileMapLayer" parent="."]
+tile_map_data = PackedByteArray("AAAEAAUAAgAAAAAAAAAEAAQAAgAAAAAAAAAEAAMAAgAAAAAAAAAEAAIAAgAAAAAAAAAEAAEAAgAAAAAAAAAEAAAAAgAAAAAAAAAEAP//AgAAAAAAAAAEAP7/AgADAAAAAAAEAP3/AgADAAAAAAAEAPz/AgADAAAAAAAEAPv/AgADAAAAAAAEAPr/AgABAAAAAAAFAPr/AgAEAAAAAAAGAPr/AgAEAAAAAAAHAPr/AgAEAAAAAAAIAPr/AgAEAAAAAAAJAPr/AgAEAAAAAAAKAPr/AgAEAAAAAAALAPr/AgAEAAAAAAAMAPr/AgAAAAAAABANAPr/AgAAAAAAABAOAPr/AgAAAAAAABA=")
+tile_set = ExtResource("2_6w1bj")
+collision_enabled = false
+
+[node name="Floor" type="TileMapLayer" parent="."]
+z_index = -1
+tile_map_data = PackedByteArray("AAAFAP3/AgAAAAQAAAAFAP7/AgAAAAQAAAAFAP//AgAAAAQAAAAFAAAAAgAAAAQAAAAFAAEAAgAAAAQAAAAFAAIAAgAAAAQAAAAFAAMAAgAAAAQAAAAGAP3/AgAAAAQAAAAGAP7/AgAAAAQAAAAGAP//AgAAAAQAAAAGAAAAAgAAAAQAAAAGAAEAAgAAAAQAAAAGAAIAAgAAAAQAAAAGAAMAAgAAAAQAAAAHAP3/AgAAAAQAAAAHAP7/AgAAAAQAAAAHAP//AgAAAAQAAAAHAAAAAgAAAAQAAAAHAAEAAgAAAAQAAAAHAAIAAgAAAAQAAAAHAAMAAgAAAAQAAAAIAP3/AgAAAAQAAAAIAP7/AgAAAAQAAAAIAP//AgAAAAQAAAAIAAAAAgAAAAQAAAAIAAEAAgAAAAQAAAAIAAIAAgAAAAQAAAAIAAMAAgAAAAQAAAAJAP3/AgAAAAQAAAAJAP7/AgAAAAQAAAAJAP//AgAAAAQAAAAJAAAAAgAAAAQAAAAJAAEAAgAAAAQAAAAJAAIAAgAAAAQAAAAJAAMAAgAAAAQAAAAKAP3/AgAAAAQAAAAKAP7/AgAAAAQAAAAKAP//AgAAAAQAAAAKAAAAAgAAAAQAAAAKAAEAAgAAAAQAAAAKAAIAAgAAAAQAAAAKAAMAAgAAAAQAAAALAP3/AgAAAAQAAAALAP7/AgAAAAQAAAALAP//AgAAAAQAAAALAAAAAgAAAAQAAAALAAEAAgAAAAQAAAALAAIAAgAAAAQAAAALAAMAAgAAAAQAAAAFAAQAAgAAAAQAAAAFAAUAAgAAAAQAAAAGAAQAAgAAAAQAAAAGAAUAAgAAAAQAAAAHAAQAAgAAAAQAAAAHAAUAAgAAAAQAAAAIAAQAAgAAAAQAAAAIAAUAAgAAAAQAAAAJAAQAAgAAAAQAAAAJAAUAAgAAAAQAAAAKAAQAAgAAAAQAAAAKAAUAAgAAAAQAAAALAAQAAgAAAAQAAAALAAUAAgAAAAQAAAAFAPv/AgAAAAQAAAAFAPz/AgAAAAQAAAAGAPv/AgAAAAQAAAAGAPz/AgAAAAQAAAAHAPv/AgAAAAQAAAAHAPz/AgAAAAQAAAAIAPv/AgAAAAQAAAAIAPz/AgAAAAQAAAAJAPv/AgAAAAQAAAAJAPz/AgAAAAQAAAAKAPv/AgAAAAQAAAAKAPz/AgAAAAQAAAALAPv/AgAAAAQAAAALAPz/AgAAAAQAAAAMAPv/AgAAAAQAAAAMAPz/AgAAAAQAAAAMAP3/AgAAAAQAAAAMAP7/AgAAAAQAAAAMAP//AgAAAAQAAAAMAAAAAgAAAAQAAAAMAAEAAgAAAAQAAAAMAAIAAgAAAAQAAAAMAAMAAgAAAAQAAAAMAAQAAgAAAAQAAAAMAAUAAgAAAAQAAAANAPv/AgAAAAQAAAANAPz/AgAAAAQAAAANAP3/AgAAAAQAAAANAP7/AgAAAAQAAAANAP//AgAAAAQAAAANAAAAAgAAAAQAAAANAAEAAgAAAAQAAAANAAIAAgAAAAQAAAANAAMAAgAAAAQAAAANAAQAAgAAAAQAAAANAAUAAgAAAAQAAAAOAPv/AgAAAAQAAAAOAPz/AgAAAAQAAAAOAP3/AgAAAAQAAAAOAP7/AgAAAAQAAAAOAP//AgAAAAQAAAAOAAAAAgAAAAQAAAAOAAEAAgAAAAQAAAAOAAIAAgAAAAQAAAAOAAMAAgAAAAQAAAAOAAQAAgAAAAQAAAAOAAUAAgAAAAQAAAAFAAYAAgABAAQAAAAGAAYAAgABAAQAAAAHAAYAAgABAAQAAAAIAAYAAgABAAQAAAAJAAYAAgABAAQAAAAKAAYAAgABAAQAAAALAAYAAgABAAQAAAAMAAYAAgABAAQAAAANAAYAAgABAAQAAAAOAAYAAgABAAQAAAAPAAUAAgABAAQAABAPAAQAAgABAAQAABAPAAMAAgABAAQAABAPAAIAAgABAAQAABAPAAEAAgABAAQAABAPAAAAAgABAAQAABAPAP//AgABAAQAABAPAP7/AgABAAQAABAPAP3/AgABAAQAABAPAPz/AgABAAQAABAPAPv/AgABAAQAABAEAAUAAgACAAQAAAAEAAQAAgACAAQAAAAEAAMAAgACAAQAAAAEAAIAAgACAAQAAAAEAAEAAgACAAQAAAAEAAAAAgACAAQAAAAEAP//AgACAAQAAAAEAP7/AgACAAQAAAAEAP3/AgACAAQAAAAEAPz/AgACAAQAAAAEAPv/AgACAAQAAAAFAPr/AgACAAQAABAGAPr/AgACAAQAABAHAPr/AgACAAQAABAIAPr/AgACAAQAABAJAPr/AgACAAQAABAKAPr/AgACAAQAABALAPr/AgACAAQAABAMAPr/AgACAAQAABANAPr/AgACAAQAABAOAPr/AgACAAQAABAEAPr/AgADAAQAAAA=")
+tile_set = ExtResource("2_6w1bj")
+
+[node name="Props" type="TileMapLayer" parent="."]
+y_sort_enabled = true
+tile_map_data = PackedByteArray("AAAHAAIAAgAAAAYAAAAHAAEAAgAAAAYAAAAHAAAAAgAAAAYAAAAHAP//AgAAAAYAAAAHAP7/AgAAAAYAAAAHAP3/AgAAAAYAAAAKAAIAAgAAAAYAAAAKAAEAAgAAAAYAAAAKAAAAAgAAAAYAAAAKAP//AgAAAAYAAAANAP//AgAAAAYAAAANAP7/AgAAAAYAAAANAP3/AgAAAAYAAAAKAP7/AgAAAAYAAAAKAP3/AgAAAAYAAAA=")
+tile_set = ExtResource("2_6w1bj")
+collision_enabled = false
+
+[node name="Enemy" parent="." instance=ExtResource("3_qyw2t")]
+position = Vector2(220, 170)
+collision_layer = 1
+turn_portrait_scene = ExtResource("4_vjqmh")
+
+[node name="Izzy" parent="." instance=ExtResource("3_xrfhg")]
+position = Vector2(176, 54)
+follow_order = 0
+
+[node name="Mei" parent="." instance=ExtResource("4_bx06k")]
+position = Vector2(70, 110)
+follow_order = 1
+
+[node name="TrackingCamera" type="Camera2D" parent="." node_paths=PackedStringArray("leader")]
+script = ExtResource("4_osyqw")
+leader = NodePath("../Izzy")
+
+[node name="Map" type="TileMapLayer" parent="."]
+z_index = -1
+y_sort_enabled = true
+tile_set = ExtResource("6_etfh4")
+
+[node name="CombatUI" type="CanvasLayer" parent="."]
+
+[node name="MarginContainer" type="MarginContainer" parent="CombatUI"]
+texture_filter = 1
+offset_right = 40.0
+offset_bottom = 40.0
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+
+[node name="TurnDisplay" type="BoxContainer" parent="CombatUI/MarginContainer"]
+layout_mode = 2
+vertical = true
+script = ExtResource("5_theaw")
+
+[node name="MarginContainer2" type="MarginContainer" parent="CombatUI"]
+texture_filter = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -64.0
+offset_bottom = 64.0
+grow_horizontal = 0
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+
+[node name="BattleTimer" type="TextureProgressBar" parent="CombatUI/MarginContainer2"]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 16.0
+step = 0.001
+fill_mode = 4
+texture_under = ExtResource("6_u88q7")
+texture_over = ExtResource("7_mt6ma")
+texture_progress = ExtResource("8_5pl3x")
+script = ExtResource("9_x3o0l")
+
+[node name="MarginContainer3" type="MarginContainer" parent="CombatUI"]
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -40.0
+offset_right = 72.0
+grow_vertical = 0
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_bottom = 8
+
+[node name="StickerLayout" type="HBoxContainer" parent="CombatUI/MarginContainer3"]
+texture_filter = 1
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+script = ExtResource("10_07fc3")
+
+[node name="BasicAttackSticker" type="TextureRect" parent="CombatUI/MarginContainer3/StickerLayout"]
+layout_mode = 2
+texture = ExtResource("11_khhba")
+
+[node name="StickerHighlight" type="ReferenceRect" parent="CombatUI/MarginContainer3/StickerLayout/BasicAttackSticker"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -16.0
+offset_top = -20.0
+offset_right = 16.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+editor_only = false
+
+[node name="SpecialSticker" type="TextureRect" parent="CombatUI/MarginContainer3/StickerLayout"]
+layout_mode = 2
+texture = ExtResource("12_8degu")
+
+[node name="NavigationObstacle2D" type="NavigationObstacle2D" parent="."]
+vertices = PackedVector2Array(120, 110, 240, 50, 220, 40, 100, 100)

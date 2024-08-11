@@ -77,7 +77,7 @@ func _process(delta: float) -> void:
 			EventBus.turn_started.emit(_current_unit)
 
 
-func _on_encounter_started(group: String) -> void:
+func _on_encounter_started() -> void:
 	_turn_pending = false
 	if not visible:
 		show()
@@ -86,7 +86,7 @@ func _on_encounter_started(group: String) -> void:
 	
 	var combatants: Array = get_tree().get_nodes_in_group("ally")
 	combatants.append_array(
-		get_tree().get_nodes_in_group(group)
+		get_tree().get_nodes_in_group("enemy")
 	)
 	
 	for unit: Character in combatants:

@@ -77,10 +77,14 @@ func _push(delta: float) -> void:
 				_o_target.take_damage(_character.special.damage, _character.facing, INF, _character.target_hit)
 		else:
 			_target_unit.take_damage(_character.special.damage, _direction, INF, _character.target_hit)
+			
+		_character.target_hit.emit()
 
 
 func update(delta: float) -> State:
-	if not pushing:
+	if _encounter_ended:
+		return _character.init_state.new()
+	elif not pushing:
 		if Input.is_action_pressed("accept"):
 			_time_since_increment += delta
 			
