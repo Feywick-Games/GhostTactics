@@ -72,12 +72,11 @@ func _push(delta: float) -> void:
 		GameState.current_level.update_unit_registry(_target_unit.current_tile, _target_unit)
 		if increment ==  _max_push_distance and _max_is_collision:
 			# guaranteed as impact was precalculated
-			_target_unit.take_damage(_character.special.damage * 2.0, _character.facing, INF, _character.target_hit)
+			_target_unit.take_damage(_character.special.damage * 2.0, _character.facing, INF, _character.target_hit, Combat.Status.PUSHED)
 			if _o_target:
-				_o_target.take_damage(_character.special.damage, _character.facing, INF, _character.target_hit)
+				_o_target.take_damage(_character.special.damage, _character.facing, INF, _character.target_hit, Combat.Status.HIT)
 		else:
-			_target_unit.take_damage(_character.special.damage, _direction, INF, _character.target_hit)
-			
+			_target_unit.take_damage(_character.special.damage, _direction, INF, _character.target_hit, Combat.Status.PUSHED)
 		_character.target_hit.emit()
 
 
@@ -93,7 +92,7 @@ func update(delta: float) -> State:
 				increment += 1
 				if increment > _max_push_distance:
 					var unit = GameState.current_level.get_unit_from_tile(_target_tile)
-					unit.take_damage(_character.special.damage, _character.facing,  _character.accuracy, _character.target_hit)
+					unit.take_damage(_character.special.damage, _character.facing,  _character.accuracy, _character.target_hit, Combat.Status.HIT)
 				else:
 					_push_range.append(_target_tile + (_direction * increment))
 					_draw_range()

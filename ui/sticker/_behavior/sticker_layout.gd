@@ -31,12 +31,12 @@ func _on_turn_started(unit: Character) -> void:
 		
 func _process(delta: float) -> void:
 	if _unit:
-		if _unit.attack_state == Character.AttackState.BASIC:
+		if _unit.attack_state == Combat.AttackState.BASIC:
 			if not _sticker_parent == _basic_attack_sticker:
 				_sticker_parent.remove_child(_sticker_highlight)
 				_basic_attack_sticker.add_child(_sticker_highlight)
 				_sticker_parent = _basic_attack_sticker
-		if _unit.attack_state == Character.AttackState.SPECIAL:
+		if _unit.attack_state == Combat.AttackState.SPECIAL:
 			if not _sticker_parent == _special_sticker:
 				_sticker_parent.remove_child(_sticker_highlight)
 				_special_sticker.add_child(_sticker_highlight)

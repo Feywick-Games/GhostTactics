@@ -84,15 +84,15 @@ func update(delta: float) -> State:
 	
 	
 	if current_tile != _enemy.current_tile:
-		if _enemy.attack_state == Character.AttackState.BASIC:
+		if _enemy.attack_state == Combat.AttackState.BASIC:
 			_attack_range = GameState.current_level.request_range(_enemy.current_tile, _enemy.minimum_attack_range, _enemy.attack_range, false, [_start_tile], true, true)
 			_enemy.draw_ranges(_attack_range, _movement_range, Global.RETICLE_ATTACK_ALTAS_COORDS, Global.RETICLE_SPECIAL_2_ATLAS_COORDS)
-		elif _enemy.attack_state == Character.AttackState.SPECIAL:
+		elif _enemy.attack_state == Combat.AttackState.SPECIAL:
 			_attack_range = GameState.current_level.request_range(_enemy.current_tile, _enemy.special.min_range, _enemy.special.range, false, [_start_tile], true, true)
 			_enemy.draw_ranges(_attack_range, _movement_range, _special_atlas_coords, _special_overlap_atlas_coords)
 	
 	if not _exiting and _tile_path.is_empty() and _is_acting:
-		if _enemy.attack_state == Character.AttackState.BASIC:
+		if _enemy.attack_state == Combat.AttackState.BASIC:
 			_enemy.process_action(_target.current_tile, _attack_range, self)
 	elif _exiting or (_tile_path.is_empty() and not _is_acting):
 		_enemy.end_turn()

@@ -5,12 +5,6 @@ signal died
 signal target_hit
 signal action_processed
 
-
-enum AttackState {
-	BASIC,
-	SPECIAL
-}
-
 const SNAP_DISTANCE := 2.4
 const TIME_PER_MOVE := .03
 const HEALTH_BAR_PIXEL_WIDTH := 25
@@ -31,6 +25,8 @@ var init_state: GDScript
 var turn_state: GDScript
 @export
 var special: Special
+@export
+var reactions: Array[Combat.Reaction]
 
 @export_category("Unit Stats")
 @export
@@ -52,7 +48,8 @@ var health: int
 var facing: Vector2i
 var ready_for_battle := false
 var current_tile: Vector2i
-var attack_state: AttackState
+var status: Combat.Status
+var attack_state: Combat.AttackState
 
 @onready
 var sprite: Sprite2D = $CharacterSprite
@@ -96,7 +93,7 @@ func is_hit(hit_chance: float) -> bool:
 	return (float(hit_chance) / float(evasion)) > randf()
 
 
-func take_damage(damage: int, direction: Vector2, hit_chance: float, hit_signal: Signal) -> void:
+func take_damage(damage: int, direction: Vector2, hit_chance: int, hit_signal: Signal, inflicted_status: Combat.Status) -> void:
 	await hit_signal
 	var hit_connected: bool
 	var damage_multiplier: float = 1
@@ -117,6 +114,7 @@ func take_damage(damage: int, direction: Vector2, hit_chance: float, hit_signal:
 		print("attack hit " + name)
 	else:
 		print("attack missed " + name)
+	status = status
 
 	_health_bar.value = health
 	action_processed.emit()
@@ -148,14 +146,14 @@ func process_action(tile: Vector2i, attack_range: RangeStruct, state: TurnState)
 		var unit: Character = GameState.current_level.get_unit_from_tile(tile)
 		if unit and unit != self:
 			facing = Vector2i(Vector2(tile - current_tile).normalized().round())
-			if attack_state == AttackState.BASIC:
+			if attack_state == Combat.AttackState.BASIC:
 				if name == "Izzy":
 					animator.queue("idle_" + animator.get_current_direction(dir))
 					animator.play("basic_attack_down")
 				
 				if not unit.action_processed.is_connected(state.end_turn):
 					unit.action_processed.connect(state.end_turn)
-				unit.take_damage(attack_damage, facing, accuracy, target_hit)
+				unit.take_damage(attack_damage, facing, accuracy, target_hit, Combat.Status.HIT)
 				if name != "Izzy":
 					notify_impact()
 			else:
