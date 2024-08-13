@@ -1,14 +1,29 @@
-[gd_scene load_steps=22 format=3 uid="uid://c3ow1ifjec62m"]
+[gd_scene load_steps=26 format=3 uid="uid://c3ow1ifjec62m"]
 
 [ext_resource type="PackedScene" uid="uid://cm7s3l5cikm6u" path="res://entity/character/ally/ally.tscn" id="1_abh6s"]
-[ext_resource type="Resource" uid="uid://dcwe1an4rcnnf" path="res://entity/character/ally/izzy/_special/special_push_punch.tres" id="3_27mrg"]
-[ext_resource type="PackedScene" uid="uid://f4x7mg2o6cwa" path="res://entity/character/ally/_packed_scene/turn_portrait_ally_1.tscn" id="3_lxf21"]
+[ext_resource type="Script" path="res://data/combat/skill.gd" id="2_d2041"]
+[ext_resource type="Script" path="res://data/combat/status_effect.gd" id="3_jkw71"]
 [ext_resource type="Texture2D" uid="uid://chfg67t7nwyc2" path="res://entity/character/ally/izzy/_sprite/izzy_idle_down.png" id="3_sk6vo"]
+[ext_resource type="Script" path="res://entity/character/_behavior/basic_skill_state.gd" id="3_tnq7t"]
+[ext_resource type="Texture2D" uid="uid://c4l71vu7ixwsl" path="res://ui/sticker/_sprite/sticker_basic_attack.png" id="4_sniu6"]
+[ext_resource type="Resource" uid="uid://fneqo5f1qdrk" path="res://entity/character/ally/izzy/_special/push_skill.tres" id="6_j04wh"]
 [ext_resource type="Texture2D" uid="uid://bel6ycldg65i6" path="res://entity/character/ally/izzy/_sprite/izzy_idle_up.png" id="6_wmewt"]
 [ext_resource type="Texture2D" uid="uid://bsa4qbod60we" path="res://entity/character/ally/izzy/_sprite/izzy_idle_cardinal_down.png" id="8_134m7"]
 [ext_resource type="Texture2D" uid="uid://dkgjktshrs3vf" path="res://entity/character/ally/izzy/_sprite/izzy_idle_cardinal_up.png" id="9_ce5tx"]
 [ext_resource type="Texture2D" uid="uid://b4ecpqhivu5tk" path="res://entity/character/ally/izzy/_sprite/izzy_basic_attack_down.png" id="10_71qqk"]
 [ext_resource type="Texture2D" uid="uid://dphldatphshsn" path="res://entity/character/ally/izzy/_sprite/izzy_idle_cardinal_left.png" id="10_ondk7"]
+
+[sub_resource type="Resource" id="Resource_owjtq"]
+script = ExtResource("2_d2041")
+name = "Punch"
+sticker = ExtResource("4_sniu6")
+character_animation = "idle"
+skill_animation = ""
+max_range = 1
+min_range = 0
+state = ExtResource("3_tnq7t")
+cool_down = 1
+status_effects = Array[ExtResource("3_jkw71")]([])
 
 [sub_resource type="Animation" id="Animation_tjtew"]
 length = 0.001
@@ -609,9 +624,8 @@ position = Vector2(0, -2)
 follow_order = 1
 is_animated = true
 character_name = "Izzy"
-turn_portrait_scene = ExtResource("3_lxf21")
-special = ExtResource("3_27mrg")
-movement_range = 4
+basic_skill = SubResource("Resource_owjtq")
+special = ExtResource("6_j04wh")
 
 [node name="CharacterSprite" parent="." index="0"]
 position = Vector2(0, 3)

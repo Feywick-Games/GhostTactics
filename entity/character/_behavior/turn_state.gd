@@ -17,6 +17,15 @@ func enter() -> void:
 	_character.start_turn()
 	EventBus.encounter_ended.connect(_on_encounter_ended)
 
+func update(_delta: float) -> State:
+	if _encounter_ended:
+		return _character.init_state.new()
+	elif _exiting:
+		_character.end_turn()
+		if not _encounter_ended:
+			return CharacterCombatIdleState.new()
+	return
+
 
 func end_turn() -> void:
 	_exiting = true

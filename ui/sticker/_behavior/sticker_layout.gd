@@ -4,7 +4,7 @@ extends HBoxContainer
 var _unit: Character
 
 @onready
-var _basic_attack_sticker: TextureRect = $BasicAttackSticker
+var _basic_skill_sticker: TextureRect = $BasicSkillSticker
 @onready
 var _special_sticker: TextureRect = $SpecialSticker
 @onready
@@ -27,15 +27,19 @@ func _on_turn_started(unit: Character) -> void:
 	if _unit.special:
 		_special_sticker.show()
 		_special_sticker.texture = _unit.special.sticker
-		
-		
+		if not _unit.special.is_ready():
+			_special_sticker.modulate = Color.DIM_GRAY
+		else:
+			_special_sticker.modulate = Color.WHITE
+
+
 func _process(delta: float) -> void:
 	if _unit:
 		if _unit.attack_state == Combat.AttackState.BASIC:
-			if not _sticker_parent == _basic_attack_sticker:
+			if not _sticker_parent == _basic_skill_sticker:
 				_sticker_parent.remove_child(_sticker_highlight)
-				_basic_attack_sticker.add_child(_sticker_highlight)
-				_sticker_parent = _basic_attack_sticker
+				_basic_skill_sticker.add_child(_sticker_highlight)
+				_sticker_parent = _basic_skill_sticker
 		if _unit.attack_state == Combat.AttackState.SPECIAL:
 			if not _sticker_parent == _special_sticker:
 				_sticker_parent.remove_child(_sticker_highlight)

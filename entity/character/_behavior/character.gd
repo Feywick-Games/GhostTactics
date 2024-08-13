@@ -24,21 +24,17 @@ var init_state: GDScript
 @export
 var turn_state: GDScript
 @export
-var special: Special
+var basic_skill: Skill
 @export
-var reactions: Array[Combat.Reaction]
+var special: Skill
+@export
+var reactions: Array[Skill]
 
 @export_category("Unit Stats")
 @export
 var max_health: int = 10
 @export
 var movement_range: int = 5
-@export
-var attack_range: int = 1
-@export
-var minimum_attack_range: int = 0
-@export
-var attack_damage: int = 2
 @export
 var evasion: int = 4
 @export
@@ -50,11 +46,14 @@ var ready_for_battle := false
 var current_tile: Vector2i
 var status: Combat.Status
 var attack_state: Combat.AttackState
+var weapon: Weapon
 
 @onready
 var sprite: Sprite2D = $CharacterSprite
 @onready
 var animator: DirectionalAnimator = $ActionAnimator
+@onready
+var skill_animator: DirectionalAnimator = $SkillAnimator
 
 @onready
 var _health_bar: TextureProgressBar = $CharacterSprite/HealthBar
@@ -93,21 +92,21 @@ func is_hit(hit_chance: float) -> bool:
 	return (float(hit_chance) / float(evasion)) > randf()
 
 
-func take_damage(damage: int, direction: Vector2, hit_chance: int, hit_signal: Signal, inflicted_status: Combat.Status) -> void:
+func take_damage(skill: Skill, direction: Vector2, hit_chance: float, hit_signal: Signal, multiplier: float = 1) -> void:
 	await hit_signal
 	var hit_connected: bool
-	var damage_multiplier: float = 1
 	
 	if is_equal_approx(direction.normalized().dot(Vector2(facing).normalized()), -1) and facing != Vector2i.ZERO:
 		hit_connected = true
-		damage_multiplier += .5
+		multiplier += .5
 	else:
 		hit_connected = is_hit(hit_chance)
 	
-	
+
 	if hit_connected:
-		damage *= damage_multiplier
-		health -= damage
+		for effect: StatusEffect in skill.status_effects:
+			_process_status_effect(effect, multiplier)
+	
 		if health <= 0:
 			died.emit()
 			queue_free()
@@ -120,18 +119,22 @@ func take_damage(damage: int, direction: Vector2, hit_chance: int, hit_signal: S
 	action_processed.emit()
 
 
+func _process_status_effect(effect: StatusEffect, multiplier: float) -> void:
+	if effect.status == Combat.Status.HIT:
+		health -= effect.value * multiplier
+
+
 func start_turn() -> void:
+	basic_skill.cool_down_status = min(basic_skill.cool_down_status + 1, basic_skill.cool_down)
+	
 	if special:
 		special.cool_down_status = min(special.cool_down_status + 1, special.cool_down)
-		
-		if special.is_ready():
-			# TODO notify ui
-			pass
+
 
 
 func end_turn() -> void:
 	GameState.current_level.update_unit_registry(current_tile, self)
-	EventBus.turn_ended.emit()
+	EventBus.turn_ended.emit.call_deferred()
 	
 
 func process_action(tile: Vector2i, attack_range: RangeStruct, state: TurnState) -> State:
@@ -146,19 +149,11 @@ func process_action(tile: Vector2i, attack_range: RangeStruct, state: TurnState)
 		var unit: Character = GameState.current_level.get_unit_from_tile(tile)
 		if unit and unit != self:
 			facing = Vector2i(Vector2(tile - current_tile).normalized().round())
+			EventBus.timer_stopped.emit()
 			if attack_state == Combat.AttackState.BASIC:
-				if name == "Izzy":
-					animator.queue("idle_" + animator.get_current_direction(dir))
-					animator.play("basic_attack_down")
-				
-				if not unit.action_processed.is_connected(state.end_turn):
-					unit.action_processed.connect(state.end_turn)
-				unit.take_damage(attack_damage, facing, accuracy, target_hit, Combat.Status.HIT)
-				if name != "Izzy":
-					notify_impact()
+				return basic_skill.state.new(basic_skill, unit.current_tile)
 			else:
-				EventBus.timer_stopped.emit()
-				return special.state.new(unit.current_tile)
+				return special.state.new(special, unit.current_tile)
 	return
 
 

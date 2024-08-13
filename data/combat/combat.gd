@@ -8,6 +8,8 @@ enum AttackState {
 enum Status {
 	HIT,
 	PUSHED,
+	DAZED,
+	SLOWED
 }
 
 enum Reaction {

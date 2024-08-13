@@ -1,5 +1,5 @@
-class_name PushPunchSpecialState
-extends SpecialState
+class_name PushSkillState
+extends SkillState
 
 const TIME_PER_INCREMENT: float = .3
 const TIME_TO_EXIT: float = 1.0
@@ -14,13 +14,17 @@ var _target_unit: Character
 var _time_since_exiting: float = 0
 var _max_is_collision := false
 var _o_target: Character
+var _push_distance: int
 
 func enter() -> void:
 	super.enter()
 	var _push_range = [_target_tile]
 	_direction =  Vector2i(Vector2(_target_tile - _character.current_tile).normalized().round())
+	for effect: StatusEffect in _skill.status_effects:
+		if effect.status == Combat.Status.PUSHED:
+			_push_distance = effect.value
 	
-	for i in range(1, _character.special.custom_values["push_distance"] + 1):
+	for i in range(1, _push_distance + 1):
 		if not GameState.current_level.grid.is_point_solid(_target_tile + (_direction * i)) and \
 		GameState.current_level.grid.region.has_point(_target_tile + (_direction * i)):
 			_max_push_distance += 1
@@ -72,18 +76,21 @@ func _push(delta: float) -> void:
 		GameState.current_level.update_unit_registry(_target_unit.current_tile, _target_unit)
 		if increment ==  _max_push_distance and _max_is_collision:
 			# guaranteed as impact was precalculated
-			_target_unit.take_damage(_character.special.damage * 2.0, _character.facing, INF, _character.target_hit, Combat.Status.PUSHED)
+			var skill: Skill = _character.special.duplicate()
+			_target_unit.take_damage(_skill, _direction, INF, _character.target_hit, 2.0)
 			if _o_target:
-				_o_target.take_damage(_character.special.damage, _character.facing, INF, _character.target_hit, Combat.Status.HIT)
+				_o_target.take_damage(_skill, _direction, INF, _character.target_hit)
 		else:
-			_target_unit.take_damage(_character.special.damage, _direction, INF, _character.target_hit, Combat.Status.PUSHED)
+			_target_unit.take_damage(_skill, _direction, INF, _character.target_hit)
 		_character.target_hit.emit()
 
 
 func update(delta: float) -> State:
-	if _encounter_ended:
-		return _character.init_state.new()
-	elif not pushing:
+	var parent_state: State = super.update(delta)
+	if parent_state:
+		return parent_state
+	
+	if not pushing:
 		if Input.is_action_pressed("accept"):
 			_time_since_increment += delta
 			
@@ -92,7 +99,8 @@ func update(delta: float) -> State:
 				increment += 1
 				if increment > _max_push_distance:
 					var unit = GameState.current_level.get_unit_from_tile(_target_tile)
-					unit.take_damage(_character.special.damage, _character.facing,  _character.accuracy, _character.target_hit, Combat.Status.HIT)
+					unit.take_damage(_skill, _character.facing,  _character.accuracy, _character.target_hit)
+					_character.notify_impact()
 				else:
 					_push_range.append(_target_tile + (_direction * increment))
 					_draw_range()
@@ -111,12 +119,6 @@ func update(delta: float) -> State:
 				
 	elif not _exiting:
 		_push(delta)
-	elif _exiting:
-		_time_since_exiting += delta
-		if _time_since_exiting > TIME_TO_EXIT:
-			_character.end_turn()
-			return CharacterCombatIdleState.new()
-
 	return
 
 

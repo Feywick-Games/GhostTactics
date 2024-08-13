@@ -1,0 +1,37 @@
+[gd_resource type="TileSet" load_steps=8 format=3 uid="uid://bg1ldnkshjcy8"]
+
+[ext_resource type="Texture2D" uid="uid://dwpuomxva06bp" path="res://entity/weapon/_sprite/dummy_weapon.png" id="1_iblnt"]
+[ext_resource type="Script" path="res://entity/weapon/_behavior/weapon.gd" id="1_twvc7"]
+[ext_resource type="Script" path="res://entity/character/_behavior/character_combat_idle_state.gd" id="2_163ox"]
+[ext_resource type="Script" path="res://data/combat/status_effect.gd" id="3_ef833"]
+[ext_resource type="Texture2D" uid="uid://c4l71vu7ixwsl" path="res://ui/sticker/_sprite/sticker_basic_attack.png" id="4_q4422"]
+
+[sub_resource type="Resource" id="Resource_2m0hx"]
+script = ExtResource("1_twvc7")
+durability = 1
+movement_penalty = 0
+name = "Broom"
+sticker = ExtResource("4_q4422")
+character_animation = "Idle"
+skill_animation = "Strike"
+max_range = 1
+min_range = 0
+state = ExtResource("2_163ox")
+cool_down = 3
+status_effects = Array[ExtResource("3_ef833")]([])
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_5n63n"]
+texture = ExtResource("1_iblnt")
+texture_region_size = Vector2i(40, 20)
+0:0/size_in_atlas = Vector2i(1, 2)
+0:0/0 = 0
+0:0/0/texture_origin = Vector2i(0, 10)
+0:0/0/custom_data_0 = SubResource("Resource_2m0hx")
+
+[resource]
+tile_shape = 1
+tile_layout = 5
+tile_size = Vector2i(40, 20)
+custom_data_layer_0/name = "weapon"
+custom_data_layer_0/type = 24
+sources/2 = SubResource("TileSetAtlasSource_5n63n")

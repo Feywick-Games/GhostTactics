@@ -1,9 +1,10 @@
-[gd_scene load_steps=7 format=3 uid="uid://cm7s3l5cikm6u"]
+[gd_scene load_steps=8 format=3 uid="uid://cm7s3l5cikm6u"]
 
 [ext_resource type="PackedScene" uid="uid://dk85fb2a3ag81" path="res://entity/character/character.tscn" id="1_sdb2p"]
 [ext_resource type="Script" path="res://entity/character/ally/_behavior/ally.gd" id="2_dd86s"]
 [ext_resource type="Texture2D" uid="uid://c5ummn06gg4w3" path="res://entity/character/ally/_sprite/ally.png" id="2_momam"]
 [ext_resource type="Script" path="res://entity/character/ally/_behavior/ally_roam_state.gd" id="3_8jy3i"]
+[ext_resource type="PackedScene" uid="uid://f4x7mg2o6cwa" path="res://entity/character/ally/_packed_scene/turn_portrait_ally_1.tscn" id="3_ugt4g"]
 [ext_resource type="Script" path="res://entity/character/ally/_behavior/ally_turn_state.gd" id="4_4us3o"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_p01wl"]
@@ -14,6 +15,8 @@ collision_layer = 4
 collision_mask = 3
 script = ExtResource("2_dd86s")
 follow_order = 0
+character_name = "Ally"
+turn_portrait_scene = ExtResource("3_ugt4g")
 init_state = ExtResource("3_8jy3i")
 turn_state = ExtResource("4_4us3o")
 

@@ -2,9 +2,9 @@ class_name Special
 extends Resource
 
 @export
-var sticker: Texture2D
+var name: String
 @export
-var damage: int
+var sticker: Texture2D
 @export
 var range: int
 @export
@@ -14,7 +14,9 @@ var state: GDScript
 @export
 var cool_down: int = 3
 @export
-var custom_values: Dictionary
+var statuses: Array[Combat.Status]
+@export
+var status_values: Array[int]
 
 var cool_down_status: int = 3
 

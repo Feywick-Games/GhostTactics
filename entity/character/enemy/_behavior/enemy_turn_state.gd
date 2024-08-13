@@ -16,10 +16,10 @@ func enter() -> void:
 	var target_list: Array[Ally]
 	_start_tile = _enemy.current_tile
 	_movement_range = GameState.current_level.request_range(_enemy.current_tile, 0,  _enemy.movement_range, false, [_start_tile])
-	_attack_range = GameState.current_level.request_range(_enemy.current_tile, _enemy.minimum_attack_range, _enemy.attack_range, false, [_start_tile], true, true)
+	_attack_range = GameState.current_level.request_range(_enemy.current_tile, _enemy.basic_skill.min_range, _enemy.basic_skill.max_range, false, [_start_tile], true, true)
 	
 	for tile: Vector2i in _movement_range.range_tiles:
-		var valid_tiles := GameState.current_level.request_range(tile, _enemy.minimum_attack_range, _enemy.attack_range, false, [_start_tile], true, true)
+		var valid_tiles := GameState.current_level.request_range(tile, _enemy.basic_skill.min_range, _enemy.basic_skill.max_range, false, [_start_tile], true, true)
 		for valid: Vector2i in valid_tiles.range_tiles:
 			if valid not in _full_attack_range:
 				_full_attack_range.append(valid)
@@ -58,7 +58,7 @@ func pick_target(target_list: Array[Ally], all_allys: Array[Ally]) -> Ally:
 
 
 func pick_tile() -> Vector2i:
-	var ideal_distance: int = _enemy.attack_range
+	var ideal_distance: int = _enemy.basic_skill.max_range
 	var desired_tile: Vector2i = _start_tile
 	var desired_distance: int 
 	var start_distance: int = GameState.current_level.get_id_path(_start_tile, _target.current_tile, false, true, true).size() - 1
@@ -85,15 +85,14 @@ func update(delta: float) -> State:
 	
 	if current_tile != _enemy.current_tile:
 		if _enemy.attack_state == Combat.AttackState.BASIC:
-			_attack_range = GameState.current_level.request_range(_enemy.current_tile, _enemy.minimum_attack_range, _enemy.attack_range, false, [_start_tile], true, true)
+			_attack_range = GameState.current_level.request_range(_enemy.current_tile, _enemy.basic_skill.min_range, _enemy.basic_skill.max_range, false, [_start_tile], true, true)
 			_enemy.draw_ranges(_attack_range, _movement_range, Global.RETICLE_ATTACK_ALTAS_COORDS, Global.RETICLE_SPECIAL_2_ATLAS_COORDS)
 		elif _enemy.attack_state == Combat.AttackState.SPECIAL:
-			_attack_range = GameState.current_level.request_range(_enemy.current_tile, _enemy.special.min_range, _enemy.special.range, false, [_start_tile], true, true)
+			_attack_range = GameState.current_level.request_range(_enemy.current_tile, _enemy.special.min_range, _enemy.special.max_range, false, [_start_tile], true, true)
 			_enemy.draw_ranges(_attack_range, _movement_range, _special_atlas_coords, _special_overlap_atlas_coords)
 	
 	if not _exiting and _tile_path.is_empty() and _is_acting:
-		if _enemy.attack_state == Combat.AttackState.BASIC:
-			_enemy.process_action(_target.current_tile, _attack_range, self)
+		return _enemy.process_action(_target.current_tile, _attack_range, self)
 	elif _exiting or (_tile_path.is_empty() and not _is_acting):
 		_enemy.end_turn()
 		return CharacterCombatIdleState.new()

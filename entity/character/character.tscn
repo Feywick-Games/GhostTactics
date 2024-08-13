@@ -28,3 +28,6 @@ texture_progress = ExtResource("4_5lxke")
 
 [node name="ActionAnimator" type="AnimationPlayer" parent="."]
 script = ExtResource("2_vs4rm")
+
+[node name="SkillAnimator" type="AnimationPlayer" parent="."]
+script = ExtResource("2_vs4rm")

@@ -9,6 +9,8 @@ func enter() -> void:
 	_character = state_machine.state_owner as Character
 	EventBus.turn_started.connect(_on_turn_started)
 	EventBus.encounter_ended.connect(_on_encounter_ended)
+	if _character.is_animated:
+		_character.animator.play_directional("idle", Vector2.ZERO)
 
 
 func _on_encounter_ended() -> void:
