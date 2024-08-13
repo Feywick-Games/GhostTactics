@@ -48,10 +48,7 @@ func _start_turn() -> void:
 	
 	_turn_portraits[_current_unit_idx].reset_portrait()
 	move_child(_turn_portraits[_current_unit_idx], -1)
-	if _current_unit_idx < len(_units) - 1:
-		_current_unit_idx += 1
-	else:
-		_current_unit_idx = 0
+	_increment_unit_index()
 	var turn_portait := _turn_portraits[_current_unit_idx]
 	turn_portait.display_full_portrait()
 	EventBus.cam_follow_requested.emit(_current_unit)
@@ -97,6 +94,13 @@ func _on_encounter_started() -> void:
 		add_child(turn_portrait)
 		
 
+func _increment_unit_index(val: int = 1) -> void:
+	if _current_unit_idx + val < len(_units):
+		_current_unit_idx += val
+	else:
+		_current_unit_idx = -1 + val
+
+
 func _on_unit_died(unit: Character) -> void:
 	if not _units.is_empty():
 		var idx: int = _units.find(unit)
@@ -104,3 +108,6 @@ func _on_unit_died(unit: Character) -> void:
 		var child = _turn_portraits[idx]
 		_turn_portraits.remove_at(idx)
 		child.queue_free()
+		
+		if idx <= _current_unit_idx:
+			_increment_unit_index()
