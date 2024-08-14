@@ -2,17 +2,25 @@ class_name Combat
 
 enum AttackState {
 	BASIC,
-	SPECIAL
+	SPECIAL,
+	IMPROV,
+	IMPROV_THROW
 }
 
 enum Status {
 	HIT,
 	PUSHED,
 	DAZED,
-	SLOWED
+	SLOWED,
+	INJURED
 }
 
 enum Reaction {
 	PINCER,
 	REBOUND
+}
+
+enum RangeShape {
+	DIAMOND,
+	CROSS
 }

@@ -5,7 +5,6 @@ const GRID_DRAW_TIME: float = 1
 
 var grid := AStarGrid2D.new()
 var grid_complete: bool
-var _active_floor_layers: Array[TileMapLayer]
 var _encounter_started: bool
 var _grid_cells: Array[Vector2i]
 var _time_since_grid_tile: float = 0
@@ -16,6 +15,13 @@ var _enemy_tiles: Array[Vector2i]
 var _ally_tiles: Array[Vector2i]
 var _prop_tiles: Array[Vector2i]
 var _reverse_build_grid := false
+
+@onready
+var _floor_layer: TileMapLayer = $Floor
+@onready
+var _prop_layer: TileMapLayer = $Props
+@onready
+var _improvised_weapon_layer: TileMapLayer = $ImprovisedWeapon
 
 @onready
 var map: TileMapLayer = $Map
@@ -172,8 +178,8 @@ func reset_map() -> void:
 			map.set_cell(tile, 0 , Vector2.RIGHT)
 
 
-func request_range(unit_tile: Vector2i,min_distance: int, max_distance: int, is_ally: bool, 
-exceptions: Array[Vector2i] = [], can_pass := false, include_opponent_tiles := false) -> RangeStruct:
+func request_range(unit_tile: Vector2i,min_distance: int, max_distance: int, range_shape: Combat.RangeShape,
+is_ally: bool, can_pass := false, include_opponent_tiles := false) -> RangeStruct:
 	var range_struct := RangeStruct.new()
 	var _pass_tiles: Array[Vector2i]
 	
@@ -197,6 +203,10 @@ exceptions: Array[Vector2i] = [], can_pass := false, include_opponent_tiles := f
 	
 	for y in range(max_range_rect.position.y, max_range_rect.end.y + 1):
 		for x in range(max_range_rect.position.x, max_range_rect.end.x + 1):
+			if range_shape == Combat.RangeShape.CROSS:
+				if x != unit_tile.x and y != unit_tile.y:
+					continue
+			
 			var tile = Vector2i(x,y)
 			if grid.region.has_point(tile):
 				var id_path: Array[Vector2i] = grid.get_id_path(unit_tile, tile)
@@ -211,7 +221,7 @@ exceptions: Array[Vector2i] = [], can_pass := false, include_opponent_tiles := f
 					grid.set_point_solid(tile)
 
 	for tile in _pass_tiles:
-		if tile not in exceptions:
+		if tile != unit_tile:
 			var tile_idx: int = range_struct.range_tiles.find(tile)
 			
 			if tile_idx != -1:
@@ -237,7 +247,10 @@ exceptions: Array[Vector2i] = [], can_pass := false, include_opponent_tiles := f
 					if tile_idx != -1:
 						range_struct.blocked_tiles.remove_at(tile_idx)
 						range_struct.range_tiles.append(tile)
-		
+	if not unit_tile in range_struct.range_tiles:
+		range_struct.range_tiles.append(unit_tile)
+	if unit_tile in range_struct.blocked_tiles:
+		range_struct.blocked_tiles.remove_at(range_struct.blocked_tiles.find(unit_tile))
 	return range_struct
 
 
@@ -256,11 +269,18 @@ func select_tile(tile: Vector2i, select := true) -> void:
 		map.set_cell(tile, 0, atlas_coords - Vector2i.RIGHT)
 
 
+func get_interactable_tiles(tiles: Array[Vector2i]) -> Array[Vector2i]:
+	var interactable_tiles: Array[Vector2i]
+	for tile in tiles:
+		if _improvised_weapon_layer.get_cell_source_id(tile) != -1:
+			interactable_tiles.append(tile)
+	
+	return interactable_tiles
+
+
+
 func _populate_grid() -> void:
-	var floor_layer: TileMapLayer = $Floor
-	var prop_layer: TileMapLayer = $Props
-	var o_rect: Rect2i = floor_layer.get_used_rect()
-	_active_floor_layers.append(floor_layer)
+	var o_rect: Rect2i = _floor_layer.get_used_rect()
 	if grid.region.size.x + grid.region.size.y == 0:
 		grid.region = o_rect
 	else:
@@ -270,12 +290,28 @@ func _populate_grid() -> void:
 	for y:int in range(o_rect.position.y, o_rect.end.y):
 		for x:int in range(o_rect.position.x, o_rect.end.x):
 			var tile := Vector2i(x,y)
-			var source_id = floor_layer.get_cell_source_id(tile)
-			var prop_source_id = prop_layer.get_cell_source_id(tile)
-			if source_id == -1 or floor_layer.get_cell_tile_data(Vector2i(x,y)).get_custom_data("border"):
+			var source_id = _floor_layer.get_cell_source_id(tile)
+			var prop_source_id = _prop_layer.get_cell_source_id(tile)
+			var improv_weapon_source_id = _improvised_weapon_layer.get_cell_source_id(tile)
+			if source_id == -1 or _floor_layer.get_cell_tile_data(Vector2i(x,y)).get_custom_data("border"):
 				grid.set_point_solid(tile)
 			else:
 				_grid_cells.append(tile)
-				if prop_source_id != -1:
+				if prop_source_id != -1 or improv_weapon_source_id != -1:
 					grid.set_point_solid(tile, true)
 					_prop_tiles.append(tile)
+
+
+func get_interactable(tile: Vector2i) -> ImprovisedWeapon:
+	var tile_data: TileData = _improvised_weapon_layer.get_cell_tile_data(tile)
+	if tile_data:
+		return tile_data.get_custom_data("improvised_weapon") as ImprovisedWeapon
+	return
+
+
+func take_interactable(tile: Vector2i) -> ImprovisedWeapon:
+	var weapon: ImprovisedWeapon = get_interactable(tile)
+	_improvised_weapon_layer.set_cell(tile, -1)
+	grid.set_point_solid(tile, false)
+	_prop_tiles.remove_at(_prop_tiles.find(tile))
+	return weapon

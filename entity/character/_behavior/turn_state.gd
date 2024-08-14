@@ -1,16 +1,18 @@
 class_name TurnState
 extends State
 
+var interacted := false
+
 var _character: Character
 var _movement_range: RangeStruct
 var _attack_range: RangeStruct = RangeStruct.new()
+var _interactable_range: Array[Vector2i]
 var _tile_path: Array[Vector2i]
 var _time_since_move: float = 0
 var _astar: AStarGrid2D
 var _start_tile: Vector2i
 var _exiting := false
 var _encounter_ended := false
-
 
 func enter() -> void:
 	_character = state_machine.state_owner as Character

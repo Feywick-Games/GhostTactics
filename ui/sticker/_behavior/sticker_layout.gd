@@ -35,12 +35,31 @@ func _on_turn_started(unit: Character) -> void:
 
 func _process(delta: float) -> void:
 	if _unit:
+		if _unit.attack_state in [Combat.AttackState.IMPROV, Combat.AttackState.IMPROV_THROW]:
+			_basic_skill_sticker.texture = _unit.improvised_weapon.sticker
+			_special_sticker.texture = ImprovisedWeapon.IMPROV_THROW_STICKER
+		else:
+			_basic_skill_sticker.texture = _unit.basic_skill.sticker
+			if _unit.special:
+				_special_sticker.texture = _unit.special.sticker
+		
+		
 		if _unit.attack_state == Combat.AttackState.BASIC:
 			if not _sticker_parent == _basic_skill_sticker:
 				_sticker_parent.remove_child(_sticker_highlight)
 				_basic_skill_sticker.add_child(_sticker_highlight)
 				_sticker_parent = _basic_skill_sticker
-		if _unit.attack_state == Combat.AttackState.SPECIAL:
+		elif _unit.attack_state == Combat.AttackState.SPECIAL:
+			if not _sticker_parent == _special_sticker:
+				_sticker_parent.remove_child(_sticker_highlight)
+				_special_sticker.add_child(_sticker_highlight)
+				_sticker_parent = _special_sticker
+		elif _unit.attack_state == Combat.AttackState.IMPROV:
+			if not _sticker_parent == _special_sticker:
+				_sticker_parent.remove_child(_sticker_highlight)
+				_basic_skill_sticker.add_child(_sticker_highlight)
+				_sticker_parent = _basic_skill_sticker
+		elif _unit.attack_state == Combat.AttackState.SPECIAL:
 			if not _sticker_parent == _special_sticker:
 				_sticker_parent.remove_child(_sticker_highlight)
 				_special_sticker.add_child(_sticker_highlight)

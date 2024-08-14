@@ -34,19 +34,34 @@ var reactions: Array[Skill]
 @export
 var max_health: int = 10
 @export
-var movement_range: int = 5
+var _movement_range: int = 5
+var _movement_modifier: int
+var movement_range: int:
+	get:
+		return _movement_range + _movement_modifier
+
 @export
-var evasion: int = 4
+var _evasion: int = 4
+var _evasion_modifier: int
+var evasion: int:
+	get:
+		return _evasion + _evasion_modifier
 @export
-var accuracy: int = 4
+var _accuracy: int = 4
+var _accuracy_modifer: int
+var accuracy: int:
+	get:
+		return _accuracy + _accuracy_modifer
+		
+
 
 var health: int
 var facing: Vector2i
 var ready_for_battle := false
 var current_tile: Vector2i
-var status: Combat.Status
+var status: Array[StatusEffect]
 var attack_state: Combat.AttackState
-var weapon: Weapon
+var improvised_weapon: ImprovisedWeapon
 
 @onready
 var sprite: Sprite2D = $CharacterSprite
@@ -84,12 +99,14 @@ func notify_impact() -> void:
 	target_hit.emit()
 
 
-func get_tile() -> Vector2i:
-	return GameState.current_level.get_tile(global_position)
-
-
 func is_hit(hit_chance: float) -> bool:
 	return (float(hit_chance) / float(evasion)) > randf()
+
+
+func drop_weapon() -> void:
+	attack_state = Combat.AttackState.BASIC
+	improvised_weapon = null
+	#TODO play drop animation on skill animator
 
 
 func take_damage(skill: Skill, direction: Vector2, hit_chance: float, hit_signal: Signal, multiplier: float = 1) -> void:
@@ -105,7 +122,9 @@ func take_damage(skill: Skill, direction: Vector2, hit_chance: float, hit_signal
 
 	if hit_connected:
 		for effect: StatusEffect in skill.status_effects:
-			_process_status_effect(effect, multiplier)
+			effect.multiplier = multiplier
+			status.append(effect)
+			_process_status_effect(effect)
 	
 		if health <= 0:
 			died.emit()
@@ -119,22 +138,35 @@ func take_damage(skill: Skill, direction: Vector2, hit_chance: float, hit_signal
 	action_processed.emit()
 
 
-func _process_status_effect(effect: StatusEffect, multiplier: float) -> void:
+func _process_status_effect(effect: StatusEffect) -> void:
 	if effect.status == Combat.Status.HIT:
-		health -= effect.value * multiplier
+		health -= effect.value * effect.multiplier
+	elif effect.status == Combat.Status.SLOWED:
+		_movement_modifier += effect.value * effect.multiplier
+	elif effect.status == Combat.Status.DAZED:
+		_accuracy_modifer += effect.value * effect.multiplier
 
 
 func start_turn() -> void:
 	basic_skill.cool_down_status = min(basic_skill.cool_down_status + 1, basic_skill.cool_down)
-	
 	if special:
 		special.cool_down_status = min(special.cool_down_status + 1, special.cool_down)
 
+	for effect: StatusEffect in status:
+		effect.duration
 
 
 func end_turn() -> void:
 	GameState.current_level.update_unit_registry(current_tile, self)
 	EventBus.turn_ended.emit.call_deferred()
+	
+	for effect: StatusEffect in status:
+		effect.duration -= 1
+	
+	status = status.filter(func(x: StatusEffect): return x.duration > 0)
+	
+	for effect: StatusEffect in status:
+		_process_status_effect(effect)
 	
 
 func process_action(tile: Vector2i, attack_range: RangeStruct, state: TurnState) -> State:
@@ -152,8 +184,16 @@ func process_action(tile: Vector2i, attack_range: RangeStruct, state: TurnState)
 			EventBus.timer_stopped.emit()
 			if attack_state == Combat.AttackState.BASIC:
 				return basic_skill.state.new(basic_skill, unit.current_tile)
-			else:
+			elif attack_state == Combat.AttackState.SPECIAL:
 				return special.state.new(special, unit.current_tile)
+			elif attack_state == Combat.AttackState.IMPROV:
+				return improvised_weapon.state.new(improvised_weapon, unit.current_tile)
+			elif attack_state == Combat.AttackState.IMPROV_THROW:
+				return ImprovisedWeaponThrowState.new(improvised_weapon, unit.current_tile)
+	elif GameState.current_level.get_interactable(tile):
+		improvised_weapon = GameState.current_level.take_interactable(tile)
+		attack_state = Combat.AttackState.IMPROV
+		state.interacted = true
 	return
 
 
@@ -174,12 +214,34 @@ func create_range_astar(range_struct: RangeStruct, manhattan_range: int) -> ASta
 	return astar
 
 
-func draw_ranges(attack_range: RangeStruct, movement_range: RangeStruct, attack_atlas_coords: Vector2i, overlap_atlas_coords: Vector2i) -> void:
+func update_ranges(movement_range: RangeStruct, interactable_range: Array[Vector2i]) -> RangeStruct:
 	# color tiles differently when attacks overlap with movement 
+	var skill_range: RangeStruct
+	var attack_atlas_coords: Vector2i
+	var overlap_atlas_coords: Vector2i
+	var is_ally: bool = self is Ally
+	
+	if attack_state == Combat.AttackState.BASIC:
+		skill_range = GameState.current_level.request_range(current_tile, basic_skill.min_range, basic_skill.max_range, basic_skill.range_shape, is_ally, true, true)
+		attack_atlas_coords = Global.RETICLE_ATTACK_ALTAS_COORDS
+		overlap_atlas_coords = Global.RETICLE_SPECIAL_2_ATLAS_COORDS
+	elif attack_state == Combat.AttackState.SPECIAL:
+		skill_range = GameState.current_level.request_range(current_tile, special.min_range, special.max_range, special.range_shape, is_ally, true, true)
+		attack_atlas_coords = Global.RETICLE_SPECIAL_1_ALTAS_COORDS
+		overlap_atlas_coords = Global.RETICLE_CURE_1_ATLAS_COORDS
+	elif attack_state == Combat.AttackState.IMPROV:
+		skill_range = GameState.current_level.request_range(current_tile, improvised_weapon.min_range, improvised_weapon.max_range, improvised_weapon.range_shape, is_ally, true, true)
+		attack_atlas_coords = Global.RETICLE_ATTACK_ALTAS_COORDS
+		overlap_atlas_coords = Global.RETICLE_SPECIAL_2_ATLAS_COORDS
+	elif attack_state == Combat.AttackState.IMPROV_THROW:
+		skill_range = GameState.current_level.request_range(current_tile, improvised_weapon.min_throw_range, improvised_weapon.max_throw_range, Combat.RangeShape.DIAMOND, is_ally, true, true)
+		attack_atlas_coords = Global.RETICLE_SPECIAL_1_ALTAS_COORDS
+		overlap_atlas_coords = Global.RETICLE_CURE_1_ATLAS_COORDS
+	
 	var overlap_tiles: Array[Vector2i]
 	var attack_only_tiles: Array[Vector2i]
 	
-	for tile in attack_range.range_tiles:
+	for tile in skill_range.range_tiles:
 		if tile in movement_range.range_tiles:
 			overlap_tiles.append(tile)
 		else:
@@ -187,12 +249,15 @@ func draw_ranges(attack_range: RangeStruct, movement_range: RangeStruct, attack_
 	
 	GameState.current_level.reset_map()
 	GameState.current_level.draw_range(movement_range.range_tiles, Global.RETICLE_MOVE_ALTAS_COORDS)
-	GameState.current_level.draw_range(attack_range.blocked_tiles, Global.RETICLE_BLOCKED_ALTAS_COORDS)
+	GameState.current_level.draw_range(skill_range.blocked_tiles, Global.RETICLE_BLOCKED_ALTAS_COORDS)
 	GameState.current_level.draw_range(movement_range.blocked_tiles, Global.RETICLE_BLOCKED_ALTAS_COORDS)
 	GameState.current_level.draw_range(attack_only_tiles, attack_atlas_coords)
 	GameState.current_level.draw_range(overlap_tiles, overlap_atlas_coords)
+	GameState.current_level.draw_range(interactable_range, Global.RETICLE_INTERACTABLE_ATLAS_COORDS)
 	GameState.current_level.map.set_cell(current_tile, 0, Global.RETICLE_MOVE_ALTAS_COORDS)
 	GameState.current_level.select_tile(current_tile)
+	
+	return skill_range
 
 
 func process_movement(delta: float, tile_path: Array[Vector2i]) -> Array[Vector2i]:
@@ -214,5 +279,5 @@ func process_movement(delta: float, tile_path: Array[Vector2i]) -> Array[Vector2
 		if not tile_path.is_empty() and \
 		path_position.distance_to(global_position) < map_position.distance_to(global_position):
 			current_tile = tile_path[0]
-				
+			GameState.current_level.update_unit_registry(current_tile, self)
 	return tile_path

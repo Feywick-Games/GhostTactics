@@ -17,6 +17,7 @@
 script = ExtResource("4_u3oph")
 status = 0
 value = 2
+duration = 1
 
 [sub_resource type="Resource" id="Resource_1kfok"]
 script = ExtResource("3_y0fl4")
@@ -26,6 +27,7 @@ character_animation = ""
 skill_animation = ""
 max_range = 1
 min_range = 0
+range_shape = 0
 state = ExtResource("4_1eaca")
 cool_down = 3
 status_effects = Array[ExtResource("4_u3oph")]([SubResource("Resource_n0ksn")])
@@ -562,7 +564,6 @@ character_name = "Mei"
 turn_portrait_scene = ExtResource("3_qngi6")
 basic_skill = SubResource("Resource_1kfok")
 special = ExtResource("7_as5tn")
-movement_range = 3
 
 [node name="CharacterSprite" parent="." index="0"]
 position = Vector2(0, 2)

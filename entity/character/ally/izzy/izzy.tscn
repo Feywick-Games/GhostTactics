@@ -21,6 +21,7 @@ character_animation = "idle"
 skill_animation = ""
 max_range = 1
 min_range = 0
+range_shape = 0
 state = ExtResource("3_tnq7t")
 cool_down = 1
 status_effects = Array[ExtResource("3_jkw71")]([])

@@ -82,7 +82,7 @@ func _push(delta: float) -> void:
 				_o_target.take_damage(_skill, _direction, INF, _character.target_hit)
 		else:
 			_target_unit.take_damage(_skill, _direction, INF, _character.target_hit)
-		_character.target_hit.emit()
+		_character.notify_impact()
 
 
 func update(delta: float) -> State:

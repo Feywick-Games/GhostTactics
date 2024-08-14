@@ -15,11 +15,12 @@ func enter() -> void:
 	units_on_field.shuffle()
 	var target_list: Array[Ally]
 	_start_tile = _enemy.current_tile
-	_movement_range = GameState.current_level.request_range(_enemy.current_tile, 0,  _enemy.movement_range, false, [_start_tile])
-	_attack_range = GameState.current_level.request_range(_enemy.current_tile, _enemy.basic_skill.min_range, _enemy.basic_skill.max_range, false, [_start_tile], true, true)
-	
+	_movement_range = GameState.current_level.request_range(_enemy.current_tile, 0,  _enemy.movement_range, Combat.RangeShape.DIAMOND, false)
+	_attack_range = GameState.current_level.request_range(_enemy.current_tile, _enemy.basic_skill.min_range, _enemy.basic_skill.max_range, _enemy.basic_skill.range_shape, false, true, true)
+	_interactable_range =  GameState.current_level.request_range(_enemy.current_tile, 0,  _enemy.movement_range + 1, Combat.RangeShape.DIAMOND, false).blocked_tiles
+	_interactable_range = GameState.current_level.get_interactable_tiles(_interactable_range)
 	for tile: Vector2i in _movement_range.range_tiles:
-		var valid_tiles := GameState.current_level.request_range(tile, _enemy.basic_skill.min_range, _enemy.basic_skill.max_range, false, [_start_tile], true, true)
+		var valid_tiles := GameState.current_level.request_range(tile, _enemy.basic_skill.min_range, _enemy.basic_skill.max_range, _enemy.basic_skill.range_shape, false, true, true)
 		for valid: Vector2i in valid_tiles.range_tiles:
 			if valid not in _full_attack_range:
 				_full_attack_range.append(valid)
@@ -84,13 +85,7 @@ func update(delta: float) -> State:
 	
 	
 	if current_tile != _enemy.current_tile:
-		if _enemy.attack_state == Combat.AttackState.BASIC:
-			_attack_range = GameState.current_level.request_range(_enemy.current_tile, _enemy.basic_skill.min_range, _enemy.basic_skill.max_range, false, [_start_tile], true, true)
-			_enemy.draw_ranges(_attack_range, _movement_range, Global.RETICLE_ATTACK_ALTAS_COORDS, Global.RETICLE_SPECIAL_2_ATLAS_COORDS)
-		elif _enemy.attack_state == Combat.AttackState.SPECIAL:
-			_attack_range = GameState.current_level.request_range(_enemy.current_tile, _enemy.special.min_range, _enemy.special.max_range, false, [_start_tile], true, true)
-			_enemy.draw_ranges(_attack_range, _movement_range, _special_atlas_coords, _special_overlap_atlas_coords)
-	
+		_attack_range = _enemy.update_ranges(_movement_range,  _interactable_range)
 	if not _exiting and _tile_path.is_empty() and _is_acting:
 		return _enemy.process_action(_target.current_tile, _attack_range, self)
 	elif _exiting or (_tile_path.is_empty() and not _is_acting):

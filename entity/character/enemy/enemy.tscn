@@ -15,6 +15,7 @@
 script = ExtResource("7_g3nm3")
 status = 0
 value = 2
+duration = 1
 
 [sub_resource type="Resource" id="Resource_3dmcj"]
 script = ExtResource("6_ju21i")
@@ -24,6 +25,7 @@ character_animation = "idle"
 skill_animation = ""
 max_range = 1
 min_range = 0
+range_shape = 0
 state = ExtResource("7_vjtmd")
 cool_down = 1
 status_effects = Array[ExtResource("7_g3nm3")]([SubResource("Resource_inb1m")])
@@ -42,7 +44,6 @@ turn_portrait_scene = ExtResource("3_fh3m0")
 init_state = ExtResource("3_yk16s")
 turn_state = ExtResource("4_w2x43")
 basic_skill = SubResource("Resource_3dmcj")
-movement_range = 2
 
 [node name="CharacterSprite" parent="." index="0"]
 position = Vector2(0, 9)
