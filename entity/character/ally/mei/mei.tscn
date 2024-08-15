@@ -578,9 +578,6 @@ offset = Vector2(0, -16)
 value = 99.0
 texture_under = ExtResource("9_yqngp")
 
-[node name="DamageBar" parent="CharacterSprite/HealthBar" index="0"]
-layout_mode = 0
-
 [node name="CollisionShape2D" parent="." index="1"]
 position = Vector2(-1, -1)
 

@@ -29,6 +29,7 @@ texture_progress = ExtResource("4_5lxke")
 show_behind_parent = true
 z_index = 1
 z_as_relative = false
+layout_mode = 0
 offset_right = 40.0
 offset_bottom = 40.0
 value = 79.0

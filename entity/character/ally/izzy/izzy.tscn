@@ -647,9 +647,6 @@ value = 99.0
 texture_under = ExtResource("8_rusp6")
 
 [node name="CollisionShape2D" parent="." index="1"]
-show_behind_parent = false
-z_index = 0
-z_as_relative = true
 position = Vector2(-1, 0)
 
 [node name="ActionAnimator" parent="." index="2"]
