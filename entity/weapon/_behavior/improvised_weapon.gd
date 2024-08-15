@@ -10,13 +10,15 @@ var durability: int = 1
 var movement_penalty: int
 @export
 var max_throw_range: int = 4
+@export
+var throw_aoe: Array[Vector2i] = [Vector2i.ZERO]
 
 var min_throw_range: int = 1
+var throw_skill: Skill
 
 func _init() -> void:
 	if sticker == Skill.DEFAULT_STICKER:
 		sticker = IMPROV_STICKER
-
 
 func is_broken() -> bool:
 	return durability <= 0

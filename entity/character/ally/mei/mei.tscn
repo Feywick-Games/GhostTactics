@@ -1,4 +1,4 @@
-[gd_scene load_steps=26 format=3 uid="uid://bctkkdhwjgs0u"]
+[gd_scene load_steps=27 format=3 uid="uid://bctkkdhwjgs0u"]
 
 [ext_resource type="PackedScene" uid="uid://cm7s3l5cikm6u" path="res://entity/character/ally/ally.tscn" id="1_2hyto"]
 [ext_resource type="Texture2D" uid="uid://hqtvgvbj0hk6" path="res://entity/character/ally/mei/_sprite/mei_idle_down.png" id="2_446ld"]
@@ -12,11 +12,12 @@
 [ext_resource type="Texture2D" uid="uid://btn2eksvhguv2" path="res://entity/character/ally/mei/_sprite/mei_idle_cardinal_up.png" id="5_uc8jj"]
 [ext_resource type="Resource" uid="uid://fneqo5f1qdrk" path="res://entity/character/ally/izzy/_special/push_skill.tres" id="7_as5tn"]
 [ext_resource type="Texture2D" uid="uid://ciq51gelbrpy" path="res://entity/character/ally/mei/_sprite/mei_idle_cardinal_down.png" id="9_bngtx"]
+[ext_resource type="Texture2D" uid="uid://b8k687sb6a6rk" path="res://ui/health_bar/_sprite/health_bar_background.png" id="9_yqngp"]
 
 [sub_resource type="Resource" id="Resource_n0ksn"]
 script = ExtResource("4_u3oph")
 status = 0
-value = 2
+value = 4
 duration = 1
 
 [sub_resource type="Resource" id="Resource_1kfok"]
@@ -25,12 +26,14 @@ name = "Kick"
 sticker = ExtResource("5_84nbx")
 character_animation = ""
 skill_animation = ""
-max_range = 1
+max_range = 3
 min_range = 0
 range_shape = 0
 state = ExtResource("4_1eaca")
-cool_down = 3
+cool_down = 0
 status_effects = Array[ExtResource("4_u3oph")]([SubResource("Resource_n0ksn")])
+aoe = Array[Vector2i]([Vector2i(0, 0), Vector2i(0, -1), Vector2i(0, 1), Vector2i(-1, 0), Vector2i(1, 0)])
+range_type = 1
 
 [sub_resource type="Animation" id="Animation_8c2px"]
 length = 0.001
@@ -564,11 +567,19 @@ character_name = "Mei"
 turn_portrait_scene = ExtResource("3_qngi6")
 basic_skill = SubResource("Resource_1kfok")
 special = ExtResource("7_as5tn")
+_accuracy = 3
 
 [node name="CharacterSprite" parent="." index="0"]
 position = Vector2(0, 2)
 texture = ExtResource("2_446ld")
 offset = Vector2(0, -16)
+
+[node name="HealthBar" parent="CharacterSprite" index="0"]
+value = 99.0
+texture_under = ExtResource("9_yqngp")
+
+[node name="DamageBar" parent="CharacterSprite/HealthBar" index="0"]
+layout_mode = 0
 
 [node name="CollisionShape2D" parent="." index="1"]
 position = Vector2(-1, -1)

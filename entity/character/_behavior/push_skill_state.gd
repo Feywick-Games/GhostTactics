@@ -82,6 +82,7 @@ func _push(delta: float) -> void:
 				_o_target.take_damage(_skill, _direction, INF, _character.target_hit)
 		else:
 			_target_unit.take_damage(_skill, _direction, INF, _character.target_hit)
+		_target_unit.action_processed.connect(end_turn)
 		_character.notify_impact()
 
 
@@ -101,12 +102,13 @@ func update(delta: float) -> State:
 					var unit = GameState.current_level.get_unit_from_tile(_target_tile)
 					unit.take_damage(_skill, _character.facing,  _character.accuracy, _character.target_hit)
 					_character.notify_impact()
+					unit.action_processed.connect(end_turn)
 				else:
 					_push_range.append(_target_tile + (_direction * increment))
 					_draw_range()
 			
 		# TODO account for push animation
-		elif Input.is_action_just_released("accept"):
+		elif Input.is_action_just_released("accept") and not _exiting:
 			_target_unit = GameState.current_level.get_unit_from_tile(_target_tile)
 			var is_hit = _target_unit.is_hit(_character.accuracy)
 			if is_hit:
@@ -120,7 +122,3 @@ func update(delta: float) -> State:
 	elif not _exiting:
 		_push(delta)
 	return
-
-
-func exit() -> void:
-	GameState.current_level.reset_map()
