@@ -8,12 +8,14 @@
 [sub_resource type="Resource" id="Resource_dj1am"]
 script = ExtResource("3_h12bb")
 status = 0
-value = 2
+value = 6
+duration = 1
 
 [sub_resource type="Resource" id="Resource_jr16b"]
 script = ExtResource("3_h12bb")
 status = 1
 value = 4
+duration = 1
 
 [resource]
 script = ExtResource("1_do42a")
@@ -23,6 +25,9 @@ character_animation = ""
 skill_animation = "idle"
 max_range = 1
 min_range = 0
+range_shape = 0
 state = ExtResource("2_81v7l")
-cool_down = 3
+cool_down = 0
 status_effects = Array[ExtResource("3_h12bb")]([SubResource("Resource_dj1am"), SubResource("Resource_jr16b")])
+aoe = Array[Vector2i]([Vector2i(0, 0)])
+range_type = 0

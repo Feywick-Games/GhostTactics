@@ -259,14 +259,16 @@ func draw_range(tiles: Array[Vector2i], atlas_coords: Vector2i) -> void:
 		map.set_cell(tile, 0, atlas_coords)
 
 
-
 func select_tile(tile: Vector2i, select := true) -> void:
 	
 	var atlas_coords: Vector2i = map.get_cell_atlas_coords(tile)
+		
 	if select:
-		map.set_cell(tile, 0, atlas_coords + Vector2i.RIGHT)
+		atlas_coords.x = 1
+		map.set_cell(tile, 0, atlas_coords)
 	else:
-		map.set_cell(tile, 0, atlas_coords - Vector2i.RIGHT)
+		atlas_coords.x = 0
+		map.set_cell(tile, 0, atlas_coords)
 
 
 func get_interactable_tiles(tiles: Array[Vector2i]) -> Array[Vector2i]:

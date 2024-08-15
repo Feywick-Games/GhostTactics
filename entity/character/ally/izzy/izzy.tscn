@@ -1,4 +1,4 @@
-[gd_scene load_steps=26 format=3 uid="uid://c3ow1ifjec62m"]
+[gd_scene load_steps=28 format=3 uid="uid://c3ow1ifjec62m"]
 
 [ext_resource type="PackedScene" uid="uid://cm7s3l5cikm6u" path="res://entity/character/ally/ally.tscn" id="1_abh6s"]
 [ext_resource type="Script" path="res://data/combat/skill.gd" id="2_d2041"]
@@ -9,11 +9,18 @@
 [ext_resource type="Resource" uid="uid://fneqo5f1qdrk" path="res://entity/character/ally/izzy/_special/push_skill.tres" id="6_j04wh"]
 [ext_resource type="Texture2D" uid="uid://bel6ycldg65i6" path="res://entity/character/ally/izzy/_sprite/izzy_idle_up.png" id="6_wmewt"]
 [ext_resource type="Texture2D" uid="uid://bsa4qbod60we" path="res://entity/character/ally/izzy/_sprite/izzy_idle_cardinal_down.png" id="8_134m7"]
+[ext_resource type="Texture2D" uid="uid://b8k687sb6a6rk" path="res://ui/health_bar/_sprite/health_bar_background.png" id="8_rusp6"]
 [ext_resource type="Texture2D" uid="uid://dkgjktshrs3vf" path="res://entity/character/ally/izzy/_sprite/izzy_idle_cardinal_up.png" id="9_ce5tx"]
 [ext_resource type="Texture2D" uid="uid://b4ecpqhivu5tk" path="res://entity/character/ally/izzy/_sprite/izzy_basic_attack_down.png" id="10_71qqk"]
 [ext_resource type="Texture2D" uid="uid://dphldatphshsn" path="res://entity/character/ally/izzy/_sprite/izzy_idle_cardinal_left.png" id="10_ondk7"]
 
-[sub_resource type="Resource" id="Resource_owjtq"]
+[sub_resource type="Resource" id="Resource_xdj1t"]
+script = ExtResource("3_jkw71")
+status = 0
+value = 4
+duration = 1
+
+[sub_resource type="Resource" id="Resource_v85yj"]
 script = ExtResource("2_d2041")
 name = "Punch"
 sticker = ExtResource("4_sniu6")
@@ -24,7 +31,9 @@ min_range = 0
 range_shape = 0
 state = ExtResource("3_tnq7t")
 cool_down = 1
-status_effects = Array[ExtResource("3_jkw71")]([])
+status_effects = Array[ExtResource("3_jkw71")]([SubResource("Resource_xdj1t")])
+aoe = Array[Vector2i]([Vector2i(0, 0)])
+range_type = 0
 
 [sub_resource type="Animation" id="Animation_tjtew"]
 length = 0.001
@@ -625,7 +634,7 @@ position = Vector2(0, -2)
 follow_order = 1
 is_animated = true
 character_name = "Izzy"
-basic_skill = SubResource("Resource_owjtq")
+basic_skill = SubResource("Resource_v85yj")
 special = ExtResource("6_j04wh")
 
 [node name="CharacterSprite" parent="." index="0"]
@@ -633,7 +642,14 @@ position = Vector2(0, 3)
 texture = ExtResource("3_sk6vo")
 offset = Vector2(0, -16)
 
+[node name="HealthBar" parent="CharacterSprite" index="0"]
+value = 99.0
+texture_under = ExtResource("8_rusp6")
+
 [node name="CollisionShape2D" parent="." index="1"]
+show_behind_parent = false
+z_index = 0
+z_as_relative = true
 position = Vector2(-1, 0)
 
 [node name="ActionAnimator" parent="." index="2"]

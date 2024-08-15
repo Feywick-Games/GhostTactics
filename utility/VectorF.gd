@@ -38,5 +38,4 @@ static func snap_direction(direction: Vector2, eight_direction:= false) -> Vecto
 			if eight_direction:
 				if theta < PI * 7.0/8.0:
 					eight_direction_vec = Vector2(-1,-1)
-
-	return eight_direction_vec if not eight_direction_vec == Vector2.INF else direction
+	return eight_direction_vec if eight_direction else direction

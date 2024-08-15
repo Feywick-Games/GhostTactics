@@ -24,3 +24,8 @@ enum RangeShape {
 	DIAMOND,
 	CROSS
 }
+
+enum RangeType {
+	MELEE,
+	RANGED
+}

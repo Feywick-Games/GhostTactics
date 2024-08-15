@@ -32,7 +32,7 @@ var reactions: Array[Skill]
 
 @export_category("Unit Stats")
 @export
-var max_health: int = 10
+var max_health: int = 20
 @export
 var _movement_range: int = 5
 var _movement_modifier: int
@@ -71,10 +71,14 @@ var animator: DirectionalAnimator = $ActionAnimator
 var skill_animator: DirectionalAnimator = $SkillAnimator
 
 @onready
-var _health_bar: TextureProgressBar = $CharacterSprite/HealthBar
+var health_bar: TextureProgressBar = $CharacterSprite/HealthBar
+@onready
+var hit_chance_label: Label = $CharacterSprite/HealthBar/HitChanceLabel
+@onready
+var damage_bar: TextureProgressBar = $CharacterSprite/HealthBar/DamageBar
 
 func _ready() -> void:
-	_health_bar.hide()
+	health_bar.hide()
 	
 	var state_machine := StateMachine.new(self, init_state.new())
 	add_child(state_machine)
@@ -85,14 +89,16 @@ func start_encounter() -> void:
 	if special:
 		special.cool_down_status = special.cool_down
 	health = max_health
-	_health_bar.show()
-	_health_bar.max_value = max_health
-	_health_bar.value = _health_bar.max_value
-	_health_bar.step = float(_health_bar.max_value) / HEALTH_BAR_PIXEL_WIDTH
+	health_bar.max_value = max_health
+	health_bar.value = health_bar.max_value
+	health_bar.step = float(health_bar.max_value) / HEALTH_BAR_PIXEL_WIDTH
+	damage_bar.value = health
+	damage_bar.max_value = max_health
+	damage_bar.step = float(health_bar.max_value) / HEALTH_BAR_PIXEL_WIDTH
 
 
 func end_encounter() -> void:
-	_health_bar.hide()
+	health_bar.hide()
 
 
 func notify_impact() -> void:
@@ -134,7 +140,8 @@ func take_damage(skill: Skill, direction: Vector2, hit_chance: float, hit_signal
 		print("attack missed " + name)
 	status = status
 
-	_health_bar.value = health
+	health_bar.value = health
+	damage_bar.value = health
 	action_processed.emit()
 
 
@@ -149,9 +156,13 @@ func _process_status_effect(effect: StatusEffect) -> void:
 
 func start_turn() -> void:
 	basic_skill.cool_down_status = min(basic_skill.cool_down_status + 1, basic_skill.cool_down)
+	
 	if special:
 		special.cool_down_status = min(special.cool_down_status + 1, special.cool_down)
 
+	health_bar.value = health
+	health_bar.show()
+	
 	for effect: StatusEffect in status:
 		effect.duration
 
@@ -159,6 +170,8 @@ func start_turn() -> void:
 func end_turn() -> void:
 	GameState.current_level.update_unit_registry(current_tile, self)
 	EventBus.turn_ended.emit.call_deferred()
+	
+	health_bar.hide()
 	
 	for effect: StatusEffect in status:
 		effect.duration -= 1
@@ -168,6 +181,8 @@ func end_turn() -> void:
 	for effect: StatusEffect in status:
 		_process_status_effect(effect)
 	
+	EventBus.tiles_highlighted.emit([] as Array[Vector2i], [] as Array[StatusEffect], 0)
+
 
 func process_action(tile: Vector2i, attack_range: RangeStruct, state: TurnState) -> State:
 	var dir := Vector2(tile - current_tile).normalized()
@@ -189,7 +204,7 @@ func process_action(tile: Vector2i, attack_range: RangeStruct, state: TurnState)
 			elif attack_state == Combat.AttackState.IMPROV:
 				return improvised_weapon.state.new(improvised_weapon, unit.current_tile)
 			elif attack_state == Combat.AttackState.IMPROV_THROW:
-				return ImprovisedWeaponThrowState.new(improvised_weapon, unit.current_tile)
+				return ImprovisedWeaponThrowState.new(improvised_weapon.throw_skill, unit.current_tile)
 	elif GameState.current_level.get_interactable(tile):
 		improvised_weapon = GameState.current_level.take_interactable(tile)
 		attack_state = Combat.AttackState.IMPROV
