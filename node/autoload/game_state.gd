@@ -15,8 +15,7 @@ func add_to_ally_order(ally: Character, index: int) -> void:
 
 
 func _on_ally_died(ally: Ally) -> void:
-	var idx: int = ally_order.find(ally)
-	ally_order.remove_at(idx)
+	ally_order.erase(ally)
 	
 	for i in range(len(ally_order)):
 		ally_order[i].follow_order = i

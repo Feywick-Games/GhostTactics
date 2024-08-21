@@ -204,7 +204,7 @@ func process_action(tile: Vector2i, attack_range: RangeStruct, state: TurnState)
 			elif attack_state == Combat.AttackState.IMPROV:
 				return improvised_weapon.state.new(improvised_weapon, unit.current_tile)
 			elif attack_state == Combat.AttackState.IMPROV_THROW:
-				return ImprovisedWeaponThrowState.new(improvised_weapon.throw_skill, unit.current_tile)
+				return ImprovisedWeaponThrowState.new(improvised_weapon, unit.current_tile)
 	elif GameState.current_level.get_interactable(tile):
 		improvised_weapon = GameState.current_level.take_interactable(tile)
 		attack_state = Combat.AttackState.IMPROV

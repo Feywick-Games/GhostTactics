@@ -1,8 +1,9 @@
-[gd_scene load_steps=7 format=3 uid="uid://bcnpnplhpud5y"]
+[gd_scene load_steps=8 format=3 uid="uid://bcnpnplhpud5y"]
 
 [ext_resource type="Script" path="res://ui/turn_display/_behavior/turn_portrait.gd" id="1_egx1p"]
 [ext_resource type="Texture2D" uid="uid://bnaof4rcviqee" path="res://entity/character/ally/_sprite/turn_portrait_small.png" id="2_wjbv8"]
 [ext_resource type="Texture2D" uid="uid://ck7ju73ierpxf" path="res://entity/character/ally/_sprite/turn_portrait_full_ally_1.png" id="3_4o6fg"]
+[ext_resource type="FontFile" uid="uid://c5u4kdxxyrrmr" path="res://ui/font/dogicabold.ttf" id="4_uw6gj"]
 
 [sub_resource type="Animation" id="Animation_66erf"]
 length = 0.001
@@ -55,11 +56,22 @@ libraries = {
 }
 
 [node name="SmallPortrait" type="Sprite2D" parent="."]
-position = Vector2(8, 8)
 texture = ExtResource("2_wjbv8")
+centered = false
 hframes = 4
 
 [node name="FullPortrait" type="Sprite2D" parent="."]
 texture = ExtResource("3_4o6fg")
 centered = false
 hframes = 7
+
+[node name="Label" type="Label" parent="FullPortrait"]
+offset_left = 2.0
+offset_top = 53.0
+offset_right = 61.0
+offset_bottom = 62.0
+theme_override_fonts/font = ExtResource("4_uw6gj")
+theme_override_font_sizes/font_size = 8
+text = "Mei"
+horizontal_alignment = 1
+vertical_alignment = 1
