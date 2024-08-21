@@ -12,12 +12,15 @@ func enter() -> void:
 	
 	if not _skill.skill_animation.is_empty():
 		_character.skill_animator.play_directional(_skill.skill_animation, _direction)
-	
+	_hit_targets(_skill.aoe, _skill.range_type)
+
+
+func _hit_targets(aoe: Array[Vector2i], range_type: Combat.RangeType) -> void:
 	_action_to_process = 0
-	for tile_offset in _skill.aoe:
+	for tile_offset in aoe:
 		var tile: Vector2i
 		var offset_rotated: = Vector2i(Vector2(tile_offset).rotated(_direction.angle()))
-		if _skill.range_type == Combat.RangeType.MELEE:
+		if range_type == Combat.RangeType.MELEE:
 			tile = _character.current_tile + Vector2i(_direction) + offset_rotated
 		else:
 			tile = _target_tile + offset_rotated

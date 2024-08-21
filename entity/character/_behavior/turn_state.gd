@@ -15,7 +15,6 @@ var _astar: AStarGrid2D
 var _start_tile: Vector2i
 var _exiting := false
 var _encounter_ended := false
-var _action_to_process: int = 1
 var _highlighted_tile: Vector2i
 
 func enter() -> void:
@@ -34,9 +33,7 @@ func update(_delta: float) -> State:
 
 
 func end_turn() -> void:
-	_action_to_process -=1
-	if _action_to_process == 0:
-		_exiting = true
+	_exiting = true
 	
 func exit() -> void:
 	GameState.current_level.reset_map()

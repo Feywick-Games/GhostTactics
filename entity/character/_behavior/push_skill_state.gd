@@ -15,6 +15,8 @@ var _time_since_exiting: float = 0
 var _max_is_collision := false
 var _o_target: Character
 var _push_distance: int
+var _tile_path: Array[Vector2i]
+var _time_since_move: float
 
 func enter() -> void:
 	super.enter()
