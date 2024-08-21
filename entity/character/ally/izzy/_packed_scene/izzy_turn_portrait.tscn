@@ -1,0 +1,14 @@
+[gd_scene load_steps=4 format=3 uid="uid://bap3a4oqvrftr"]
+
+[ext_resource type="PackedScene" uid="uid://bcnpnplhpud5y" path="res://ui/turn_display/_packed_scene/turn_portrait.tscn" id="1_f1cmh"]
+[ext_resource type="Texture2D" uid="uid://bpiqvpjl2wlf6" path="res://entity/character/ally/izzy/_sprite/izzy_turn_portrait_small.png" id="2_dykkl"]
+[ext_resource type="Texture2D" uid="uid://bm2obdmybkcqr" path="res://entity/character/ally/izzy/_sprite/izzy_turn_portrait.png" id="2_lux4x"]
+
+[node name="IzzyTurnPortrait" instance=ExtResource("1_f1cmh")]
+
+[node name="SmallPortrait" parent="." index="1"]
+texture = ExtResource("2_dykkl")
+hframes = 1
+
+[node name="FullPortrait" parent="." index="2"]
+texture = ExtResource("2_lux4x")

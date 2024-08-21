@@ -250,7 +250,7 @@ is_ally: bool, can_pass := false, include_opponent_tiles := false) -> RangeStruc
 	if not unit_tile in range_struct.range_tiles:
 		range_struct.range_tiles.append(unit_tile)
 	if unit_tile in range_struct.blocked_tiles:
-		range_struct.blocked_tiles.remove_at(range_struct.blocked_tiles.find(unit_tile))
+		range_struct.blocked_tiles.erase(unit_tile)
 	return range_struct
 
 
@@ -315,5 +315,5 @@ func take_interactable(tile: Vector2i) -> ImprovisedWeapon:
 	var weapon: ImprovisedWeapon = get_interactable(tile)
 	_improvised_weapon_layer.set_cell(tile, -1)
 	grid.set_point_solid(tile, false)
-	_prop_tiles.remove_at(_prop_tiles.find(tile))
+	_prop_tiles.erase(tile)
 	return weapon

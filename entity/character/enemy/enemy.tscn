@@ -52,8 +52,5 @@ position = Vector2(0, 9)
 texture = ExtResource("5_6eqwe")
 offset = Vector2(0, -20)
 
-[node name="DamageBar" parent="CharacterSprite/HealthBar" index="0"]
-layout_mode = 0
-
 [node name="CollisionShape2D" parent="." index="1"]
 shape = SubResource("RectangleShape2D_p01wl")

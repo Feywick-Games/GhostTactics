@@ -1,9 +1,9 @@
 [gd_scene load_steps=27 format=3 uid="uid://bctkkdhwjgs0u"]
 
 [ext_resource type="PackedScene" uid="uid://cm7s3l5cikm6u" path="res://entity/character/ally/ally.tscn" id="1_2hyto"]
+[ext_resource type="PackedScene" uid="uid://0vhq1ufxesi7" path="res://entity/character/ally/mei/_packed_scene/mei_turn_portrait.tscn" id="2_6fea8"]
 [ext_resource type="Texture2D" uid="uid://hqtvgvbj0hk6" path="res://entity/character/ally/mei/_sprite/mei_idle_down.png" id="2_446ld"]
 [ext_resource type="Texture2D" uid="uid://gj5ykhi8ncdt" path="res://entity/character/ally/mei/_sprite/mei_idle_up.png" id="3_in48b"]
-[ext_resource type="PackedScene" uid="uid://bpo6p5rrl0hwl" path="res://entity/character/ally/_packed_scene/turn_portrait_ally_2.tscn" id="3_qngi6"]
 [ext_resource type="Script" path="res://data/combat/skill.gd" id="3_y0fl4"]
 [ext_resource type="Script" path="res://entity/character/_behavior/basic_skill_state.gd" id="4_1eaca"]
 [ext_resource type="Script" path="res://data/combat/status_effect.gd" id="4_u3oph"]
@@ -564,7 +564,7 @@ _data = {
 [node name="Mei" instance=ExtResource("1_2hyto")]
 is_animated = true
 character_name = "Mei"
-turn_portrait_scene = ExtResource("3_qngi6")
+turn_portrait_scene = ExtResource("2_6fea8")
 basic_skill = SubResource("Resource_1kfok")
 special = ExtResource("7_as5tn")
 _accuracy = 3

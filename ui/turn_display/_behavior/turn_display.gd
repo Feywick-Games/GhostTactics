@@ -9,6 +9,7 @@ var _current_unit: Character:
 var _turn_portraits: Array[TurnPortrait]
 var _battle_started := false
 var _turn_pending := false
+var _is_first_turn := false
 
 func _ready() -> void:
 	EventBus.turn_ended.connect(_start_turn)
@@ -45,12 +46,17 @@ func _start_turn() -> void:
 	elif not allies_remaining:
 		get_tree().reload_current_scene()
 	
-	
+	if _is_first_turn:
+		_is_first_turn = false
+		for turn_portrait: TurnPortrait in _turn_portraits:
+			add_child(turn_portrait)
+
 	_turn_portraits[_current_unit_idx].reset_portrait()
 	move_child(_turn_portraits[_current_unit_idx], -1)
 	_increment_unit_index()
 	var turn_portait := _turn_portraits[_current_unit_idx]
 	turn_portait.display_full_portrait()
+	
 	EventBus.cam_follow_requested.emit(_current_unit)
 	_turn_pending = true
 
@@ -76,6 +82,7 @@ func _process(delta: float) -> void:
 
 func _on_encounter_started() -> void:
 	_turn_pending = false
+	_is_first_turn = true
 	if not visible:
 		show()
 	
@@ -90,9 +97,8 @@ func _on_encounter_started() -> void:
 		_units.append(unit)
 		unit.died.connect(_on_unit_died.bind(unit))
 		var turn_portrait: TurnPortrait = unit.turn_portrait_scene.instantiate()
+		turn_portrait.set_portrait_name(unit.character_name)
 		_turn_portraits.append(turn_portrait)
-		add_child(turn_portrait)
-		
 
 func _increment_unit_index(val: int = 1) -> void:
 	if _current_unit_idx + val < len(_units):
