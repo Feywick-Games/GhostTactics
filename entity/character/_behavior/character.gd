@@ -79,7 +79,7 @@ var damage_bar: TextureProgressBar = $CharacterSprite/HealthBar/DamageBar
 
 func _ready() -> void:
 	health_bar.hide()
-	
+	EventBus.display_requested.connect(_on_display_requested)
 	var state_machine := StateMachine.new(self, init_state.new())
 	add_child(state_machine)
 	print(self.get_class())
@@ -98,11 +98,18 @@ func start_encounter() -> void:
 
 
 func end_encounter() -> void:
-	health_bar.hide()
+	pass
 
 
 func notify_impact() -> void:
 	target_hit.emit()
+
+
+func _on_display_requested(show_display: bool) -> void:
+	if show_display:
+		health_bar.show()
+	else:
+		health_bar.hide()
 
 
 func is_hit(hit_chance: float) -> bool:
@@ -116,6 +123,7 @@ func drop_weapon() -> void:
 
 
 func take_damage(skill: Skill, direction: Vector2, hit_chance: float, hit_signal: Signal, multiplier: float = 1) -> void:
+	health_bar.show()
 	await hit_signal
 	var hit_connected: bool
 	
@@ -142,6 +150,8 @@ func take_damage(skill: Skill, direction: Vector2, hit_chance: float, hit_signal
 
 	health_bar.value = health
 	damage_bar.value = health
+	await get_tree().create_timer(2).timeout
+	health_bar.hide()
 	action_processed.emit()
 
 

@@ -11,7 +11,7 @@ func enter() -> void:
 	EventBus.encounter_ended.connect(_on_encounter_ended)
 	EventBus.tiles_highlighted.connect(_on_tiles_highlighted)
 	if _character.is_animated:
-		_character.animator.play_directional("idle", Vector2.ZERO)
+		_character.animator.play_directional("combat_idle", Vector2.ZERO)
 
 
 func _on_encounter_ended() -> void:

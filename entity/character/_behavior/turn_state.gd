@@ -21,6 +21,9 @@ func enter() -> void:
 	_character = state_machine.state_owner as Character
 	_character.start_turn()
 	EventBus.encounter_ended.connect(_on_encounter_ended)
+	
+	if _character.is_animated:
+		_character.animator.play_directional("idle")
 
 func update(_delta: float) -> State:
 	if _encounter_ended:
