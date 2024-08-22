@@ -194,17 +194,17 @@ func process_action(tile: Vector2i, attack_range: RangeStruct, state: TurnState)
 	
 	if tile in attack_range.range_tiles:
 		var unit: Character = GameState.current_level.get_unit_from_tile(tile)
-		if unit and unit != self:
+		if unit != self:
 			facing = Vector2i(Vector2(tile - current_tile).normalized().round())
 			EventBus.timer_stopped.emit()
 			if attack_state == Combat.AttackState.BASIC:
-				return basic_skill.state.new(basic_skill, unit.current_tile)
+				return basic_skill.state.new(basic_skill, tile)
 			elif attack_state == Combat.AttackState.SPECIAL:
-				return special.state.new(special, unit.current_tile)
+				return special.state.new(special, tile)
 			elif attack_state == Combat.AttackState.IMPROV:
-				return improvised_weapon.state.new(improvised_weapon, unit.current_tile)
+				return improvised_weapon.state.new(improvised_weapon, tile)
 			elif attack_state == Combat.AttackState.IMPROV_THROW:
-				return ImprovisedWeaponThrowState.new(improvised_weapon, unit.current_tile)
+				return ImprovisedWeaponThrowState.new(improvised_weapon, tile)
 	elif GameState.current_level.get_interactable(tile):
 		improvised_weapon = GameState.current_level.take_interactable(tile)
 		attack_state = Combat.AttackState.IMPROV

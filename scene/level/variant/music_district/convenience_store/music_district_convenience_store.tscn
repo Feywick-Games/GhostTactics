@@ -45,14 +45,17 @@ tile_set = ExtResource("3_j3cxe")
 [node name="Enemy" parent="." instance=ExtResource("3_qyw2t")]
 position = Vector2(220, 136)
 collision_layer = 1
+custom_priority_min = 0.0
 
 [node name="Enemy2" parent="." instance=ExtResource("3_qyw2t")]
 position = Vector2(266, 48)
 collision_layer = 1
+custom_priority_min = 0.0
 
 [node name="Enemy3" parent="." instance=ExtResource("3_qyw2t")]
 position = Vector2(350, 82)
 collision_layer = 1
+custom_priority_min = 0.0
 
 [node name="Izzy" parent="." instance=ExtResource("3_xrfhg")]
 position = Vector2(180, 112)
