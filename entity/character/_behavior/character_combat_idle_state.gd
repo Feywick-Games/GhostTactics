@@ -43,16 +43,14 @@ accuracy: int, direction: Vector2i, is_ally: bool) -> void:
 	_highlighted_status_effects = status_effects
 	_highlighted_direction = direction
 	_highlighter_is_ally = is_ally
+	if not _character.current_tile in _highlighted_tiles and _character.health_bar.visible:
+		_character.health_bar.hide()
 
 
 func _display_health() -> void:
 	if _character.current_tile in _highlighted_tiles:
 		_character.health_bar.show()
 		_character.hit_chance_label.show()
-	elif _character.health_bar.visible:
-		_character.health_bar.hide()
-		_character.hit_chance_label.hide()
-		return
 	if not _damage_taken:
 		var multiplier: int = 1
 		if _highlighter_is_ally:
@@ -97,7 +95,8 @@ func update(_delta: float) -> State:
 		return _character.init_state.new()
 	elif _turn_started:
 		return _character.turn_state.new()
-	_display_health()
+	if not _highlighted_tiles.is_empty():
+		_display_health()
 		
 	return
 
