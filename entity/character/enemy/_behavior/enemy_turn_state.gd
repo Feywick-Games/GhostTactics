@@ -1,6 +1,8 @@
 class_name EnemyTurnState
 extends TurnState
 
+const HIGHLIGHT_TIME: float = 2.5
+
 var _enemy: Enemy
 var _target: Character
 var _full_attack_range: Array[Vector2i]
@@ -9,6 +11,8 @@ var _special_atlas_coords: Vector2i = Global.RETICLE_SPECIAL_1_ALTAS_COORDS
 var _special_overlap_atlas_coords: Vector2i = Global.RETICLE_CURE_1_ATLAS_COORDS
 var _is_acting := false
 var _is_processing_custom := false
+var _time_highlight: float = 0
+var _has_highlighted := false
 
 class TargetPriority:
 	var target:  Character
@@ -159,7 +163,14 @@ func update(delta: float) -> State:
 		if current_tile != _enemy.current_tile:
 			_attack_range = _enemy.update_ranges(_movement_range,  _interactable_range)
 		if not _exiting and _tile_path.is_empty() and _is_acting:
-			return _enemy.process_action(_target.current_tile, _attack_range, self)
+			if _time_highlight >= HIGHLIGHT_TIME:
+				return _enemy.process_action(_target.current_tile, _attack_range, self)
+			else:
+				if not _has_highlighted:
+					_movement_range = RangeStruct.new()
+					_has_highlighted = true
+					_highlight_targets(_target.current_tile, true)
+				_time_highlight += delta
 		elif _exiting or (_tile_path.is_empty() and not _is_acting):
 			_enemy.end_turn()
 			return CharacterCombatIdleState.new()

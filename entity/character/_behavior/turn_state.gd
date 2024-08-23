@@ -103,4 +103,4 @@ func _highlight_targets(target_tile: Vector2i, highlight := true) -> void:
 		GameState.current_level.select_tile(target_tile, highlight)
 
 	if highlight:
-		EventBus.tiles_highlighted.emit(highlighted_tiles, status_effects, _character.accuracy)
+		EventBus.tiles_highlighted.emit(highlighted_tiles, status_effects, _character.accuracy, Vector2i(direction), _character is Ally)

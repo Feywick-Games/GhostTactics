@@ -3,8 +3,8 @@
 [ext_resource type="Script" path="res://scene/level/_behavior/level.gd" id="1_lxdcq"]
 [ext_resource type="TileSet" uid="uid://bilapom7gwcxe" path="res://scene/level/variant/music_district/convenience_store/_sprite/music_district_convenience_store_tile_set.tres" id="2_6w1bj"]
 [ext_resource type="TileSet" uid="uid://bg1ldnkshjcy8" path="res://entity/weapon/_sprite/improvised_weapon_tileset.tres" id="3_j3cxe"]
-[ext_resource type="PackedScene" uid="uid://cqgaf4b8quup7" path="res://entity/character/enemy/enemy.tscn" id="3_qyw2t"]
 [ext_resource type="PackedScene" uid="uid://c3ow1ifjec62m" path="res://entity/character/ally/izzy/izzy.tscn" id="3_xrfhg"]
+[ext_resource type="PackedScene" uid="uid://oisc6bjs6p6w" path="res://entity/character/enemy/wendigo/wendigo.tscn" id="4_0u3rc"]
 [ext_resource type="PackedScene" uid="uid://bctkkdhwjgs0u" path="res://entity/character/ally/mei/mei.tscn" id="4_bx06k"]
 [ext_resource type="Script" path="res://node/camera/tracking_camera.gd" id="4_osyqw"]
 [ext_resource type="Script" path="res://ui/turn_display/_behavior/turn_display.gd" id="5_theaw"]
@@ -42,20 +42,14 @@ collision_enabled = false
 tile_map_data = PackedByteArray("AAAJAAAAAgAAAAAAAAA=")
 tile_set = ExtResource("3_j3cxe")
 
-[node name="Enemy" parent="." instance=ExtResource("3_qyw2t")]
-position = Vector2(220, 136)
-collision_layer = 1
-custom_priority_min = 0.0
+[node name="Wendigo" parent="." instance=ExtResource("4_0u3rc")]
+position = Vector2(180, 40)
 
-[node name="Enemy2" parent="." instance=ExtResource("3_qyw2t")]
-position = Vector2(266, 48)
-collision_layer = 1
-custom_priority_min = 0.0
+[node name="Wendigo3" parent="." instance=ExtResource("4_0u3rc")]
+position = Vector2(241, 147)
 
-[node name="Enemy3" parent="." instance=ExtResource("3_qyw2t")]
-position = Vector2(350, 82)
-collision_layer = 1
-custom_priority_min = 0.0
+[node name="Wendigo2" parent="." instance=ExtResource("4_0u3rc")]
+position = Vector2(269, 147)
 
 [node name="Izzy" parent="." instance=ExtResource("3_xrfhg")]
 position = Vector2(180, 112)

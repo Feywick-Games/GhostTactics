@@ -67,7 +67,9 @@ func update(delta: float) -> State:
 		elif Input.is_action_just_pressed("cancel"):
 			if acted and not interacted:
 				acted = false
-				EventBus.tiles_highlighted.emit([] as Array[Vector2i], [] as Array[StatusEffect], 0)
+				EventBus.tiles_highlighted.emit(
+					[] as Array[Vector2i], [] as Array[StatusEffect], 0, Vector2i.ZERO, true
+				)
 				_movement_range = _starting_movement_range
 				force_redraw = true
 		elif Input.is_action_just_pressed("special"):
@@ -83,7 +85,9 @@ func update(delta: float) -> State:
 				
 				
 			if acted:
-				EventBus.tiles_highlighted.emit([] as Array[Vector2i], [] as Array[StatusEffect], 0)
+				EventBus.tiles_highlighted.emit(
+					[] as Array[Vector2i], [] as Array[StatusEffect], 0, Vector2i.ZERO, true
+				)
 			force_redraw = true
 		elif Input.is_action_just_pressed("act"):
 			acted = true
@@ -91,7 +95,8 @@ func update(delta: float) -> State:
 			_movement_range = RangeStruct.new()
 		elif  Input.is_action_just_pressed("accept") and acted:
 			_current_state = _ally.process_action(_highlighted_tile, _attack_range, self)
-			force_redraw = true
+			if _current_state:
+				force_redraw = true
 			if interacted:
 				_movement_range = RangeStruct.new()
 				_interactable_range = GameState.current_level.request_range(_ally.current_tile, 0, _ally.movement_range + 1, Combat.RangeShape.DIAMOND, true).blocked_tiles

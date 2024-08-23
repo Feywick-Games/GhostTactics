@@ -13,6 +13,7 @@ func enter() -> void:
 	_direction = (_character.global_position - GameState.current_level.tile_to_world(_character.current_tile)).normalized()
 	GameState.current_level.update_unit_registry(_character.current_tile, _character)
 	_target_position = GameState.current_level.tile_to_world(_character.current_tile)
+	_character.facing = Vector2i(VectorF.snap_direction(_direction))
 	_character.start_encounter()
 
 

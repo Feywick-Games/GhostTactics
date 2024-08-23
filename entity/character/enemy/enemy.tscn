@@ -1,11 +1,10 @@
-[gd_scene load_steps=14 format=3 uid="uid://cqgaf4b8quup7"]
+[gd_scene load_steps=13 format=3 uid="uid://cqgaf4b8quup7"]
 
 [ext_resource type="PackedScene" uid="uid://dk85fb2a3ag81" path="res://entity/character/character.tscn" id="1_13rsw"]
 [ext_resource type="Script" path="res://entity/character/enemy/_behavior/enemy.gd" id="2_iqt36"]
 [ext_resource type="PackedScene" uid="uid://bn875t12gh6w2" path="res://entity/character/enemy/_packed_scene/turn_portrait_enemy_1.tscn" id="3_fh3m0"]
 [ext_resource type="Script" path="res://entity/character/enemy/_behavior/enemy_roam_state.gd" id="3_yk16s"]
 [ext_resource type="Script" path="res://entity/character/enemy/_behavior/enemy_turn_state.gd" id="4_w2x43"]
-[ext_resource type="Texture2D" uid="uid://cw11km5rkxisp" path="res://entity/character/enemy/_sprite/wendigo_idle_down.png" id="5_6eqwe"]
 [ext_resource type="Script" path="res://data/combat/skill.gd" id="6_ju21i"]
 [ext_resource type="Script" path="res://data/combat/status_effect.gd" id="7_g3nm3"]
 [ext_resource type="Script" path="res://entity/character/_behavior/basic_skill_state.gd" id="7_vjtmd"]
@@ -56,7 +55,6 @@ basic_skill = SubResource("Resource_3dmcj")
 
 [node name="CharacterSprite" parent="." index="0"]
 position = Vector2(0, 9)
-texture = ExtResource("5_6eqwe")
 offset = Vector2(0, -20)
 
 [node name="CollisionShape2D" parent="." index="1"]

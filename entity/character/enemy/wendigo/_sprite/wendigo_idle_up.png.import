@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bxlxtatdmpf2f"
-path="res://.godot/imported/wendigo_idle_down.png-26bceb6afcd43d104288758e9784b713.ctex"
+uid="uid://cx3hr7orbrgtx"
+path="res://.godot/imported/wendigo_idle_up.png-759c1a919e8a8c54978e88afe11076b2.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://entity/character/enemy/_sprite/wendigo_idle_down.png"
-dest_files=["res://.godot/imported/wendigo_idle_down.png-26bceb6afcd43d104288758e9784b713.ctex"]
+source_file="res://entity/character/enemy/wendigo/_sprite/wendigo_idle_up.png"
+dest_files=["res://.godot/imported/wendigo_idle_up.png-759c1a919e8a8c54978e88afe11076b2.ctex"]
 
 [params]
 
