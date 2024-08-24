@@ -124,3 +124,11 @@ func update(delta: float) -> State:
 	elif not _exiting:
 		_push(delta)
 	return
+
+func calc_skill_likelihood(attack_range: RangeStruct) -> float:
+	#var push_distance: int
+	#for effect: StatusEffect in _skill.status_effects:
+		#if effect.status == Combat.Status.PUSHED:
+			#push_distance = effect.value
+	
+	return 0

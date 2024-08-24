@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://cqgaf4b8quup7"]
+[gd_scene load_steps=14 format=3 uid="uid://cqgaf4b8quup7"]
 
 [ext_resource type="PackedScene" uid="uid://dk85fb2a3ag81" path="res://entity/character/character.tscn" id="1_13rsw"]
 [ext_resource type="Script" path="res://entity/character/enemy/_behavior/enemy.gd" id="2_iqt36"]
@@ -9,6 +9,7 @@
 [ext_resource type="Script" path="res://data/combat/status_effect.gd" id="7_g3nm3"]
 [ext_resource type="Script" path="res://entity/character/_behavior/basic_skill_state.gd" id="7_vjtmd"]
 [ext_resource type="Texture2D" uid="uid://c4l71vu7ixwsl" path="res://ui/sticker/_sprite/sticker_basic_attack.png" id="8_oqdqr"]
+[ext_resource type="Resource" uid="uid://bk1spqs5rmrm8" path="res://entity/weapon/_data/broom.tres" id="10_01dq5"]
 
 [sub_resource type="Resource" id="Resource_inb1m"]
 script = ExtResource("7_g3nm3")
@@ -37,21 +38,18 @@ size = Vector2(22, 10)
 [node name="Enemy" groups=["enemy"] instance=ExtResource("1_13rsw")]
 position = Vector2(0, 5)
 script = ExtResource("2_iqt36")
-damage_priority_min = 0.296
-damage_priority_max = 1.0
-knock_out_priority_min = 1.0
-knock_out_priority_max = 1.0
-safety_priority_min = 0.5
-safety_priority_max = 1.0
-special_priority_min = 0.5
-special_priority_max = 1.0
-custom_priority_min = 0.0
-custom_priority_max = 1.0
+damage_priority = 0.5
+basic_skill_priority = 0.5
+knock_out_priority = 0.75
+safety_priority = 0.5
+special_priority = 0.75
+custom_priority = 0.0
 character_name = "Enemy"
 turn_portrait_scene = ExtResource("3_fh3m0")
 init_state = ExtResource("3_yk16s")
 turn_state = ExtResource("4_w2x43")
 basic_skill = SubResource("Resource_3dmcj")
+special = ExtResource("10_01dq5")
 
 [node name="CharacterSprite" parent="." index="0"]
 position = Vector2(0, 9)
