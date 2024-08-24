@@ -1,39 +1,12 @@
-[gd_scene load_steps=24 format=3 uid="uid://c3ow1ifjec62m"]
+[gd_scene load_steps=16 format=3 uid="uid://r5sdcdlxfmjr"]
 
-[ext_resource type="PackedScene" uid="uid://cm7s3l5cikm6u" path="res://entity/character/ally/ally.tscn" id="1_abh6s"]
-[ext_resource type="Script" path="res://data/combat/skill.gd" id="2_d2041"]
-[ext_resource type="PackedScene" uid="uid://bap3a4oqvrftr" path="res://entity/character/ally/izzy/_packed_scene/izzy_turn_portrait.tscn" id="2_y0p6f"]
-[ext_resource type="Script" path="res://data/combat/status_effect.gd" id="3_jkw71"]
-[ext_resource type="Texture2D" uid="uid://chfg67t7nwyc2" path="res://entity/character/ally/izzy/_sprite/izzy_idle_down.png" id="3_sk6vo"]
-[ext_resource type="Script" path="res://entity/character/_behavior/basic_skill_state.gd" id="3_tnq7t"]
-[ext_resource type="Texture2D" uid="uid://c4l71vu7ixwsl" path="res://ui/sticker/_sprite/sticker_basic_attack.png" id="4_sniu6"]
-[ext_resource type="Resource" uid="uid://fneqo5f1qdrk" path="res://entity/character/ally/izzy/_special/push_skill.tres" id="6_j04wh"]
-[ext_resource type="Texture2D" uid="uid://bel6ycldg65i6" path="res://entity/character/ally/izzy/_sprite/izzy_idle_up.png" id="6_wmewt"]
-[ext_resource type="Texture2D" uid="uid://bmng0nysy3gjd" path="res://entity/character/ally/izzy/_sprite/izzy_combat_idle_up.png" id="15_0j56j"]
-[ext_resource type="Texture2D" uid="uid://pbfod4mftla6" path="res://entity/character/ally/izzy/_sprite/izzy_combat_idle_down.png" id="16_3ocq5"]
+[ext_resource type="PackedScene" uid="uid://cm7s3l5cikm6u" path="res://entity/character/ally/ally.tscn" id="1_telll"]
+[ext_resource type="Texture2D" uid="uid://ctrrubge6r45p" path="res://entity/character/ally/chaz/_sprite/chaz_idle_down.png" id="2_4tvf7"]
+[ext_resource type="Texture2D" uid="uid://bf5ryjrutpfj1" path="res://entity/character/ally/chaz/_sprite/chaz_combat_idle_down.png" id="3_2e3h7"]
+[ext_resource type="Texture2D" uid="uid://b5n7mlhj67tan" path="res://entity/character/ally/chaz/_sprite/chaz_combat_idle_up.png" id="4_cwwrv"]
+[ext_resource type="Texture2D" uid="uid://c01os2oy5ipq0" path="res://entity/character/ally/chaz/_sprite/chaz_idle_up.png" id="5_l0hun"]
 
-[sub_resource type="Resource" id="Resource_xdj1t"]
-script = ExtResource("3_jkw71")
-status = 0
-value = 4
-duration = 1
-
-[sub_resource type="Resource" id="Resource_v85yj"]
-script = ExtResource("2_d2041")
-name = "Punch"
-sticker = ExtResource("4_sniu6")
-character_animation = "idle"
-skill_animation = ""
-max_range = 1
-min_range = 0
-range_shape = 0
-state = ExtResource("3_tnq7t")
-cool_down = 1
-status_effects = Array[ExtResource("3_jkw71")]([SubResource("Resource_xdj1t")])
-aoe = Array[Vector2i]([Vector2i(0, 0)])
-range_type = 0
-
-[sub_resource type="Animation" id="Animation_tjtew"]
+[sub_resource type="Animation" id="Animation_cscvr"]
 length = 0.001
 tracks/0/type = "value"
 tracks/0/imported = false
@@ -81,10 +54,10 @@ tracks/3/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 1,
-"values": [ExtResource("3_sk6vo")]
+"values": [ExtResource("2_4tvf7")]
 }
 
-[sub_resource type="Animation" id="Animation_21amu"]
+[sub_resource type="Animation" id="Animation_kynjq"]
 resource_name = "combat_idle_down"
 length = 0.6
 loop_mode = 1
@@ -135,10 +108,10 @@ tracks/3/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 1,
-"values": [ExtResource("16_3ocq5")]
+"values": [ExtResource("3_2e3h7")]
 }
 
-[sub_resource type="Animation" id="Animation_yp81w"]
+[sub_resource type="Animation" id="Animation_tmg2g"]
 resource_name = "combat_idle_left"
 length = 0.6
 loop_mode = 1
@@ -189,10 +162,10 @@ tracks/3/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 1,
-"values": [ExtResource("15_0j56j")]
+"values": [ExtResource("4_cwwrv")]
 }
 
-[sub_resource type="Animation" id="Animation_ume1i"]
+[sub_resource type="Animation" id="Animation_r6jlk"]
 resource_name = "combat_idle_right"
 length = 0.6
 loop_mode = 1
@@ -243,10 +216,10 @@ tracks/3/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 1,
-"values": [ExtResource("16_3ocq5")]
+"values": [ExtResource("3_2e3h7")]
 }
 
-[sub_resource type="Animation" id="Animation_bmi5h"]
+[sub_resource type="Animation" id="Animation_k5e4p"]
 resource_name = "combat_idle_up"
 length = 0.6
 loop_mode = 1
@@ -297,10 +270,10 @@ tracks/3/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 1,
-"values": [ExtResource("15_0j56j")]
+"values": [ExtResource("4_cwwrv")]
 }
 
-[sub_resource type="Animation" id="Animation_0tlu4"]
+[sub_resource type="Animation" id="Animation_ywvt0"]
 resource_name = "idle_down"
 tracks/0/type = "value"
 tracks/0/imported = false
@@ -348,10 +321,10 @@ tracks/3/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 1,
-"values": [ExtResource("3_sk6vo")]
+"values": [ExtResource("2_4tvf7")]
 }
 
-[sub_resource type="Animation" id="Animation_a75ug"]
+[sub_resource type="Animation" id="Animation_0wanu"]
 resource_name = "idle_left"
 tracks/0/type = "value"
 tracks/0/imported = false
@@ -399,10 +372,10 @@ tracks/3/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 1,
-"values": [ExtResource("6_wmewt")]
+"values": [ExtResource("5_l0hun")]
 }
 
-[sub_resource type="Animation" id="Animation_hv0d0"]
+[sub_resource type="Animation" id="Animation_1ea7d"]
 resource_name = "idle_right"
 tracks/0/type = "value"
 tracks/0/imported = false
@@ -450,10 +423,10 @@ tracks/3/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 1,
-"values": [ExtResource("3_sk6vo")]
+"values": [ExtResource("2_4tvf7")]
 }
 
-[sub_resource type="Animation" id="Animation_6us76"]
+[sub_resource type="Animation" id="Animation_nj5vh"]
 resource_name = "idle_up"
 tracks/0/type = "value"
 tracks/0/imported = false
@@ -501,43 +474,30 @@ tracks/3/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 1,
-"values": [ExtResource("6_wmewt")]
+"values": [ExtResource("5_l0hun")]
 }
 
-[sub_resource type="AnimationLibrary" id="AnimationLibrary_hs5m1"]
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_wpweh"]
 _data = {
-"RESET": SubResource("Animation_tjtew"),
-"combat_idle_down": SubResource("Animation_21amu"),
-"combat_idle_left": SubResource("Animation_yp81w"),
-"combat_idle_right": SubResource("Animation_ume1i"),
-"combat_idle_up": SubResource("Animation_bmi5h"),
-"idle_down": SubResource("Animation_0tlu4"),
-"idle_left": SubResource("Animation_a75ug"),
-"idle_right": SubResource("Animation_hv0d0"),
-"idle_up": SubResource("Animation_6us76")
+"RESET": SubResource("Animation_cscvr"),
+"combat_idle_down": SubResource("Animation_kynjq"),
+"combat_idle_left": SubResource("Animation_tmg2g"),
+"combat_idle_right": SubResource("Animation_r6jlk"),
+"combat_idle_up": SubResource("Animation_k5e4p"),
+"idle_down": SubResource("Animation_ywvt0"),
+"idle_left": SubResource("Animation_0wanu"),
+"idle_right": SubResource("Animation_1ea7d"),
+"idle_up": SubResource("Animation_nj5vh")
 }
 
-[node name="Izzy" instance=ExtResource("1_abh6s")]
-position = Vector2(0, -2)
-follow_order = 1
+[node name="Chaz" instance=ExtResource("1_telll")]
 is_animated = true
-character_name = "Izzy"
-turn_portrait_scene = ExtResource("2_y0p6f")
-basic_skill = SubResource("Resource_v85yj")
-special = ExtResource("6_j04wh")
+character_name = "Chaz"
 
 [node name="CharacterSprite" parent="." index="0"]
-position = Vector2(0, 3)
-texture = ExtResource("3_sk6vo")
-offset = Vector2(0, -16)
-
-[node name="HealthBar" parent="CharacterSprite" index="0"]
-value = 99.0
-
-[node name="CollisionShape2D" parent="." index="1"]
-position = Vector2(-1, 0)
+texture = ExtResource("2_4tvf7")
 
 [node name="ActionAnimator" parent="." index="2"]
 libraries = {
-"": SubResource("AnimationLibrary_hs5m1")
+"": SubResource("AnimationLibrary_wpweh")
 }

@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=4 uid="uid://dq1qwclm7p5ki"]
+[gd_scene load_steps=26 format=4 uid="uid://dq1qwclm7p5ki"]
 
 [ext_resource type="Script" path="res://scene/level/_behavior/level.gd" id="1_lxdcq"]
 [ext_resource type="TileSet" uid="uid://bilapom7gwcxe" path="res://scene/level/variant/music_district/convenience_store/_sprite/music_district_convenience_store_tile_set.tres" id="2_6w1bj"]
@@ -8,15 +8,56 @@
 [ext_resource type="PackedScene" uid="uid://bctkkdhwjgs0u" path="res://entity/character/ally/mei/mei.tscn" id="4_bx06k"]
 [ext_resource type="Script" path="res://node/camera/tracking_camera.gd" id="4_osyqw"]
 [ext_resource type="Script" path="res://ui/turn_display/_behavior/turn_display.gd" id="5_theaw"]
+[ext_resource type="PackedScene" uid="uid://r5sdcdlxfmjr" path="res://entity/character/ally/chaz/chaz.tscn" id="6_6jvc4"]
 [ext_resource type="TileSet" uid="uid://5dfqqlx3fkjg" path="res://ui/battle_grid/_sprite/battle_map_tile_set.tres" id="6_etfh4"]
 [ext_resource type="Texture2D" uid="uid://dnkx7jyewlkxh" path="res://ui/battle_timer/battle_timer_under.png" id="6_u88q7"]
+[ext_resource type="Script" path="res://data/combat/skill.gd" id="7_gicr4"]
 [ext_resource type="Texture2D" uid="uid://caqbtr4v8posy" path="res://ui/battle_timer/battle_timer_over.png" id="7_mt6ma"]
 [ext_resource type="Texture2D" uid="uid://cycr83c35trtu" path="res://ui/battle_timer/battle_timer_fill.png" id="8_5pl3x"]
+[ext_resource type="Script" path="res://entity/character/_behavior/basic_skill_state.gd" id="8_nxvh2"]
+[ext_resource type="Script" path="res://data/combat/status_effect.gd" id="9_63smf"]
 [ext_resource type="Script" path="res://ui/battle_timer/_behavior/battle_timer.gd" id="9_x3o0l"]
 [ext_resource type="Script" path="res://ui/sticker/_behavior/sticker_layout.gd" id="10_07fc3"]
+[ext_resource type="Resource" uid="uid://fneqo5f1qdrk" path="res://entity/character/ally/izzy/_special/push_skill.tres" id="11_3154k"]
 [ext_resource type="Texture2D" uid="uid://c4l71vu7ixwsl" path="res://ui/sticker/_sprite/sticker_basic_attack.png" id="11_khhba"]
 [ext_resource type="Texture2D" uid="uid://c1xbsgyj5cgwq" path="res://ui/sticker/_sprite/sticker_push_punch.png" id="12_8degu"]
 [ext_resource type="Texture2D" uid="uid://fmjk5p8qy63s" path="res://scene/level/variant/music_district/convenience_store/_sprite/light.png" id="17_120mi"]
+
+[sub_resource type="Resource" id="Resource_n0ksn"]
+script = ExtResource("9_63smf")
+status = 0
+value = 4
+duration = 1
+
+[sub_resource type="Resource" id="Resource_olqis"]
+script = ExtResource("7_gicr4")
+name = "Slingshot"
+sticker = ExtResource("11_khhba")
+character_animation = "idle"
+skill_animation = ""
+max_range = 5
+min_range = 0
+range_shape = 0
+state = ExtResource("8_nxvh2")
+cool_down = 0
+status_effects = Array[ExtResource("9_63smf")]([SubResource("Resource_n0ksn")])
+aoe = Array[Vector2i]([Vector2i(0, 0)])
+range_type = 1
+
+[sub_resource type="Resource" id="Resource_s6vku"]
+script = ExtResource("7_gicr4")
+name = "Kick"
+sticker = ExtResource("11_khhba")
+character_animation = "idle"
+skill_animation = ""
+max_range = 2
+min_range = 0
+range_shape = 1
+state = ExtResource("8_nxvh2")
+cool_down = 0
+status_effects = Array[ExtResource("9_63smf")]([SubResource("Resource_n0ksn")])
+aoe = Array[Vector2i]([Vector2i(0, 0), Vector2i(1, 0)])
+range_type = 0
 
 [node name="MusicDistrictConvenienceStore" type="Node2D"]
 y_sort_enabled = true
@@ -55,11 +96,19 @@ position = Vector2(269, 147)
 position = Vector2(180, 112)
 follow_order = 0
 
+[node name="Chaz" parent="." instance=ExtResource("6_6jvc4")]
+position = Vector2(108, 131)
+follow_order = 1
+basic_skill = SubResource("Resource_olqis")
+special = ExtResource("11_3154k")
+
 [node name="Mei" parent="." instance=ExtResource("4_bx06k")]
 position = Vector2(160, 160)
 follow_order = 1
+basic_skill = SubResource("Resource_s6vku")
 
 [node name="TrackingCamera" type="Camera2D" parent="." node_paths=PackedStringArray("leader")]
+position = Vector2(320, 178)
 script = ExtResource("4_osyqw")
 leader = NodePath("../Izzy")
 

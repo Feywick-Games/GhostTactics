@@ -57,5 +57,12 @@ basic_skill = SubResource("Resource_3dmcj")
 position = Vector2(0, 9)
 offset = Vector2(0, -20)
 
+[node name="HealthBar" parent="CharacterSprite" index="0"]
+offset_left = -17.0
+offset_top = -63.0
+offset_right = 16.0
+offset_bottom = -51.0
+value = 99.0
+
 [node name="CollisionShape2D" parent="." index="1"]
 shape = SubResource("RectangleShape2D_p01wl")
