@@ -18,11 +18,11 @@ func _ready() -> void:
 	body_exited.connect(_on_body_exited)
 
 # TODO
-func _on_body_entered(body: Node2D) -> void:
+func _on_body_entered(_body: Node2D) -> void:
 	EventBus.room_transitioned.emit(self, true)
 
 
-func _on_body_exited(body: Node2D) -> void:
+func _on_body_exited(_body: Node2D) -> void:
 	if not has_overlapping_bodies():
 		hide()
 		EventBus.room_transitioned.emit(self, false)

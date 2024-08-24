@@ -79,14 +79,14 @@ func _on_unit_died(unit: Character) -> void:
 
 
 func get_id_path(start_tile: Vector2i, end_tile: Vector2i,  is_ally := false, 
-can_pass := false, get_nearest := false) -> Array[Vector2i]:
+can_pass := false, get_nearest := false, both_units := false) -> Array[Vector2i]:
 	var _pass_tiles: Array[Vector2i]
 	
 	for tile in _unit_registry.keys():
-		if _unit_registry[tile] is Ally and (is_ally or can_pass):
+		if _unit_registry[tile] is Ally and (is_ally or can_pass or both_units):
 			grid.set_point_solid(tile, false)
 			_pass_tiles.append(tile)
-		elif _unit_registry[tile] is Enemy and (not is_ally or can_pass):
+		elif _unit_registry[tile] is Enemy and (not is_ally or can_pass or both_units):
 			grid.set_point_solid(tile, false)
 			_pass_tiles.append(tile)
 	

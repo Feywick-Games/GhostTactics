@@ -8,6 +8,7 @@ func _ready() -> void:
 	GameState.battle_timer = self
 	EventBus.encounter_ended.connect(_on_encounter_ended)
 	value = 0
+	max_value = Global.TIMER_MAX_VALUE
 	EventBus.timer_stopped.connect(_on_timer_stopped)
 	hide()
 

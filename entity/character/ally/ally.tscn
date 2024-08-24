@@ -25,6 +25,12 @@ position = Vector2(0, 9)
 texture = ExtResource("2_momam")
 offset = Vector2(0, -20)
 
+[node name="HealthBar" parent="CharacterSprite" index="0"]
+offset_left = -17.0
+offset_top = -63.0
+offset_right = 16.0
+offset_bottom = -51.0
+
 [node name="CollisionShape2D" parent="." index="1"]
 position = Vector2(-0.5, -2)
 shape = SubResource("RectangleShape2D_p01wl")

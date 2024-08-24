@@ -37,3 +37,10 @@ func _init() -> void:
 
 func is_ready() -> bool:
 	return cool_down_status == cool_down
+
+func get_hit_damage() -> int:
+	var damage_status := status_effects.filter(func(x): return true if (x as StatusEffect).status == Combat.Status.HIT else false)
+	if not damage_status.is_empty():
+		return damage_status[0].value
+	else:
+		return 0

@@ -4,6 +4,7 @@ extends CharacterBody2D
 signal died
 signal target_hit
 signal action_processed
+signal damage_taken
 
 const SNAP_DISTANCE := 2.4
 const TIME_PER_MOVE := .03
@@ -79,7 +80,7 @@ var damage_bar: TextureProgressBar = $CharacterSprite/HealthBar/DamageBar
 
 func _ready() -> void:
 	health_bar.hide()
-	
+	EventBus.display_requested.connect(_on_display_requested)
 	var state_machine := StateMachine.new(self, init_state.new())
 	add_child(state_machine)
 	print(self.get_class())
@@ -90,7 +91,7 @@ func start_encounter() -> void:
 		special.cool_down_status = special.cool_down
 	health = max_health
 	health_bar.max_value = max_health
-	health_bar.value = health_bar.max_value
+	health_bar.value = health
 	health_bar.step = float(health_bar.max_value) / HEALTH_BAR_PIXEL_WIDTH
 	damage_bar.value = health
 	damage_bar.max_value = max_health
@@ -98,11 +99,18 @@ func start_encounter() -> void:
 
 
 func end_encounter() -> void:
-	health_bar.hide()
+	pass
 
 
 func notify_impact() -> void:
 	target_hit.emit()
+
+
+func _on_display_requested(show_display: bool) -> void:
+	if show_display:
+		health_bar.show()
+	else:
+		health_bar.hide()
 
 
 func is_hit(hit_chance: float) -> bool:
@@ -116,6 +124,7 @@ func drop_weapon() -> void:
 
 
 func take_damage(skill: Skill, direction: Vector2, hit_chance: float, hit_signal: Signal, multiplier: float = 1) -> void:
+	health_bar.show()
 	await hit_signal
 	var hit_connected: bool
 	
@@ -131,17 +140,23 @@ func take_damage(skill: Skill, direction: Vector2, hit_chance: float, hit_signal
 			effect.multiplier = multiplier
 			status.append(effect)
 			_process_status_effect(effect)
-	
-		if health <= 0:
-			died.emit()
-			queue_free()
 		print("attack hit " + name)
 	else:
 		print("attack missed " + name)
 	status = status
 
 	health_bar.value = health
-	damage_bar.value = health
+	damage_bar.value = health_bar.value
+	damage_taken.emit()
+	
+	if health <= 0:
+		died.emit()
+	
+	await get_tree().create_timer(2.5).timeout
+	
+	if health <= 0:
+		queue_free()
+	health_bar.hide()
 	action_processed.emit()
 
 
@@ -181,7 +196,7 @@ func end_turn() -> void:
 	for effect: StatusEffect in status:
 		_process_status_effect(effect)
 	
-	EventBus.tiles_highlighted.emit([] as Array[Vector2i], [] as Array[StatusEffect], 0)
+	EventBus.tiles_highlighted.emit([] as Array[Vector2i], [] as Array[StatusEffect], 0, Vector2i.ZERO, false)
 
 
 func process_action(tile: Vector2i, attack_range: RangeStruct, state: TurnState) -> State:
@@ -193,18 +208,37 @@ func process_action(tile: Vector2i, attack_range: RangeStruct, state: TurnState)
 	
 	
 	if tile in attack_range.range_tiles:
-		var unit: Character = GameState.current_level.get_unit_from_tile(tile)
-		if unit and unit != self:
+		var aoe: Array[Vector2i]
+		
+		if attack_state == Combat.AttackState.BASIC:
+			aoe = basic_skill.aoe
+		elif attack_state == Combat.AttackState.SPECIAL:
+			aoe = special.aoe
+		elif attack_state == Combat.AttackState.IMPROV:
+			aoe = improvised_weapon.aoe
+		elif attack_state == Combat.AttackState.IMPROV_THROW:
+			aoe = improvised_weapon.throw_aoe
+		
+		var unit: Character
+		
+		for aoe_tile in aoe:
+			unit = GameState.current_level.get_unit_from_tile(tile + aoe_tile)
+			if unit:
+				break
+		
+		
+		if unit != null:
 			facing = Vector2i(Vector2(tile - current_tile).normalized().round())
 			EventBus.timer_stopped.emit()
 			if attack_state == Combat.AttackState.BASIC:
-				return basic_skill.state.new(basic_skill, unit.current_tile)
+				return basic_skill.state.new(basic_skill, tile)
 			elif attack_state == Combat.AttackState.SPECIAL:
-				return special.state.new(special, unit.current_tile)
+				return special.state.new(special, tile)
 			elif attack_state == Combat.AttackState.IMPROV:
-				return improvised_weapon.state.new(improvised_weapon, unit.current_tile)
+				return improvised_weapon.state.new(improvised_weapon, tile)
 			elif attack_state == Combat.AttackState.IMPROV_THROW:
-				return ImprovisedWeaponThrowState.new(improvised_weapon, unit.current_tile)
+				return ImprovisedWeaponThrowState.new(improvised_weapon, tile)
+	
 	elif GameState.current_level.get_interactable(tile):
 		improvised_weapon = GameState.current_level.take_interactable(tile)
 		attack_state = Combat.AttackState.IMPROV

@@ -1,4 +1,4 @@
-[gd_scene load_steps=27 format=3 uid="uid://bctkkdhwjgs0u"]
+[gd_scene load_steps=32 format=3 uid="uid://bctkkdhwjgs0u"]
 
 [ext_resource type="PackedScene" uid="uid://cm7s3l5cikm6u" path="res://entity/character/ally/ally.tscn" id="1_2hyto"]
 [ext_resource type="PackedScene" uid="uid://0vhq1ufxesi7" path="res://entity/character/ally/mei/_packed_scene/mei_turn_portrait.tscn" id="2_6fea8"]
@@ -12,7 +12,8 @@
 [ext_resource type="Texture2D" uid="uid://btn2eksvhguv2" path="res://entity/character/ally/mei/_sprite/mei_idle_cardinal_up.png" id="5_uc8jj"]
 [ext_resource type="Resource" uid="uid://fneqo5f1qdrk" path="res://entity/character/ally/izzy/_special/push_skill.tres" id="7_as5tn"]
 [ext_resource type="Texture2D" uid="uid://ciq51gelbrpy" path="res://entity/character/ally/mei/_sprite/mei_idle_cardinal_down.png" id="9_bngtx"]
-[ext_resource type="Texture2D" uid="uid://b8k687sb6a6rk" path="res://ui/health_bar/_sprite/health_bar_background.png" id="9_yqngp"]
+[ext_resource type="Texture2D" uid="uid://cqim6rtvxrc0d" path="res://entity/character/ally/mei/_sprite/mei_combat_idle_down.png" id="14_4727j"]
+[ext_resource type="Texture2D" uid="uid://davlp3vj88r17" path="res://entity/character/ally/mei/_sprite/mei_combat_idle_up.png" id="15_wbqvo"]
 
 [sub_resource type="Resource" id="Resource_n0ksn"]
 script = ExtResource("4_u3oph")
@@ -24,16 +25,16 @@ duration = 1
 script = ExtResource("3_y0fl4")
 name = "Kick"
 sticker = ExtResource("5_84nbx")
-character_animation = ""
+character_animation = "idle"
 skill_animation = ""
-max_range = 3
+max_range = 2
 min_range = 0
 range_shape = 0
 state = ExtResource("4_1eaca")
 cool_down = 0
 status_effects = Array[ExtResource("4_u3oph")]([SubResource("Resource_n0ksn")])
-aoe = Array[Vector2i]([Vector2i(0, 0), Vector2i(0, -1), Vector2i(0, 1), Vector2i(-1, 0), Vector2i(1, 0)])
-range_type = 1
+aoe = Array[Vector2i]([Vector2i(0, 0), Vector2i(1, 0)])
+range_type = 0
 
 [sub_resource type="Animation" id="Animation_8c2px"]
 length = 0.001
@@ -137,6 +138,222 @@ tracks/3/keys = {
 "transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1),
 "update": 1,
 "values": [ExtResource("2_446ld"), ExtResource("4_vq3ym"), ExtResource("3_in48b"), ExtResource("5_uc8jj"), ExtResource("3_in48b"), ExtResource("4_vq3ym"), ExtResource("2_446ld"), ExtResource("9_bngtx")]
+}
+
+[sub_resource type="Animation" id="Animation_ka1aj"]
+resource_name = "combat_idle_down"
+length = 0.4
+loop_mode = 1
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("CharacterSprite:hframes")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [4]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("CharacterSprite:flip_h")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("CharacterSprite:frame")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 1,
+"values": [0, 1, 2, 3]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("CharacterSprite:texture")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [ExtResource("14_4727j")]
+}
+
+[sub_resource type="Animation" id="Animation_63hmn"]
+resource_name = "combat_idle_left"
+length = 0.4
+loop_mode = 1
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("CharacterSprite:hframes")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [4]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("CharacterSprite:flip_h")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("CharacterSprite:frame")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 1,
+"values": [0, 1, 2, 3]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("CharacterSprite:texture")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [ExtResource("15_wbqvo")]
+}
+
+[sub_resource type="Animation" id="Animation_qnx4o"]
+resource_name = "combat_idle_right"
+length = 0.4
+loop_mode = 1
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("CharacterSprite:hframes")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [4]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("CharacterSprite:flip_h")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("CharacterSprite:frame")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 1,
+"values": [0, 1, 2, 3]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("CharacterSprite:texture")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [ExtResource("14_4727j")]
+}
+
+[sub_resource type="Animation" id="Animation_t28sb"]
+resource_name = "combat_idle_up"
+length = 0.4
+loop_mode = 1
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("CharacterSprite:hframes")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [4]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("CharacterSprite:flip_h")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("CharacterSprite:frame")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 1,
+"values": [0, 1, 2, 3]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("CharacterSprite:texture")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [ExtResource("15_wbqvo")]
 }
 
 [sub_resource type="Animation" id="Animation_ob4ac"]
@@ -551,6 +768,10 @@ tracks/3/keys = {
 _data = {
 "RESET": SubResource("Animation_8c2px"),
 "angle_test": SubResource("Animation_tflaj"),
+"combat_idle_down": SubResource("Animation_ka1aj"),
+"combat_idle_left": SubResource("Animation_63hmn"),
+"combat_idle_right": SubResource("Animation_qnx4o"),
+"combat_idle_up": SubResource("Animation_t28sb"),
 "idle_cardinal_down": SubResource("Animation_ob4ac"),
 "idle_cardinal_left": SubResource("Animation_isimq"),
 "idle_cardinal_right": SubResource("Animation_pw8gf"),
@@ -575,8 +796,13 @@ texture = ExtResource("2_446ld")
 offset = Vector2(0, -16)
 
 [node name="HealthBar" parent="CharacterSprite" index="0"]
-value = 99.0
-texture_under = ExtResource("9_yqngp")
+offset_top = -50.0
+offset_bottom = -10.0
+value = 40.0
+
+[node name="DamageBar" parent="CharacterSprite/HealthBar" index="0"]
+max_value = 99.87
+value = 97.0
 
 [node name="CollisionShape2D" parent="." index="1"]
 position = Vector2(-1, -1)
