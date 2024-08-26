@@ -83,7 +83,6 @@ func _ready() -> void:
 	EventBus.display_requested.connect(_on_display_requested)
 	var state_machine := StateMachine.new(self, init_state.new())
 	add_child(state_machine)
-	print(self.get_class())
 
 
 func start_encounter() -> void:
@@ -271,15 +270,15 @@ func update_ranges(movement_range: RangeStruct, interactable_range: Array[Vector
 	var is_ally: bool = self is Ally
 	
 	if attack_state == Combat.AttackState.BASIC:
-		skill_range = GameState.current_level.request_range(current_tile, basic_skill.min_range, basic_skill.max_range, basic_skill.range_shape, is_ally, true, true)
+		skill_range = GameState.current_level.request_range(current_tile, basic_skill.min_range, basic_skill.max_range, basic_skill.range_shape, is_ally, true, true, basic_skill.direct)
 		attack_atlas_coords = Global.RETICLE_ATTACK_ALTAS_COORDS
 		overlap_atlas_coords = Global.RETICLE_SPECIAL_2_ATLAS_COORDS
 	elif attack_state == Combat.AttackState.SPECIAL:
-		skill_range = GameState.current_level.request_range(current_tile, special.min_range, special.max_range, special.range_shape, is_ally, true, true)
+		skill_range = GameState.current_level.request_range(current_tile, special.min_range, special.max_range, special.range_shape, is_ally, true, true, special.direct)
 		attack_atlas_coords = Global.RETICLE_SPECIAL_1_ALTAS_COORDS
 		overlap_atlas_coords = Global.RETICLE_CURE_1_ATLAS_COORDS
 	elif attack_state == Combat.AttackState.IMPROV:
-		skill_range = GameState.current_level.request_range(current_tile, improvised_weapon.min_range, improvised_weapon.max_range, improvised_weapon.range_shape, is_ally, true, true)
+		skill_range = GameState.current_level.request_range(current_tile, improvised_weapon.min_range, improvised_weapon.max_range, improvised_weapon.range_shape, is_ally, true, true, improvised_weapon.direct)
 		attack_atlas_coords = Global.RETICLE_ATTACK_ALTAS_COORDS
 		overlap_atlas_coords = Global.RETICLE_SPECIAL_2_ATLAS_COORDS
 	elif attack_state == Combat.AttackState.IMPROV_THROW:

@@ -495,12 +495,6 @@ _data = {
 }
 
 [node name="Wendigo" instance=ExtResource("1_dcng5")]
-damage_priority = 0.5
-basic_skill_priority = 0.5
-knock_out_priority = 0.75
-safety_priority = 0.5
-special_priority = 0.75
-custom_priority = 0.0
 is_animated = true
 
 [node name="CharacterSprite" parent="." index="0"]

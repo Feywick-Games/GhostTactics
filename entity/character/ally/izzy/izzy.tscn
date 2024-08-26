@@ -32,6 +32,7 @@ cool_down = 1
 status_effects = Array[ExtResource("3_jkw71")]([SubResource("Resource_xdj1t")])
 aoe = Array[Vector2i]([Vector2i(0, 0)])
 range_type = 0
+direct = true
 
 [sub_resource type="Animation" id="Animation_tjtew"]
 length = 0.001

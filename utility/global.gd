@@ -20,4 +20,4 @@ const RETICLE_SPECIAL_1_ALTAS_COORDS := Vector2i(0,6)
 const RETICLE_SPECIAL_2_ATLAS_COORDS := Vector2i(0,7)
 const GAME_SIZE := Vector2i(640,360)
 
-const TIMER_MAX_VALUE := 30
+const TIMER_MAX_VALUE := 500

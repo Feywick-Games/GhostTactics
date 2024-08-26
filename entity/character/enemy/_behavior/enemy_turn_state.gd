@@ -55,8 +55,6 @@ func enter() -> void:
 			target_list.append(unit)
 		all_allies.append(unit)
 	
-
-	_adjust_priority()
 	
 	var standard_priorities : Array[float] = [_enemy.special_priority, _enemy.knock_out_priority, _enemy.safety_priority, _enemy.damage_priority]
 	var should_custom := true
@@ -74,9 +72,6 @@ func enter() -> void:
 		_take_custom_action()
 
 
-func _adjust_priority() -> void:
-	pass
-
 func _calculate_custom_likelihood() -> float:
 	return 0.0
 
@@ -86,7 +81,7 @@ func _take_custom_action() -> void:
 	
 	
 	
-func _process_custom_action() -> void:
+func _process_custom_action(_delta: float) -> void:
 	pass
 
 
@@ -115,10 +110,21 @@ func _pick_target(target_list: Array[Ally], all_allys: Array[Ally]) -> Ally:
 			target_priority.knock_out_likelihood *= damage_likelihood
 			if target.current_tile in _full_attack_range.range_tiles: 
 				var basic_skill_state: SkillState = (_character.basic_skill.state.new(_character.basic_skill, target.current_tile) as SkillState)
-				target_priority.basic_skill_likelihood = basic_skill_state.calc_skill_likelihood(_full_attack_range)
-			if _enemy.special and target.current_tile in _full_special_range.range_tiles:
+				var skill_likelihoods: Array[float]
+				
+				for tile: Vector2i in _movement_range.range_tiles:
+					skill_likelihoods.append(basic_skill_state.calc_skill_likelihood(_full_attack_range, tile))
+				
+				target_priority.basic_skill_likelihood = skill_likelihoods.max()
+				target_priority.basic_skill_likelihood *= damage_likelihood
+			if _enemy.special and target.current_tile in _full_special_range.range_tiles and _enemy.special.is_ready():
 				var special_skill_state: SkillState = (_character.special.state.new(_character.special, target.current_tile) as SkillState)
-				target_priority.special_likelihood = special_skill_state.calc_skill_likelihood(_full_special_range)
+				var skill_likelihoods: Array[float]
+				
+				for tile: Vector2i in _movement_range.range_tiles:
+					skill_likelihoods.append(special_skill_state.calc_skill_likelihood(_full_special_range, tile))
+				
+				target_priority.special_likelihood = skill_likelihoods.max()
 				target_priority.special_likelihood *=damage_likelihood
 			target_priorities.append(target_priority)
 		_is_acting = true
@@ -143,7 +149,7 @@ func _pick_target(target_list: Array[Ally], all_allys: Array[Ally]) -> Ally:
 func _pick_tile() -> Vector2i:
 	var desired_skill = _enemy.basic_skill if _enemy.attack_state == Combat.AttackState.BASIC else _enemy.special
 	var skill_state: SkillState = (desired_skill.state.new(desired_skill, _target.current_tile) as SkillState)
-	_attack_range = GameState.current_level.request_range(_enemy.current_tile, desired_skill.min_range, desired_skill.max_range, desired_skill.range_shape, false, true, true)
+	_attack_range = GameState.current_level.request_range(_enemy.current_tile, desired_skill.min_range, desired_skill.max_range, desired_skill.range_shape, false, true, true, desired_skill.direct)
 	var ideal_distance: int = desired_skill.max_range
 	var desired_tile: Vector2i = _start_tile
 	var desired_distance: int 
@@ -156,16 +162,19 @@ func _pick_tile() -> Vector2i:
 				desired_distance = abs(dist - ideal_distance)
 				desired_tile = tile
 	else:
-		var desired_skill_likelihood: float = 0
+		var desired_skill_likelihood: float = -1
+		var desired_favoribility: float = -1
 		for tile in _movement_range.range_tiles:
 			var dist: int = GameState.current_level.get_id_path(tile, _target.current_tile, false, true, true).size() - 1
-			var target_range: RangeStruct = GameState.current_level.request_range(tile, desired_skill.min_range, desired_skill.max_range, desired_skill.range_shape, false, true, true)
-			var range_struct := RangeStruct.new()
-			range_struct.range_tiles.append(tile)
-			var likelihood: float = skill_state.calc_skill_likelihood(range_struct)
-			if abs(dist - ideal_distance)  < desired_distance and _target.current_tile in target_range.range_tiles:
-				desired_tile = tile
-				desired_skill_likelihood = likelihood
+			var target_range: RangeStruct = GameState.current_level.request_range(tile, desired_skill.min_range, desired_skill.max_range, desired_skill.range_shape, false, true, true, desired_skill.direct)
+			var likelihood: float = skill_state.calc_skill_likelihood(target_range, tile)
+			var distance_favoribility : float = (ideal_distance - dist) / float(ideal_distance)
+			var favoribility: float = (distance_favoribility * likelihood)
+			if favoribility > desired_favoribility and _target.current_tile in target_range.range_tiles:
+					desired_tile = tile
+					desired_skill_likelihood = likelihood
+					desired_distance = distance_favoribility
+					desired_favoribility = favoribility
 
 	return desired_tile
 
@@ -195,6 +204,6 @@ func update(delta: float) -> State:
 			_enemy.end_turn()
 			return CharacterCombatIdleState.new()
 	else:
-		_process_custom_action()
+		_process_custom_action(delta)
 	
 	return

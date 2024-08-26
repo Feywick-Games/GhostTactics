@@ -36,15 +36,23 @@ func exit() -> void:
 	_skill.cool_down_status = 0
 
 
-func calc_skill_likelihood(attack_range: RangeStruct) -> float:
+func calc_skill_likelihood(attack_range: RangeStruct, strike_tile : Vector2i) -> float:
 	for tile in attack_range.range_tiles:
 		var target_count: int = 0
+		var has_unit := false
+		var direction := VectorF.snap_direction(Vector2(tile - strike_tile))
+		var last_target_tile: Vector2i = Vector2i.UP
 		for target_tile in _skill.aoe:
+			target_tile = Vector2i(Vector2(target_tile).rotated(direction.angle()))
+			if target_tile == last_target_tile:
+				printerr("counted tile twice")
+			
 			var unit: Character = GameState.current_level.get_unit_from_tile(tile + target_tile)
-			if unit:
+			if unit != self and (unit is Ally) != (_character is Ally):
 				target_count +=1
-				if target_count >= _desired_target_count:
+				if tile + target_tile == _target_tile:
+					has_unit = true
+				if target_count >= _desired_target_count and has_unit:
 					return 1
-	
+			last_target_tile = target_tile
 	return 0
-	

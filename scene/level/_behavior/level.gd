@@ -4,6 +4,7 @@ extends Node2D
 const GRID_DRAW_TIME: float = 1
 
 var grid := AStarGrid2D.new()
+var _direct_grid := AStarGrid2D.new()
 var grid_complete: bool
 var _encounter_started: bool
 var _grid_cells: Array[Vector2i]
@@ -35,6 +36,12 @@ func _ready() -> void:
 	grid.cell_size = Global.TILE_SIZE
 	grid.diagonal_mode = AStarGrid2D.DIAGONAL_MODE_NEVER
 	grid.update()
+	
+	_direct_grid.region = Rect2i()
+	_direct_grid.cell_shape = AStarGrid2D.CELL_SHAPE_ISOMETRIC_DOWN
+	_direct_grid.cell_size = Global.TILE_SIZE
+	_direct_grid.update()
+	
 	GameState.current_level = self
 	EventBus.encounter_ended.connect(_on_encounter_ended)
 	await get_tree().create_timer(2).timeout
@@ -61,6 +68,7 @@ func update_unit_registry(tile: Vector2i, unit: Character) -> void:
 	for cur_tile: Vector2i in _unit_registry.keys():
 		if _unit_registry[cur_tile] == unit:
 			grid.set_point_solid(cur_tile, false)
+			_direct_grid.set_point_solid(cur_tile, false)
 			_unit_registry.erase(cur_tile)
 			if unit is Ally:
 				_ally_tiles.remove_at(_ally_tiles.find(cur_tile))
@@ -68,6 +76,7 @@ func update_unit_registry(tile: Vector2i, unit: Character) -> void:
 				_enemy_tiles.remove_at(_enemy_tiles.find(cur_tile))
 	
 	grid.set_point_solid(tile)
+	_direct_grid.set_point_solid(tile)
 	_unit_registry[tile] = unit
 	
 
@@ -75,6 +84,7 @@ func _on_unit_died(unit: Character) -> void:
 	for cur_tile: Vector2i in _unit_registry.keys():
 		if _unit_registry[cur_tile] == unit:
 			grid.set_point_solid(cur_tile, false)
+			_direct_grid.set_point_solid(cur_tile, false)
 			_unit_registry.erase(cur_tile)
 
 
@@ -179,18 +189,17 @@ func reset_map() -> void:
 
 
 func request_range(unit_tile: Vector2i,min_distance: int, max_distance: int, range_shape: Combat.RangeShape,
-is_ally: bool, can_pass := false, include_opponent_tiles := false) -> RangeStruct:
+is_ally: bool, can_pass := false, include_opponent_tiles := false, direct := false) -> RangeStruct:
 	var range_struct := RangeStruct.new()
 	var _pass_tiles: Array[Vector2i]
 	
 	for tile in _unit_registry.keys():
-		if _unit_registry[tile] is Ally and (is_ally or can_pass):
+		if ((_unit_registry[tile] is Ally == is_ally)  and not direct) \
+		or tile == unit_tile:
 			grid.set_point_solid(tile, false)
 			_pass_tiles.append(tile)
-		elif _unit_registry[tile] is Enemy and (not is_ally or can_pass):
-			grid.set_point_solid(tile, false)
-			_pass_tiles.append(tile)
-	
+
+		
 	if can_pass:
 		for tile in _prop_tiles:
 			grid.set_point_solid(tile, false)
@@ -207,18 +216,86 @@ is_ally: bool, can_pass := false, include_opponent_tiles := false) -> RangeStruc
 				if x != unit_tile.x and y != unit_tile.y:
 					continue
 			
-			var tile = Vector2i(x,y)
+			var tile := Vector2i(x,y)
 			if grid.region.has_point(tile):
 				var id_path: Array[Vector2i] = grid.get_id_path(unit_tile, tile)
 				if id_path.size() <= max_distance + 1 and id_path.size() > min_distance:
 					if not grid.is_point_solid(tile):
-						range_struct.range_tiles.append(tile)
+						if not direct:
+							range_struct.range_tiles.append(tile)
+						else:
+							#var direct_path = _direct_grid.get_id_path(unit_tile, tile)
+							#var last_angle := 0
+							#var has_turned := false
+							#if direct_path.size() > 1:
+								#var direction = direct_path[1] - direct_path[0]
+								#var is_straight := true
+								#for i in range(2, direct_path.size()):
+									#var next_direction : Vector2i = direct_path[i] - direct_path[i - 1]
+									#if Vector2(next_direction).dot(Vector2(direction)) + last_angle < .1:
+										#is_straight = false
+										#break
+									#
+									##direction = next_direction
+									#last_angle += 1 - Vector2(next_direction).dot(Vector2(direction))
+								#if is_straight:
+									#range_struct.range_tiles.append(tile)
+							var line := Vector2(tile - unit_tile)
+							var is_blocked = false
+							
+							for i in range(line.length() + 1):
+								var point := Vector2i((Vector2(unit_tile).lerp(Vector2(tile), min(float(i)/float(line.length()), 1))).round())
+								if grid.region.has_point(point):
+									if grid.is_point_solid(point):
+										is_blocked = true
+										break
+							
+							if not is_blocked:
+								range_struct.range_tiles.append(tile)
 				elif tile in _grid_cells and id_path.size() == 0:
 					grid.set_point_solid(tile, false)
 					var check_path := grid.get_id_path(unit_tile, tile)
 					if check_path.size() <= max_distance + 1 and check_path.size() > min_distance:
 						range_struct.blocked_tiles.append(tile)
 					grid.set_point_solid(tile)
+		
+	if include_opponent_tiles:
+		if is_ally:
+			for tile in _enemy_tiles:
+				var dist: int = abs(tile.y - unit_tile.y) + abs(tile.x - unit_tile.x)
+				var line := Vector2(tile - unit_tile)
+				var is_blocked = false
+				grid.set_point_solid(tile, false)
+				if direct:
+					for i in range(line.length() + 1):
+						var point := Vector2i((Vector2(unit_tile).lerp(Vector2(tile), min(float(i)/float(line.length()), 1))).round())
+						if grid.is_point_solid(point):
+							is_blocked = true
+						break
+				grid.set_point_solid(tile, true)
+				if dist <= max_distance and dist >= min_distance and not is_blocked:
+					var tile_idx: int = range_struct.blocked_tiles.find(tile)
+					if tile_idx != -1:
+						range_struct.blocked_tiles.remove_at(tile_idx)
+						range_struct.range_tiles.append(tile)
+		else:
+			for tile in _ally_tiles:
+				var dist: int = abs(tile.y - unit_tile.y) + abs(tile.x - unit_tile.x)
+				var line := Vector2(tile - unit_tile)
+				var is_blocked = false
+				grid.set_point_solid(tile, false)
+				if direct:
+					for i in range(line.length() + 1):
+						var point := Vector2i((Vector2(unit_tile).lerp(Vector2(tile), min(float(i)/float(line.length()), 1))).round())
+						if grid.is_point_solid(point):
+							is_blocked = true
+						break
+				grid.set_point_solid(tile, true)
+				if dist <= max_distance and dist >= min_distance:
+					var tile_idx: int = range_struct.blocked_tiles.find(tile)
+					if tile_idx != -1:
+						range_struct.blocked_tiles.remove_at(tile_idx)
+						range_struct.range_tiles.append(tile)
 
 	for tile in _pass_tiles:
 		if tile != unit_tile:
@@ -229,24 +306,7 @@ is_ally: bool, can_pass := false, include_opponent_tiles := false) -> RangeStruc
 				range_struct.blocked_tiles.append(tile)
 			
 		grid.set_point_solid(tile)
-		
-	if include_opponent_tiles:
-		if is_ally:
-			for tile in _enemy_tiles:
-				var dist: int = abs(tile.y - unit_tile.y) + abs(tile.x - unit_tile.x)
-				if dist <= max_distance and dist >= min_distance:
-					var tile_idx: int = range_struct.blocked_tiles.find(tile)
-					if tile_idx != -1:
-						range_struct.blocked_tiles.remove_at(tile_idx)
-						range_struct.range_tiles.append(tile)
-		else:
-			for tile in _ally_tiles:
-				var dist: int = abs(tile.y - unit_tile.y) + abs(tile.x - unit_tile.x)
-				if dist <= max_distance and dist >= min_distance:
-					var tile_idx: int = range_struct.blocked_tiles.find(tile)
-					if tile_idx != -1:
-						range_struct.blocked_tiles.remove_at(tile_idx)
-						range_struct.range_tiles.append(tile)
+
 	if not unit_tile in range_struct.range_tiles:
 		range_struct.range_tiles.append(unit_tile)
 	if unit_tile in range_struct.blocked_tiles:
@@ -285,24 +345,30 @@ func _populate_grid() -> void:
 	var o_rect: Rect2i = _floor_layer.get_used_rect()
 	if grid.region.size.x + grid.region.size.y == 0:
 		grid.region = o_rect
+		_direct_grid.region = o_rect
 	else:
 		grid.region = grid.region.merge(o_rect)
+		_direct_grid.region = _direct_grid.region.merge(o_rect)
 	grid.update()
-	print(grid.region)
+	_direct_grid.update()
+	
 	for y:int in range(o_rect.position.y, o_rect.end.y):
 		for x:int in range(o_rect.position.x, o_rect.end.x):
 			var tile := Vector2i(x,y)
 			var source_id = _floor_layer.get_cell_source_id(tile)
 			var prop_source_id = _prop_layer.get_cell_source_id(tile)
 			var improv_weapon_source_id = _improvised_weapon_layer.get_cell_source_id(tile)
-			if source_id == -1 or _floor_layer.get_cell_tile_data(Vector2i(x,y)).get_custom_data("border"):
+			if source_id == -1 or _floor_layer.get_cell_tile_data(tile).get_custom_data("border"):
 				grid.set_point_solid(tile)
+				_direct_grid.set_point_solid(tile)
 			else:
 				_grid_cells.append(tile)
 				if prop_source_id != -1 or improv_weapon_source_id != -1:
 					grid.set_point_solid(tile, true)
-					_prop_tiles.append(tile)
-
+					if not _prop_layer.get_cell_tile_data(tile).get_custom_data("impassable"):
+						_prop_tiles.append(tile)
+					else:
+						_direct_grid.set_point_solid(tile, true)
 
 func get_interactable(tile: Vector2i) -> ImprovisedWeapon:
 	var tile_data: TileData = _improvised_weapon_layer.get_cell_tile_data(tile)
@@ -314,6 +380,8 @@ func get_interactable(tile: Vector2i) -> ImprovisedWeapon:
 func take_interactable(tile: Vector2i) -> ImprovisedWeapon:
 	var weapon: ImprovisedWeapon = get_interactable(tile)
 	_improvised_weapon_layer.set_cell(tile, -1)
-	grid.set_point_solid(tile, false)
+	if grid.is_point_solid(tile):
+		grid.set_point_solid(tile, false)
+		_direct_grid.set_point_solid(tile, false)
 	_prop_tiles.erase(tile)
 	return weapon
