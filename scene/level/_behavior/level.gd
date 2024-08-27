@@ -4,7 +4,6 @@ extends Node2D
 const GRID_DRAW_TIME: float = 1
 
 var grid := AStarGrid2D.new()
-var _direct_grid := AStarGrid2D.new()
 var grid_complete: bool
 var _encounter_started: bool
 var _grid_cells: Array[Vector2i]
@@ -37,11 +36,6 @@ func _ready() -> void:
 	grid.diagonal_mode = AStarGrid2D.DIAGONAL_MODE_NEVER
 	grid.update()
 	
-	_direct_grid.region = Rect2i()
-	_direct_grid.cell_shape = AStarGrid2D.CELL_SHAPE_ISOMETRIC_DOWN
-	_direct_grid.cell_size = Global.TILE_SIZE
-	_direct_grid.update()
-	
 	GameState.current_level = self
 	EventBus.encounter_ended.connect(_on_encounter_ended)
 	await get_tree().create_timer(2).timeout
@@ -68,7 +62,6 @@ func update_unit_registry(tile: Vector2i, unit: Character) -> void:
 	for cur_tile: Vector2i in _unit_registry.keys():
 		if _unit_registry[cur_tile] == unit:
 			grid.set_point_solid(cur_tile, false)
-			_direct_grid.set_point_solid(cur_tile, false)
 			_unit_registry.erase(cur_tile)
 			if unit is Ally:
 				_ally_tiles.remove_at(_ally_tiles.find(cur_tile))
@@ -76,7 +69,6 @@ func update_unit_registry(tile: Vector2i, unit: Character) -> void:
 				_enemy_tiles.remove_at(_enemy_tiles.find(cur_tile))
 	
 	grid.set_point_solid(tile)
-	_direct_grid.set_point_solid(tile)
 	_unit_registry[tile] = unit
 	
 
@@ -84,7 +76,6 @@ func _on_unit_died(unit: Character) -> void:
 	for cur_tile: Vector2i in _unit_registry.keys():
 		if _unit_registry[cur_tile] == unit:
 			grid.set_point_solid(cur_tile, false)
-			_direct_grid.set_point_solid(cur_tile, false)
 			_unit_registry.erase(cur_tile)
 
 
@@ -224,26 +215,11 @@ is_ally: bool, can_pass := false, include_opponent_tiles := false, direct := fal
 						if not direct:
 							range_struct.range_tiles.append(tile)
 						else:
-							#var direct_path = _direct_grid.get_id_path(unit_tile, tile)
-							#var last_angle := 0
-							#var has_turned := false
-							#if direct_path.size() > 1:
-								#var direction = direct_path[1] - direct_path[0]
-								#var is_straight := true
-								#for i in range(2, direct_path.size()):
-									#var next_direction : Vector2i = direct_path[i] - direct_path[i - 1]
-									#if Vector2(next_direction).dot(Vector2(direction)) + last_angle < .1:
-										#is_straight = false
-										#break
-									#
-									##direction = next_direction
-									#last_angle += 1 - Vector2(next_direction).dot(Vector2(direction))
-								#if is_straight:
-									#range_struct.range_tiles.append(tile)
 							var line := Vector2(tile - unit_tile)
 							var is_blocked = false
 							
 							for i in range(line.length() + 1):
+								i *= 1 * sqrt(2)
 								var point := Vector2i((Vector2(unit_tile).lerp(Vector2(tile), min(float(i)/float(line.length()), 1))).round())
 								if grid.region.has_point(point):
 									if grid.is_point_solid(point):
@@ -268,6 +244,7 @@ is_ally: bool, can_pass := false, include_opponent_tiles := false, direct := fal
 				grid.set_point_solid(tile, false)
 				if direct:
 					for i in range(line.length() + 1):
+						i *= 1 * sqrt(2)
 						var point := Vector2i((Vector2(unit_tile).lerp(Vector2(tile), min(float(i)/float(line.length()), 1))).round())
 						if grid.is_point_solid(point):
 							is_blocked = true
@@ -286,6 +263,7 @@ is_ally: bool, can_pass := false, include_opponent_tiles := false, direct := fal
 				grid.set_point_solid(tile, false)
 				if direct:
 					for i in range(line.length() + 1):
+						i *= 1 * sqrt(2)
 						var point := Vector2i((Vector2(unit_tile).lerp(Vector2(tile), min(float(i)/float(line.length()), 1))).round())
 						if grid.is_point_solid(point):
 							is_blocked = true
@@ -345,12 +323,9 @@ func _populate_grid() -> void:
 	var o_rect: Rect2i = _floor_layer.get_used_rect()
 	if grid.region.size.x + grid.region.size.y == 0:
 		grid.region = o_rect
-		_direct_grid.region = o_rect
 	else:
 		grid.region = grid.region.merge(o_rect)
-		_direct_grid.region = _direct_grid.region.merge(o_rect)
 	grid.update()
-	_direct_grid.update()
 	
 	for y:int in range(o_rect.position.y, o_rect.end.y):
 		for x:int in range(o_rect.position.x, o_rect.end.x):
@@ -360,15 +335,13 @@ func _populate_grid() -> void:
 			var improv_weapon_source_id = _improvised_weapon_layer.get_cell_source_id(tile)
 			if source_id == -1 or _floor_layer.get_cell_tile_data(tile).get_custom_data("border"):
 				grid.set_point_solid(tile)
-				_direct_grid.set_point_solid(tile)
 			else:
 				_grid_cells.append(tile)
 				if prop_source_id != -1 or improv_weapon_source_id != -1:
 					grid.set_point_solid(tile, true)
 					if not _prop_layer.get_cell_tile_data(tile).get_custom_data("impassable"):
 						_prop_tiles.append(tile)
-					else:
-						_direct_grid.set_point_solid(tile, true)
+
 
 func get_interactable(tile: Vector2i) -> ImprovisedWeapon:
 	var tile_data: TileData = _improvised_weapon_layer.get_cell_tile_data(tile)
@@ -382,6 +355,5 @@ func take_interactable(tile: Vector2i) -> ImprovisedWeapon:
 	_improvised_weapon_layer.set_cell(tile, -1)
 	if grid.is_point_solid(tile):
 		grid.set_point_solid(tile, false)
-		_direct_grid.set_point_solid(tile, false)
 	_prop_tiles.erase(tile)
 	return weapon
