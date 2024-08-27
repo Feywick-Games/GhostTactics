@@ -43,16 +43,23 @@ func enter() -> void:
 		var valid_tiles := GameState.current_level.grid.request_range(tile, _enemy.basic_skill.min_range, _enemy.basic_skill.max_range, _enemy.basic_skill.range_shape, true)
 		_full_attack_range.absorb(valid_tiles)
 		
-	if _enemy.special:
-		for unit: Character in units_on_field:
-			var skill_range := GameState.current_level.grid.request_range(unit.current_tile, 
+	if _enemy.special and _enemy.special.is_ready():
+		for tile: Vector2i in _movement_range.range_tiles:
+			var skill_range := GameState.current_level.grid.request_range(tile, 
 				_enemy.special.min_range, _enemy.special.max_range, _enemy.special.range_shape, 
 				true, _enemy.special.direct
 			)
-			var skill_state: SkillState = _enemy.special.state.new(_enemy.special, unit.current_tile)
-			for skill_tile in skill_range.range_tiles:
-				if skill_state.calc_skill_likelihood(skill_tile) > 0:
-					_full_special_range.range_tiles.append(skill_tile)
+			var units: Array[Character]
+			
+			for skill_tile: Vector2i in skill_range.range_tiles:
+				var unit: Character = GameState.current_level.grid.get_unit_from_tile(skill_tile)
+				if unit and unit != self and not unit in units:
+					units.append(unit)
+			
+			for unit: Character in units:
+				var skill_state: SkillState = _enemy.special.state.new(_enemy.special, unit.current_tile)
+				if skill_state.calc_skill_likelihood(tile) > 0:
+					_full_special_range.range_tiles.append(unit.current_tile)
 
 	var all_allies: Array[Ally]
 	for unit: Ally in units_on_field:
@@ -64,6 +71,7 @@ func enter() -> void:
 	
 	
 	var standard_priorities : Array[float] = [_enemy.special_priority, _enemy.knock_out_priority, _enemy.safety_priority, _enemy.damage_priority]
+	_enemy.custom_priority = _calculate_custom_likelihood() 
 	var should_custom := true
 	for priority: float in standard_priorities:
 		if priority > _enemy.custom_priority:
@@ -115,7 +123,7 @@ func _pick_target(target_list: Array[Ally], all_allys: Array[Ally]) -> Ally:
 			target_priority.distance = 1 - (target_priority.distance/float(_enemy.movement_range))
 			var damage_likelihood =  float(_enemy.accuracy) / float(target.evasion)
 			target_priority.knock_out_likelihood = 1 if target.health - _enemy.basic_skill.get_hit_damage() < 0 else 0
-			target_priority.knock_out_likelihood *= damage_likelihood
+			target_priority.knock_out_likelihood *= damage_likelihood * _enemy.knock_out_priority
 			if target.current_tile in _full_attack_range.range_tiles: 
 				var basic_skill_state: SkillState = (_character.basic_skill.state.new(_character.basic_skill, target.current_tile) as SkillState)
 				var skill_likelihoods: Array[float]
@@ -124,7 +132,7 @@ func _pick_target(target_list: Array[Ally], all_allys: Array[Ally]) -> Ally:
 					skill_likelihoods.append(basic_skill_state.calc_skill_likelihood(tile))
 				
 				target_priority.basic_skill_likelihood = skill_likelihoods.max()
-				target_priority.basic_skill_likelihood *= damage_likelihood
+				target_priority.basic_skill_likelihood *= damage_likelihood * _enemy.basic_skill_priority
 			if _enemy.special and target.current_tile in _full_special_range.range_tiles and _enemy.special.is_ready():
 				var special_skill_state: SkillState = (_character.special.state.new(_character.special, target.current_tile) as SkillState)
 				var skill_likelihoods: Array[float]
@@ -133,15 +141,15 @@ func _pick_target(target_list: Array[Ally], all_allys: Array[Ally]) -> Ally:
 					skill_likelihoods.append(special_skill_state.calc_skill_likelihood(tile))
 				
 				target_priority.special_likelihood = skill_likelihoods.max()
-				target_priority.special_likelihood *=damage_likelihood
+				target_priority.special_likelihood *=damage_likelihood * _enemy.special_priority
 			target_priorities.append(target_priority)
 		_is_acting = true
 	
 	for target_priority: TargetPriority in target_priorities:
 		target_priority.rating += target_priority.distance
-		target_priority.rating += target_priority.knock_out_likelihood * _enemy.knock_out_priority
-		target_priority.rating += target_priority.special_likelihood * _enemy.special_priority
-		target_priority.rating += target_priority.basic_skill_likelihood * _enemy.basic_skill_priority
+		target_priority.rating += target_priority.knock_out_likelihood
+		target_priority.rating += target_priority.special_likelihood
+		target_priority.rating += target_priority.basic_skill_likelihood
 	
 	var max_rating: float = -INF
 	for target_priority: TargetPriority in target_priorities:
@@ -149,7 +157,8 @@ func _pick_target(target_list: Array[Ally], all_allys: Array[Ally]) -> Ally:
 			max_rating = target_priority.rating
 			current_target = target_priority.target
 			target_priority = target_priority
-			_enemy.attack_state = Combat.AttackState.BASIC if target_priority.basic_skill_likelihood >= target_priority.special_likelihood else Combat.AttackState.SPECIAL
+			if _is_acting:
+				_enemy.attack_state = Combat.AttackState.BASIC if target_priority.basic_skill_likelihood > target_priority.special_likelihood else Combat.AttackState.SPECIAL
 	
 	return current_target
 

@@ -37,9 +37,14 @@ func exit() -> void:
 
 
 func calc_skill_likelihood(strike_tile : Vector2i) -> float:
+	if strike_tile == Vector2i(8,8):
+		print("!")
+
 	var attack_range : RangeStruct = GameState.current_level.grid.request_range(
 		strike_tile, _skill.min_range, _skill.max_range, _skill.range_shape, true, _skill.direct
 	)
+	
+
 	for tile in attack_range.range_tiles:
 		var target_count: int = 0
 		var has_unit := false
