@@ -97,7 +97,7 @@ func get_tile_distance(start_tile, end_tile) -> int:
 		set_point_solid(start_tile, false)
 		revert_start = true
 	if is_point_solid(end_tile):
-		set_point_solid(end_tile)
+		set_point_solid(end_tile, false)
 		revert_end = true
 		
 	var out : int = get_id_path(start_tile, end_tile).size() - 1
@@ -110,8 +110,8 @@ func get_tile_distance(start_tile, end_tile) -> int:
 	return out
 
 
-func request_range(unit_tile: Vector2i,min_distance: int, max_distance: int, range_shape: Combat.RangeShape,
-is_ally: bool, can_pass := false, include_opponent_tiles := false, direct := false) -> RangeStruct:
+func request_range(unit_tile: Vector2i, min_distance: int, max_distance: int, range_shape: Combat.RangeShape,
+is_range := false, direct := false) -> RangeStruct:
 	var range_struct := RangeStruct.new()
 	var _pass_tiles: Array[Vector2i]
 	var unit : Character = get_unit_from_tile(unit_tile)
@@ -120,7 +120,7 @@ is_ally: bool, can_pass := false, include_opponent_tiles := false, direct := fal
 		set_point_solid(unit_tile, false)
 		_pass_tiles.append(unit_tile)
 	
-	if can_pass:
+	if is_range:
 		for tile in _prop_tiles:
 			set_point_solid(tile, false)
 			_pass_tiles.append(tile)
@@ -157,15 +157,15 @@ is_ally: bool, can_pass := false, include_opponent_tiles := false, direct := fal
 							
 							if not is_blocked:
 								range_struct.range_tiles.append(tile)
-				elif tile in cells and id_path.size() == 0:
+				elif tile in cells and id_path.size() == 0 and is_point_solid(tile):
 					set_point_solid(tile, false)
 					var check_path := get_id_path(unit_tile, tile)
 					if check_path.size() <= max_distance + 1 and check_path.size() > min_distance:
 						range_struct.blocked_tiles.append(tile)
 					set_point_solid(tile, true)
 		
-	if include_opponent_tiles:
-		if is_ally:
+	if is_range:
+		if unit is Ally:
 			for tile in _enemy_tiles:
 				var dist: int = abs(tile.y - unit_tile.y) + abs(tile.x - unit_tile.x)
 				var line := Vector2(tile - unit_tile)

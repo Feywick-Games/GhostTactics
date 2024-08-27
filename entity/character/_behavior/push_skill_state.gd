@@ -44,7 +44,7 @@ func enter() -> void:
 		if unit:
 			_o_target = unit
 	var skill_range = GameState.current_level.grid.request_range(_character.current_tile, _skill.min_range, 
-		_skill.max_range, _skill.range_shape, _character is Ally, false, false, true
+		_skill.max_range, _skill.range_shape, false, true
 	)
 	_astar = _character.create_range_astar(skill_range, _skill.max_range)
 	_tile_path = _astar.get_id_path(_target_tile, _target_tile + (_direction * _max_push_distance))

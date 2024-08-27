@@ -35,19 +35,19 @@ func enter() -> void:
 	units_on_field.shuffle()
 	var target_list: Array[Ally]
 	_start_tile = _enemy.current_tile
-	_movement_range = GameState.current_level.grid.request_range(_enemy.current_tile, 0,  _enemy.movement_range, Combat.RangeShape.DIAMOND, false)
+	_movement_range = GameState.current_level.grid.request_range(_enemy.current_tile, 0,  _enemy.movement_range, Combat.RangeShape.DIAMOND)
 	_movement_astar = _enemy.create_range_astar(_movement_range, _enemy.movement_range)
-	_interactable_range =  GameState.current_level.grid.request_range(_enemy.current_tile, 0,  _enemy.movement_range + 1, Combat.RangeShape.DIAMOND, false).blocked_tiles
+	_interactable_range =  GameState.current_level.grid.request_range(_enemy.current_tile, 0,  _enemy.movement_range + 1, Combat.RangeShape.DIAMOND).blocked_tiles
 	_interactable_range = GameState.current_level.get_interactable_tiles(_interactable_range)
 	for tile: Vector2i in _movement_range.range_tiles:
-		var valid_tiles := GameState.current_level.grid.request_range(tile, _enemy.basic_skill.min_range, _enemy.basic_skill.max_range, _enemy.basic_skill.range_shape, false, true, true)
+		var valid_tiles := GameState.current_level.grid.request_range(tile, _enemy.basic_skill.min_range, _enemy.basic_skill.max_range, _enemy.basic_skill.range_shape, true)
 		_full_attack_range.absorb(valid_tiles)
 		
 	if _enemy.special:
 		for unit: Character in units_on_field:
 			var skill_range := GameState.current_level.grid.request_range(unit.current_tile, 
-				_enemy.special.min_range, _enemy.special.max_range, _enemy.special.range_shape, false, 
-				true, true, _enemy.special.direct
+				_enemy.special.min_range, _enemy.special.max_range, _enemy.special.range_shape, 
+				true, _enemy.special.direct
 			)
 			var skill_state: SkillState = _enemy.special.state.new(_enemy.special, unit.current_tile)
 			for skill_tile in skill_range.range_tiles:
@@ -159,7 +159,6 @@ func _pick_tile() -> Vector2i:
 	var skill_state: SkillState = (desired_skill.state.new(desired_skill, _target.current_tile) as SkillState)
 	var ideal_distance: int = desired_skill.max_range
 	var desired_tile: Vector2i = _start_tile
-	_range_astar = _enemy.create_range_astar(_attack_range, desired_skill.max_range)
 	
 	if not _is_acting:
 		var start_distance: int = GameState.current_level.grid.get_tile_distance(_start_tile, _target.current_tile)
@@ -171,16 +170,18 @@ func _pick_tile() -> Vector2i:
 				desired_tile = tile
 	else:
 		var desired_favoribility: float = 0
-		var skill_range := GameState.current_level.grid.request_range(_target.current_tile, desired_skill.min_range, desired_skill.max_range, desired_skill.range_shape, true, true, true, desired_skill.direct)
-		var skill_astar := _target.create_range_astar(skill_range, desired_skill.max_range)
+		var skill_range := GameState.current_level.grid.request_range(_target.current_tile, desired_skill.min_range, desired_skill.max_range, desired_skill.range_shape, true, desired_skill.direct)
+		_range_astar = _target.create_range_astar(skill_range, desired_skill.max_range)
 		for tile in skill_range.range_tiles:
-			var dist: int = _range_astar.get_id_path(tile, _target.current_tile, true).size() - 1
-			var likelihood: float = skill_state.calc_skill_likelihood(tile)
-			#var distance_favoribility : float = 1 - (ideal_distance - dist / float(ideal_distance))
-			var favoribility: float = likelihood #(distance_favoribility * likelihood)
-			if favoribility > desired_favoribility:
-					desired_tile = tile
-					desired_favoribility = favoribility
+			if tile in _movement_range.range_tiles:
+				if _range_astar.region.has_point(tile):
+					var dist: int = _range_astar.get_id_path(tile, _target.current_tile, true).size() - 1
+					var likelihood: float = skill_state.calc_skill_likelihood(tile)
+					#var distance_favoribility : float = 1 - (ideal_distance - dist / float(ideal_distance))
+					var favoribility: float = likelihood #(distance_favoribility * likelihood)
+					if favoribility > desired_favoribility:
+							desired_tile = tile
+							desired_favoribility = favoribility
 
 	return desired_tile
 

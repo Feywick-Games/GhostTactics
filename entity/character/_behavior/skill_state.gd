@@ -38,8 +38,7 @@ func exit() -> void:
 
 func calc_skill_likelihood(strike_tile : Vector2i) -> float:
 	var attack_range : RangeStruct = GameState.current_level.grid.request_range(
-		strike_tile, _skill.min_range, _skill.max_range, _skill.range_shape, _character is Ally, 
-		true, true, _skill.direct
+		strike_tile, _skill.min_range, _skill.max_range, _skill.range_shape, true, _skill.direct
 	)
 	for tile in attack_range.range_tiles:
 		var target_count: int = 0

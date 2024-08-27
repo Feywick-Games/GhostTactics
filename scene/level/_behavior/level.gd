@@ -141,6 +141,8 @@ func _populate_grid() -> void:
 				if prop_source_id != -1 or improv_weapon_source_id != -1:
 					if not _prop_layer.get_cell_tile_data(tile).get_custom_data("impassable"):
 						grid.add_prop(tile)
+					else:
+						grid.lock_cell(tile)
 					
 
 func get_interactable(tile: Vector2i) -> ImprovisedWeapon:

@@ -9,9 +9,9 @@ func enter() -> void:
 	_ally = state_machine.state_owner as Ally
 	_ally.global_position = GameState.current_level.tile_to_world(_ally.current_tile).round()
 	_start_tile = _ally.current_tile
-	_movement_range = GameState.current_level.grid.request_range(_ally.current_tile, 0, _ally.movement_range, Combat.RangeShape.DIAMOND, true)
+	_movement_range = GameState.current_level.grid.request_range(_ally.current_tile, 0, _ally.movement_range, Combat.RangeShape.DIAMOND)
 	_starting_movement_range = _movement_range
-	_interactable_range = GameState.current_level.grid.request_range(_ally.current_tile, 0, _ally.movement_range + 1, Combat.RangeShape.DIAMOND, true).blocked_tiles
+	_interactable_range = GameState.current_level.grid.request_range(_ally.current_tile, 0, _ally.movement_range + 1, Combat.RangeShape.DIAMOND).blocked_tiles
 	_interactable_range = GameState.current_level.get_interactable_tiles(_interactable_range)
 	_ally.attack_state = Combat.AttackState.BASIC if not _ally.improvised_weapon else Combat.AttackState.IMPROV
 	_movement_astar = _ally.create_range_astar(_movement_range, _ally.movement_range)
@@ -99,7 +99,7 @@ func update(delta: float) -> State:
 				force_redraw = true
 			if interacted:
 				_movement_range = RangeStruct.new()
-				_interactable_range = GameState.grid.current_level.request_range(_ally.current_tile, 0, _ally.movement_range + 1, Combat.RangeShape.DIAMOND, true).blocked_tiles
+				_interactable_range = GameState.grid.current_level.request_range(_ally.current_tile, 0, _ally.movement_range + 1, Combat.RangeShape.DIAMOND,).blocked_tiles
 				_interactable_range = GameState.current_level.get_interactable_tiles(_interactable_range)
 		
 		if current_tile != _ally.current_tile or force_redraw:

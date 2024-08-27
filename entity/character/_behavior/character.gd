@@ -267,22 +267,21 @@ func update_ranges(movement_range: RangeStruct, interactable_range: Array[Vector
 	var skill_range: RangeStruct
 	var attack_atlas_coords: Vector2i
 	var overlap_atlas_coords: Vector2i
-	var is_ally: bool = self is Ally
 	
 	if attack_state == Combat.AttackState.BASIC:
-		skill_range = GameState.current_level.grid.request_range(current_tile, basic_skill.min_range, basic_skill.max_range, basic_skill.range_shape, is_ally, true, true, basic_skill.direct)
+		skill_range = GameState.current_level.grid.request_range(current_tile, basic_skill.min_range, basic_skill.max_range, basic_skill.range_shape, true, basic_skill.direct)
 		attack_atlas_coords = Global.RETICLE_ATTACK_ALTAS_COORDS
 		overlap_atlas_coords = Global.RETICLE_SPECIAL_2_ATLAS_COORDS
 	elif attack_state == Combat.AttackState.SPECIAL:
-		skill_range = GameState.current_level.grid.request_range(current_tile, special.min_range, special.max_range, special.range_shape, is_ally, true, true, special.direct)
+		skill_range = GameState.current_level.grid.request_range(current_tile, special.min_range, special.max_range, special.range_shape, true, special.direct)
 		attack_atlas_coords = Global.RETICLE_SPECIAL_1_ALTAS_COORDS
 		overlap_atlas_coords = Global.RETICLE_CURE_1_ATLAS_COORDS
 	elif attack_state == Combat.AttackState.IMPROV:
-		skill_range = GameState.current_level.grid.request_range(current_tile, improvised_weapon.min_range, improvised_weapon.max_range, improvised_weapon.range_shape, is_ally, true, true, improvised_weapon.direct)
+		skill_range = GameState.current_level.grid.request_range(current_tile, improvised_weapon.min_range, improvised_weapon.max_range, improvised_weapon.range_shape, true, improvised_weapon.direct)
 		attack_atlas_coords = Global.RETICLE_ATTACK_ALTAS_COORDS
 		overlap_atlas_coords = Global.RETICLE_SPECIAL_2_ATLAS_COORDS
 	elif attack_state == Combat.AttackState.IMPROV_THROW:
-		skill_range = GameState.current_level.grid.request_range(current_tile, improvised_weapon.min_throw_range, improvised_weapon.max_throw_range, Combat.RangeShape.DIAMOND, is_ally, true, true)
+		skill_range = GameState.current_level.grid.request_range(current_tile, improvised_weapon.min_throw_range, improvised_weapon.max_throw_range, Combat.RangeShape.DIAMOND, true)
 		attack_atlas_coords = Global.RETICLE_SPECIAL_1_ALTAS_COORDS
 		overlap_atlas_coords = Global.RETICLE_CURE_1_ATLAS_COORDS
 	
