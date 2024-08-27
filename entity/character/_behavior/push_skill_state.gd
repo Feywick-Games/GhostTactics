@@ -17,6 +17,8 @@ var _o_target: Character
 var _push_distance: int
 var _tile_path: Array[Vector2i]
 var _time_since_move: float
+var _has_acted := false
+var _astar: AStarGrid2D
 
 func enter() -> void:
 	super.enter()
@@ -37,13 +39,15 @@ func enter() -> void:
 	if GameState.current_level.grid.is_point_solid(collision_point):
 		_max_is_collision = true
 		
-		var unit := GameState.current_level.get_unit_from_tile(collision_point)
+		var unit := GameState.current_level.grid.get_unit_from_tile(collision_point)
 		
 		if unit:
 			_o_target = unit
-		
-	
-	_tile_path = GameState.current_level.get_id_path(_target_tile, _target_tile + (_direction * _max_push_distance))
+	var skill_range = GameState.current_level.grid.request_range(_character.current_tile, _skill.min_range, 
+		_skill.max_range, _skill.range_shape, _character is Ally, false, false, true
+	)
+	_astar = _character.create_range_astar(skill_range, _skill.max_range)
+	_tile_path = _astar.get_id_path(_target_tile, _target_tile + (_direction * _max_push_distance))
 	
 	_draw_range()
 
@@ -75,7 +79,7 @@ func _push(delta: float) -> void:
 				_target_unit.current_tile = _tile_path[0]
 	else:
 		_exiting = true
-		GameState.current_level.update_unit_registry(_target_unit.current_tile, _target_unit)
+		GameState.current_level.grid.update_unit_registry(_target_unit.current_tile, _target_unit)
 		if increment ==  _max_push_distance and _max_is_collision:
 			# guaranteed as impact was precalculated
 			var skill: Skill = _character.special.duplicate()
@@ -92,43 +96,44 @@ func update(delta: float) -> State:
 	var parent_state: State = super.update(delta)
 	if parent_state:
 		return parent_state
-	
-	if not pushing:
-		if Input.is_action_pressed("accept"):
-			_time_since_increment += delta
-			
-			if _time_since_increment > TIME_PER_INCREMENT:
-				_time_since_increment = 0
-				increment += 1
-				if increment > _max_push_distance:
-					var unit = GameState.current_level.get_unit_from_tile(_target_tile)
-					unit.take_damage(_skill, _character.facing,  _character.accuracy, _character.target_hit)
-					_character.notify_impact()
-					unit.action_processed.connect(end_turn)
-				else:
-					_push_range.append(_target_tile + (_direction * increment))
-					_draw_range()
-			
-		# TODO account for push animation
-		elif Input.is_action_just_released("accept") and not _exiting:
-			_target_unit = GameState.current_level.get_unit_from_tile(_target_tile)
-			var is_hit = _target_unit.is_hit(_character.accuracy)
-			if is_hit:
-				EventBus.cam_follow_requested.emit(_target_unit)
-				pushing = true
-				_tile_path = _tile_path.slice(0, increment + 1)
-			else:
-				_character.end_turn()
-				return CharacterCombatIdleState.new()
+	if not _has_acted:
+		if not pushing:
+			if Input.is_action_pressed("accept"):
+				_time_since_increment += delta
 				
-	elif not _exiting:
-		_push(delta)
+				if _time_since_increment > TIME_PER_INCREMENT:
+					_time_since_increment = 0
+					increment += 1
+					if increment > _max_push_distance:
+						var unit = GameState.current_level.grid.get_unit_from_tile(_target_tile)
+						unit.take_damage(_skill, _character.facing,  _character.accuracy, _character.target_hit)
+						_character.notify_impact()
+						unit.action_processed.connect(end_turn)
+						_has_acted = true
+					else:
+						_push_range.append(_target_tile + (_direction * increment))
+						_draw_range()
+				
+			# TODO account for push animation
+			elif Input.is_action_just_released("accept") and not _exiting:
+				_target_unit = GameState.current_level.grid.get_unit_from_tile(_target_tile)
+				var is_hit = _target_unit.is_hit(_character.accuracy)
+				if is_hit:
+					EventBus.cam_follow_requested.emit(_target_unit)
+					pushing = true
+					_tile_path = _tile_path.slice(0, increment + 1)
+				else:
+					_character.end_turn()
+					return CharacterCombatIdleState.new()
+					
+		elif not _exiting:
+			_push(delta)
 	return
 
-func calc_skill_likelihood(attack_range: RangeStruct, strike_tile: Vector2i) -> float:
-	#var push_distance: int
-	#for effect: StatusEffect in _skill.status_effects:
-		#if effect.status == Combat.Status.PUSHED:
-			#push_distance = effect.value
-	
-	return 0
+#func calc_skill_likelihood(attack_range: RangeStruct, strike_tile: Vector2i) -> float:
+	##var push_distance: int
+	##for effect: StatusEffect in _skill.status_effects:
+		##if effect.status == Combat.Status.PUSHED:
+			##push_distance = effect.value
+	#
+	#return 0

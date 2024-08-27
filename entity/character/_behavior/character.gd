@@ -182,7 +182,7 @@ func start_turn() -> void:
 
 
 func end_turn() -> void:
-	GameState.current_level.update_unit_registry(current_tile, self)
+	GameState.current_level.grid.update_unit_registry(current_tile, self)
 	EventBus.turn_ended.emit.call_deferred()
 	
 	health_bar.hide()
@@ -221,7 +221,7 @@ func process_action(tile: Vector2i, attack_range: RangeStruct, state: TurnState)
 		var unit: Character
 		
 		for aoe_tile in aoe:
-			unit = GameState.current_level.get_unit_from_tile(tile + aoe_tile)
+			unit = GameState.current_level.grid.get_unit_from_tile(tile + aoe_tile)
 			if unit:
 				break
 		
@@ -270,19 +270,19 @@ func update_ranges(movement_range: RangeStruct, interactable_range: Array[Vector
 	var is_ally: bool = self is Ally
 	
 	if attack_state == Combat.AttackState.BASIC:
-		skill_range = GameState.current_level.request_range(current_tile, basic_skill.min_range, basic_skill.max_range, basic_skill.range_shape, is_ally, true, true, basic_skill.direct)
+		skill_range = GameState.current_level.grid.request_range(current_tile, basic_skill.min_range, basic_skill.max_range, basic_skill.range_shape, is_ally, true, true, basic_skill.direct)
 		attack_atlas_coords = Global.RETICLE_ATTACK_ALTAS_COORDS
 		overlap_atlas_coords = Global.RETICLE_SPECIAL_2_ATLAS_COORDS
 	elif attack_state == Combat.AttackState.SPECIAL:
-		skill_range = GameState.current_level.request_range(current_tile, special.min_range, special.max_range, special.range_shape, is_ally, true, true, special.direct)
+		skill_range = GameState.current_level.grid.request_range(current_tile, special.min_range, special.max_range, special.range_shape, is_ally, true, true, special.direct)
 		attack_atlas_coords = Global.RETICLE_SPECIAL_1_ALTAS_COORDS
 		overlap_atlas_coords = Global.RETICLE_CURE_1_ATLAS_COORDS
 	elif attack_state == Combat.AttackState.IMPROV:
-		skill_range = GameState.current_level.request_range(current_tile, improvised_weapon.min_range, improvised_weapon.max_range, improvised_weapon.range_shape, is_ally, true, true, improvised_weapon.direct)
+		skill_range = GameState.current_level.grid.request_range(current_tile, improvised_weapon.min_range, improvised_weapon.max_range, improvised_weapon.range_shape, is_ally, true, true, improvised_weapon.direct)
 		attack_atlas_coords = Global.RETICLE_ATTACK_ALTAS_COORDS
 		overlap_atlas_coords = Global.RETICLE_SPECIAL_2_ATLAS_COORDS
 	elif attack_state == Combat.AttackState.IMPROV_THROW:
-		skill_range = GameState.current_level.request_range(current_tile, improvised_weapon.min_throw_range, improvised_weapon.max_throw_range, Combat.RangeShape.DIAMOND, is_ally, true, true)
+		skill_range = GameState.current_level.grid.request_range(current_tile, improvised_weapon.min_throw_range, improvised_weapon.max_throw_range, Combat.RangeShape.DIAMOND, is_ally, true, true)
 		attack_atlas_coords = Global.RETICLE_SPECIAL_1_ALTAS_COORDS
 		overlap_atlas_coords = Global.RETICLE_CURE_1_ATLAS_COORDS
 	
@@ -327,5 +327,5 @@ func process_movement(delta: float, tile_path: Array[Vector2i]) -> Array[Vector2
 		if not tile_path.is_empty() and \
 		path_position.distance_to(global_position) < map_position.distance_to(global_position):
 			current_tile = tile_path[0]
-			GameState.current_level.update_unit_registry(current_tile, self)
+			GameState.current_level.grid.update_unit_registry(current_tile, self)
 	return tile_path

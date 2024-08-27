@@ -9,12 +9,12 @@ func enter() -> void:
 	_ally = state_machine.state_owner as Ally
 	_ally.global_position = GameState.current_level.tile_to_world(_ally.current_tile).round()
 	_start_tile = _ally.current_tile
-	_movement_range = GameState.current_level.request_range(_ally.current_tile, 0, _ally.movement_range, Combat.RangeShape.DIAMOND, true)
+	_movement_range = GameState.current_level.grid.request_range(_ally.current_tile, 0, _ally.movement_range, Combat.RangeShape.DIAMOND, true)
 	_starting_movement_range = _movement_range
-	_interactable_range = GameState.current_level.request_range(_ally.current_tile, 0, _ally.movement_range + 1, Combat.RangeShape.DIAMOND, true).blocked_tiles
+	_interactable_range = GameState.current_level.grid.request_range(_ally.current_tile, 0, _ally.movement_range + 1, Combat.RangeShape.DIAMOND, true).blocked_tiles
 	_interactable_range = GameState.current_level.get_interactable_tiles(_interactable_range)
 	_ally.attack_state = Combat.AttackState.BASIC if not _ally.improvised_weapon else Combat.AttackState.IMPROV
-	_astar = _ally.create_range_astar(_movement_range, _ally.movement_range)
+	_movement_astar = _ally.create_range_astar(_movement_range, _ally.movement_range)
 	_attack_range = _ally.update_ranges(_movement_range,  _interactable_range)
 	EventBus.timed_out.connect(_on_timed_out)
 	_mouse_node = Node2D.new()
@@ -45,7 +45,7 @@ func update(delta: float) -> State:
 		var hover_tile: Vector2i = GameState.current_level.world_to_tile(_ally.get_global_mouse_position())
 		if Input.is_action_pressed("move") and not acted:
 			if hover_tile in _movement_range.range_tiles:
-				_tile_path = _astar.get_id_path(_ally.current_tile, hover_tile)
+				_tile_path = _movement_astar.get_id_path(_ally.current_tile, hover_tile)
 		elif acted and _highlighted_tile != hover_tile and \
 		(hover_tile in _attack_range.range_tiles or hover_tile in _interactable_range):
 			_highlight_targets(_highlighted_tile, false)
@@ -99,7 +99,7 @@ func update(delta: float) -> State:
 				force_redraw = true
 			if interacted:
 				_movement_range = RangeStruct.new()
-				_interactable_range = GameState.current_level.request_range(_ally.current_tile, 0, _ally.movement_range + 1, Combat.RangeShape.DIAMOND, true).blocked_tiles
+				_interactable_range = GameState.grid.current_level.request_range(_ally.current_tile, 0, _ally.movement_range + 1, Combat.RangeShape.DIAMOND, true).blocked_tiles
 				_interactable_range = GameState.current_level.get_interactable_tiles(_interactable_range)
 		
 		if current_tile != _ally.current_tile or force_redraw:

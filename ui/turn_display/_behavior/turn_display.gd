@@ -63,7 +63,7 @@ func _start_turn() -> void:
 
 func _process(delta: float) -> void:
 	if visible:
-		if not _battle_started and not _units.is_empty() and GameState.current_level.grid_complete:
+		if not _battle_started and not _units.is_empty() and GameState.current_level.map_complete:
 			var units_waiting := false
 			for unit in _units:
 				if not unit.ready_for_battle:

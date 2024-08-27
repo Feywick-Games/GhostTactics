@@ -11,7 +11,8 @@ var _attack_range: RangeStruct = RangeStruct.new()
 var _interactable_range: Array[Vector2i]
 var _tile_path: Array[Vector2i]
 var _time_since_move: float = 0
-var _astar: AStarGrid2D
+var _movement_astar: AStarGrid2D
+var _range_astar: AStarGrid2D
 var _start_tile: Vector2i
 var _exiting := false
 var _encounter_ended := false
@@ -91,7 +92,7 @@ func _highlight_targets(target_tile: Vector2i, highlight := true) -> void:
 				GameState.current_level.select_tile(tile, highlight)
 			else:
 				if highlight:
-					var is_floor := GameState.current_level.map.get_cell_source_id(tile) != -1
+					var is_floor := tile in GameState.current_level.grid.cells
 					
 					if not is_floor:
 						continue

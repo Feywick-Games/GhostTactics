@@ -24,7 +24,7 @@ func _hit_targets(aoe: Array[Vector2i], range_type: Combat.RangeType) -> void:
 			tile = _character.current_tile + Vector2i(_direction) + offset_rotated
 		else:
 			tile = _target_tile + offset_rotated
-		var unit: Character = GameState.current_level.get_unit_from_tile(tile)
+		var unit: Character = GameState.current_level.grid.get_unit_from_tile(tile)
 		if unit:
 			unit.action_processed.connect(end_turn)
 			_action_to_process += 1

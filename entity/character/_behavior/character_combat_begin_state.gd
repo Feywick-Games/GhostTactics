@@ -9,9 +9,9 @@ var _direction: Vector2
 
 func enter() -> void:
 	_character = state_machine.state_owner as Character
-	_character.current_tile = GameState.current_level.get_nearest_available_tile(_character.global_position)
+	_character.current_tile = GameState.current_level.grid.get_nearest_available_tile(_character.global_position)
 	_direction = (_character.global_position - GameState.current_level.tile_to_world(_character.current_tile)).normalized()
-	GameState.current_level.update_unit_registry(_character.current_tile, _character)
+	GameState.current_level.grid.update_unit_registry(_character.current_tile, _character)
 	_target_position = GameState.current_level.tile_to_world(_character.current_tile)
 	_character.facing = Vector2i(VectorF.snap_direction(_direction))
 	_character.start_encounter()
