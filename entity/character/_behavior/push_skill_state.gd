@@ -22,6 +22,7 @@ var _astar: AStarGrid2D
 
 func enter() -> void:
 	super.enter()
+	_target_unit = GameState.current_level.grid.get_unit_from_tile(_target_tile)
 	var _push_range = [_target_tile]
 	_direction =  Vector2i(Vector2(_target_tile - _character.current_tile).normalized().round())
 	for effect: StatusEffect in _skill.status_effects:
@@ -43,10 +44,10 @@ func enter() -> void:
 		
 		if unit:
 			_o_target = unit
-	var skill_range = GameState.current_level.grid.request_range(_character.current_tile, _skill.min_range, 
-		_skill.max_range, _skill.range_shape, false, true
+	var skill_range = GameState.current_level.grid.request_range(_target_tile, 0, 
+		_max_push_distance, Combat.RangeShape.CROSS, true, true
 	)
-	_astar = _character.create_range_astar(skill_range, _skill.max_range)
+	_astar = _target_unit.create_range_astar(skill_range, _max_push_distance)
 	_tile_path = _astar.get_id_path(_target_tile, _target_tile + (_direction * _max_push_distance))
 	
 	_draw_range()
@@ -61,24 +62,8 @@ func _draw_range() -> void:
 func _push(delta: float) -> void:
 	_target_unit.velocity = Vector2.ZERO
 	if not _tile_path.is_empty():
-		_time_since_move += delta
-		if _time_since_move >= Character.TIME_PER_MOVE:
-			_time_since_move = 0
-			var path_position :=  GameState.current_level.tile_to_world(_tile_path[0])
-			var map_position := GameState.current_level.tile_to_world(_character.current_tile)
-			if path_position.distance_to(_target_unit.global_position) > Character.SNAP_DISTANCE:
-				var dir: Vector2 = (path_position - _target_unit.global_position).normalized()
-				_target_unit.global_position += dir * Global.PLAYER_SPEED * 4.0 * delta
-				_target_unit.global_position = _target_unit.global_position.snapped(Vector2(2,1))
-			if not path_position.distance_to(_target_unit.global_position) > Character.SNAP_DISTANCE:
-				if len(_tile_path) == 1:
-					_target_unit.global_position = path_position.round()
-				_tile_path.pop_front()
-			if not _tile_path.is_empty() and \
-			path_position.distance_to(_target_unit.global_position) < map_position.distance_to(_target_unit.global_position):
-				_target_unit.current_tile = _tile_path[0]
+		_tile_path = _target_unit.process_movement(delta, _tile_path)
 	else:
-		_exiting = true
 		GameState.current_level.grid.update_unit_registry(_target_unit.current_tile, _target_unit)
 		if increment ==  _max_push_distance and _max_is_collision:
 			# guaranteed as impact was precalculated
@@ -90,6 +75,7 @@ func _push(delta: float) -> void:
 			_target_unit.take_damage(_skill, _direction, INF, _character.target_hit)
 		_target_unit.action_processed.connect(end_turn)
 		_character.notify_impact()
+		_has_acted = true
 
 
 func update(delta: float) -> State:
@@ -115,25 +101,18 @@ func update(delta: float) -> State:
 						_draw_range()
 				
 			# TODO account for push animation
-			elif Input.is_action_just_released("accept") and not _exiting:
-				_target_unit = GameState.current_level.grid.get_unit_from_tile(_target_tile)
+			else:
 				var is_hit = _target_unit.is_hit(_character.accuracy)
 				if is_hit:
 					EventBus.cam_follow_requested.emit(_target_unit)
 					pushing = true
 					_tile_path = _tile_path.slice(0, increment + 1)
 				else:
-					_character.end_turn()
-					return CharacterCombatIdleState.new()
+					_target_unit.take_damage(_skill, _direction, 0, _character.target_hit, 0)
+					_target_unit.action_processed.connect(end_turn)
+					_target_unit.notify_impact()
+					_has_acted = true
 					
 		elif not _exiting:
 			_push(delta)
 	return
-
-#func calc_skill_likelihood(attack_range: RangeStruct, strike_tile: Vector2i) -> float:
-	##var push_distance: int
-	##for effect: StatusEffect in _skill.status_effects:
-		##if effect.status == Combat.Status.PUSHED:
-			##push_distance = effect.value
-	#
-	#return 0
