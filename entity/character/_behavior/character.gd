@@ -77,6 +77,8 @@ var health_bar: TextureProgressBar = $CharacterSprite/HealthBar
 var hit_chance_label: Label = $CharacterSprite/HealthBar/HitChanceLabel
 @onready
 var damage_bar: TextureProgressBar = $CharacterSprite/HealthBar/DamageBar
+@onready
+var _status_label_manager: StatusLabelManager = $CharacterSprite/StatusLabelManager
 
 func _ready() -> void:
 	health_bar.hide()
@@ -139,21 +141,20 @@ func take_damage(skill: Skill, direction: Vector2, hit_chance: float, hit_signal
 			effect.multiplier = multiplier
 			status.append(effect)
 			_process_status_effect(effect)
-		print("attack hit " + name)
+			_status_label_manager.add_status_effect(effect)
 	else:
-		print("attack missed " + name)
+		_status_label_manager.add_status_effect(null)
 	status = status
 
 	health_bar.value = health
 	damage_bar.value = health_bar.value
 	damage_taken.emit()
 	
+	_status_label_manager.display_statuses()
+	await _status_label_manager.statuses_displayed
+	
 	if health <= 0:
 		died.emit()
-	
-	await get_tree().create_timer(2.5).timeout
-	
-	if health <= 0:
 		queue_free()
 	health_bar.hide()
 	action_processed.emit()
@@ -307,7 +308,7 @@ func update_ranges(movement_range: RangeStruct, interactable_range: Array[Vector
 	return skill_range
 
 
-func process_movement(delta: float, tile_path: Array[Vector2i]) -> Array[Vector2i]:
+func process_movement(delta: float, tile_path: Array[Vector2i], animation := "idle") -> Array[Vector2i]:
 	velocity = Vector2.ZERO
 	if not tile_path.is_empty():
 		var path_position :=  GameState.current_level.tile_to_world(tile_path[0])
@@ -318,7 +319,7 @@ func process_movement(delta: float, tile_path: Array[Vector2i]) -> Array[Vector2
 			global_position = global_position.snapped(Vector2(2,1))
 			if is_animated:
 				var anim_dir := Vector2(tile_path[0] - current_tile).normalized()
-				animator.play_directional("idle", anim_dir)
+				animator.play_directional(animation, anim_dir)
 		if not path_position.distance_to(global_position) > SNAP_DISTANCE:
 			if len(tile_path) == 1:
 				global_position = path_position.round()
