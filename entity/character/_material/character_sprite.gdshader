@@ -22,9 +22,8 @@ void fragment() {
 	{
 		int highlight_uv;
 		highlight_uv = int(TIME * 50.0) % int(1.0/TEXTURE_PIXEL_SIZE.y);
-		
-		
-		if (abs(int(UV.y * (1.0/TEXTURE_PIXEL_SIZE.y)) - highlight_uv) < 2)
+		int pixel_uv = int(UV.y * (1.0/TEXTURE_PIXEL_SIZE.y));
+		if (abs(pixel_uv - highlight_uv) < 4)
 			COLOR = border_color; 
 	}
 }
