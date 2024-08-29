@@ -37,6 +37,7 @@ func _on_encounter_started() -> void:
 	_encounter_started = true
 	_current_cell_x = grid.region.position.x
 	_time_per_grid_tile =  GRID_DRAW_TIME/ grid.size.x
+	map_complete = true
 
 
 func _on_encounter_ended() -> void:
@@ -88,9 +89,11 @@ func _process(delta: float) -> void:
 func reset_map() -> void:
 	for tile in grid.cells:
 		if tile + Vector2i.UP in grid.cells:
-			map.set_cell(tile, 0, Vector2.ZERO)
-		else:
-			map.set_cell(tile, 0 , Vector2.RIGHT)
+			map.set_cell(tile)
+			#map.set_cell(tile, 0, Vector2.ZERO)
+		#else:
+			#map.set_cell(tile)
+			#map.set_cell(tile, 0 , Vector2.RIGHT)
 
 
 func draw_range(tiles: Array[Vector2i], atlas_coords: Vector2i) -> void:
@@ -139,7 +142,8 @@ func _populate_grid() -> void:
 			else:
 				grid.add_cell(tile)
 				if prop_source_id != -1 or improv_weapon_source_id != -1:
-					if not _prop_layer.get_cell_tile_data(tile).get_custom_data("impassable"):
+					var tile_data: TileData = _prop_layer.get_cell_tile_data(tile)
+					if tile_data and tile_data.get_custom_data("impassable"):
 						grid.add_prop(tile)
 					else:
 						grid.lock_cell(tile)

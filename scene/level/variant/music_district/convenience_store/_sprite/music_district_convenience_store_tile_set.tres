@@ -86,5 +86,7 @@ physics_layer_0/collision_layer = 1
 navigation_layer_0/layers = 1
 custom_data_layer_0/name = "border"
 custom_data_layer_0/type = 1
+custom_data_layer_1/name = "impassable"
+custom_data_layer_1/type = 0
 sources/2 = SubResource("TileSetAtlasSource_etcb0")
 sources/1 = SubResource("TileSetAtlasSource_m1of5")

@@ -78,16 +78,16 @@ tile_set = ExtResource("2_7h7cu")
 tile_set = ExtResource("3_ndi1j")
 
 [node name="Wendigo" parent="." instance=ExtResource("4_sgqih")]
-position = Vector2(29, 94)
+position = Vector2(54, 186)
 
 [node name="Wendigo3" parent="." instance=ExtResource("4_sgqih")]
 position = Vector2(127, 136)
 
 [node name="Wendigo2" parent="." instance=ExtResource("4_sgqih")]
-position = Vector2(86, 101)
+position = Vector2(86, 167)
 
 [node name="Izzy" parent="." instance=ExtResource("5_0a6gs")]
-position = Vector2(-35, 157)
+position = Vector2(-4, 216)
 follow_order = 0
 
 [node name="Chaz" parent="." instance=ExtResource("6_i4enw")]

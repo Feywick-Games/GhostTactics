@@ -8,6 +8,45 @@
 [ext_resource type="FontFile" uid="uid://b3bass46yqae2" path="res://ui/font/dogica.ttf" id="4_eqor8"]
 [ext_resource type="Script" path="res://entity/character/status_label_manager.gd" id="6_1nyw1"]
 
+[sub_resource type="Animation" id="Animation_2gelk"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("StatusLabelManager/StatusLabel:theme_override_colors/font_color")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(0.968627, 0.968627, 0.960784, 1)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("StatusLabelManager/StatusLabel:theme_override_colors/font_outline_color")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(0.0470588, 0.0352941, 0.0509804, 1)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("StatusLabelManager/StatusLabel:position")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(-19, -64)]
+}
+
 [sub_resource type="Animation" id="Animation_leh64"]
 resource_name = "hit"
 length = 2.0
@@ -60,45 +99,6 @@ tracks/3/keys = {
 "args": [],
 "method": &"set_damage_value"
 }]
-}
-
-[sub_resource type="Animation" id="Animation_2gelk"]
-length = 0.001
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("StatusLabelManager/StatusLabel:theme_override_colors/font_color")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Color(0.968627, 0.968627, 0.960784, 1)]
-}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("StatusLabelManager/StatusLabel:theme_override_colors/font_outline_color")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Color(0.0470588, 0.0352941, 0.0509804, 1)]
-}
-tracks/2/type = "value"
-tracks/2/imported = false
-tracks/2/enabled = true
-tracks/2/path = NodePath("StatusLabelManager/StatusLabel:position")
-tracks/2/interp = 1
-tracks/2/loop_wrap = true
-tracks/2/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Vector2(-19, -64)]
 }
 
 [sub_resource type="Animation" id="Animation_clwql"]
@@ -218,6 +218,7 @@ libraries = {
 }
 
 [node name="StatusLabel" type="Label" parent="CharacterSprite/StatusLabelManager"]
+layout_mode = 0
 offset_left = -19.0
 offset_top = -64.0
 offset_right = 21.0
