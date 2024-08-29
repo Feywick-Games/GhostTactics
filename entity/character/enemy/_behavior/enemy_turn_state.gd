@@ -197,16 +197,6 @@ func _pick_tile() -> Vector2i:
 
 func update(delta: float) -> State:
 	if not _is_processing_custom:
-		var current_tile := _enemy.current_tile
-		
-		_time_since_move += delta
-		if _time_since_move > Character.TIME_PER_MOVE:
-			_time_since_move = 0
-			_tile_path =  _enemy.process_movement(delta, _tile_path)
-		
-		
-		if current_tile != _enemy.current_tile:
-			_attack_range = _enemy.update_ranges(_movement_range,  _interactable_range)
 		if not _exiting and _tile_path.is_empty() and _is_acting:
 			if _time_highlight >= HIGHLIGHT_TIME:
 				return _enemy.process_action(_target.current_tile, _attack_range, self)
@@ -222,4 +212,12 @@ func update(delta: float) -> State:
 	else:
 		_process_custom_action(delta)
 	
+	return
+
+
+func physics_update(delta: float) -> State:
+	var current_tile := _enemy.current_tile
+	super.physics_update(delta)
+	if current_tile != _enemy.current_tile:
+		_attack_range = _enemy.update_ranges(_movement_range,  _interactable_range)
 	return

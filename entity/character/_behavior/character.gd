@@ -308,7 +308,6 @@ func update_ranges(movement_range: RangeStruct, interactable_range: Array[Vector
 
 
 func process_movement(delta: float, tile_path: Array[Vector2i], animation := "idle") -> Array[Vector2i]:
-	velocity = Vector2.ZERO
 	if not tile_path.is_empty():
 		var path_position :=  GameState.current_level.tile_to_world(tile_path[0])
 		var map_position := GameState.current_level.tile_to_world(current_tile)

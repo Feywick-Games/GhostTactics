@@ -3,6 +3,7 @@ extends TurnState
 
 var _ally: Ally
 var _mouse_node: Node2D
+var force_redraw := false
 
 func enter() -> void:
 	super.enter()
@@ -35,8 +36,6 @@ func update(delta: float) -> State:
 		EventBus.display_requested.emit(false)
 	
 	if not Input.is_action_pressed("free_camera"):
-		var current_tile: Vector2i = _ally.current_tile
-		var force_redraw := false
 		
 		var _current_state: State = super.update(delta)
 		if _current_state:
@@ -51,11 +50,6 @@ func update(delta: float) -> State:
 			_highlight_targets(_highlighted_tile, false)
 			_highlight_targets(hover_tile)
 			_highlighted_tile = hover_tile
-
-		_time_since_move += delta
-		if _time_since_move > Character.TIME_PER_MOVE:
-			_time_since_move = 0
-			_tile_path =  _ally.process_movement(delta, _tile_path)
 		
 		if Input.is_action_just_pressed("guard"):
 				_ally.get_viewport().set_input_as_handled()
@@ -102,13 +96,20 @@ func update(delta: float) -> State:
 				_interactable_range = GameState.grid.current_level.request_range(_ally.current_tile, 0, _ally.movement_range + 1, Combat.RangeShape.DIAMOND,).blocked_tiles
 				_interactable_range = GameState.current_level.get_interactable_tiles(_interactable_range)
 		
-		if current_tile != _ally.current_tile or force_redraw:
-			force_redraw = false
-			_attack_range = _ally.update_ranges(_movement_range,  _interactable_range)
-			if interacted:
-				_highlight_targets(_highlighted_tile)
+
 		return _current_state
 	else:
 		if Input.is_action_pressed("accept"):
 			_mouse_node.global_position = _ally.get_global_mouse_position()
+	return
+
+
+func physics_update(delta: float) -> State:
+	var current_tile: Vector2i = _ally.current_tile
+	super.physics_update(delta)
+	if current_tile != _ally.current_tile or force_redraw:
+		force_redraw = false
+		_attack_range = _ally.update_ranges(_movement_range,  _interactable_range)
+		if interacted:
+			_highlight_targets(_highlighted_tile)
 	return

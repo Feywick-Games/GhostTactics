@@ -36,6 +36,14 @@ func update(_delta: float) -> State:
 	return
 
 
+func physics_update(delta: float) -> State:
+	_time_since_move += delta
+	if _time_since_move > Character.TIME_PER_MOVE:
+		_time_since_move = 0
+		_tile_path =  _character.process_movement(delta, _tile_path)
+	return
+
+
 func end_turn() -> void:
 	_exiting = true
 	
