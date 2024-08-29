@@ -144,9 +144,9 @@ func _populate_grid() -> void:
 				if prop_source_id != -1 or improv_weapon_source_id != -1:
 					var tile_data: TileData = _prop_layer.get_cell_tile_data(tile)
 					if tile_data and tile_data.get_custom_data("impassable"):
-						grid.add_prop(tile)
-					else:
 						grid.lock_cell(tile)
+					else:
+						grid.add_prop(tile)
 					
 
 func get_interactable(tile: Vector2i) -> ImprovisedWeapon:
@@ -161,3 +161,13 @@ func take_interactable(tile: Vector2i) -> ImprovisedWeapon:
 	_improvised_weapon_layer.set_cell(tile, -1)
 	grid.erase_prop(tile)
 	return weapon
+
+
+func get_subtile_position(world_position: Vector2) -> Vector2:
+	var tile := world_to_tile(world_position)
+	var tile_world_position := tile_to_world(tile)
+	var offset: Vector2 = abs(tile_world_position - world_position) / Vector2(Global.TILE_SIZE)
+	var out: Vector2
+	out.x = fmod(offset.x, 1)
+	out.y = fmod(offset.y, 1)
+	return out

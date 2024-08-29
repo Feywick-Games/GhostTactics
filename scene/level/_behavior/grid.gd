@@ -109,6 +109,25 @@ func get_tile_distance(start_tile, end_tile) -> int:
 	
 	return out
 
+func is_path_blocked(from_tile: Vector2i, to_tile: Vector2i, blocked_tiles: Array[Vector2i]) -> bool:
+	var start := Vector2(from_tile) 
+	var destination := Vector2(to_tile)
+	var path := destination - start
+	var path_length = path.length()
+		
+	if to_tile == Vector2i(12,11) or to_tile == Vector2i(12,12) or to_tile == Vector2i(13,12):
+		pass
+	
+	for i in range(1, path.length()):
+		var weight : float = i
+		var lerp_pos: Vector2 = start.lerp(destination, weight / float(path.length()))
+		var point: Vector2i = Vector2i(Vector2(lerp_pos).round())
+		
+		if region.has_point(point):
+			if is_point_solid(point) or point in blocked_tiles:
+				return true
+	return false
+
 
 func request_range(unit_tile: Vector2i, min_distance: int, max_distance: int, range_shape: Combat.RangeShape,
 is_range := false, direct := false) -> RangeStruct:
@@ -125,8 +144,11 @@ is_range := false, direct := false) -> RangeStruct:
 		for tile in _prop_tiles:
 			set_point_solid(tile, false)
 			_pass_tiles.append(tile)
-			
-	
+		for tile in _unit_registry.keys():
+			if tile != unit_tile:
+				set_point_solid(tile, false)
+				_unit_tiles.append(tile)
+
 	var max_range_rect: Rect2i
 	max_range_rect.position = unit_tile - Vector2i(max_distance, max_distance)
 	max_range_rect.end = unit_tile + Vector2i(max_distance, max_distance)
@@ -146,18 +168,7 @@ is_range := false, direct := false) -> RangeStruct:
 						if not direct:
 							range_struct.range_tiles.append(tile)
 						else:
-							var line := Vector2(tile - unit_tile)
-							var is_blocked = false
-							
-							for i in range(1, line.length()+ 1):
-								i = (i * sqrt(2))
-								var point := Vector2i((Vector2(unit_tile).lerp(Vector2(tile), min(float(i)/float(line.length()), 1))).round())
-								if region.has_point(point):
-									if is_point_solid(point):
-										is_blocked = true
-										break
-							
-							if not is_blocked:
+							if not is_path_blocked(unit_tile, tile, _unit_tiles):
 								range_struct.range_tiles.append(tile)
 							else:
 								range_struct.blocked_tiles.append(tile)
@@ -167,14 +178,9 @@ is_range := false, direct := false) -> RangeStruct:
 					if check_path.size() <= max_distance + 1 and check_path.size() > min_distance:
 						range_struct.blocked_tiles.append(tile)
 					set_point_solid(tile, true)
-		
 
-	if is_range and unit:
-		for o_unit: Character in _unit_registry.values():
-			#if unit is Ally != o_unit is Ally:
-			if o_unit.current_tile in range_struct.blocked_tiles:
-				range_struct.range_tiles.append(o_unit.current_tile)
-				range_struct.blocked_tiles.erase(o_unit.current_tile)
+	for tile in _unit_tiles:
+		set_point_solid(tile, true)
 
 	for tile in _pass_tiles:
 		if tile != unit_tile:
