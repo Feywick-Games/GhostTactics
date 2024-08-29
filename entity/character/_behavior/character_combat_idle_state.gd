@@ -51,6 +51,11 @@ func _display_health() -> void:
 	if _character.current_tile in _highlighted_tiles:
 		_character.health_bar.show()
 		_character.hit_chance_label.show()
+		(_character.sprite.material as ShaderMaterial).set_shader_parameter("highlighted", true)
+	elif _character.hit_chance_label.visible or _character.damage_bar.value != _character.health_bar.value:
+		_character.hit_chance_label.hide()
+		_character.damage_bar.value = _character.health_bar.value
+		(_character.sprite.material as ShaderMaterial).set_shader_parameter("highlighted", false)
 	if not _damage_taken:
 		var multiplier: int = 1
 		if _highlighter_is_ally:
@@ -85,9 +90,8 @@ func _display_health() -> void:
 			hit_chance_color = Color.WHITE
 		
 		_character.hit_chance_label.add_theme_color_override("font_color", hit_chance_color)
-	elif _character.hit_chance_label.visible or _character.damage_bar.value != _character.health_bar.value:
-		_character.hit_chance_label.hide()
-		_character.damage_bar.value = _character.health_bar.value
+
+	
 
 func update(_delta: float) -> State:
 	if _encounter_ended:
@@ -95,8 +99,8 @@ func update(_delta: float) -> State:
 		return _character.init_state.new()
 	elif _turn_started:
 		return _character.turn_state.new()
-	if not _highlighted_tiles.is_empty():
-		_display_health()
+	#if not _highlighted_tiles.is_empty():
+	_display_health()
 		
 	return
 

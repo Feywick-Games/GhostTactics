@@ -35,7 +35,7 @@ var reactions: Array[Skill]
 @export
 var max_health: int = 20
 @export
-var _movement_range: int = 5
+var _movement_range: int = 3
 var _movement_modifier: int
 var movement_range: int:
 	get:
@@ -70,7 +70,6 @@ var sprite: Sprite2D = $CharacterSprite
 var animator: DirectionalAnimator = $ActionAnimator
 @onready
 var skill_animator: DirectionalAnimator = $SkillAnimator
-
 @onready
 var health_bar: TextureProgressBar = $CharacterSprite/HealthBar
 @onready
@@ -297,8 +296,8 @@ func update_ranges(movement_range: RangeStruct, interactable_range: Array[Vector
 	
 	GameState.current_level.reset_map()
 	GameState.current_level.draw_range(movement_range.range_tiles, Global.RETICLE_MOVE_ALTAS_COORDS)
-	GameState.current_level.draw_range(skill_range.blocked_tiles, Global.RETICLE_BLOCKED_ALTAS_COORDS)
-	GameState.current_level.draw_range(movement_range.blocked_tiles, Global.RETICLE_BLOCKED_ALTAS_COORDS)
+	#GameState.current_level.draw_range(skill_range.blocked_tiles, Global.RETICLE_BLOCKED_ALTAS_COORDS)
+	#GameState.current_level.draw_range(movement_range.blocked_tiles, Global.RETICLE_BLOCKED_ALTAS_COORDS)
 	GameState.current_level.draw_range(attack_only_tiles, attack_atlas_coords)
 	GameState.current_level.draw_range(overlap_tiles, overlap_atlas_coords)
 	GameState.current_level.draw_range(interactable_range, Global.RETICLE_INTERACTABLE_ATLAS_COORDS)
