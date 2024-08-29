@@ -125,10 +125,6 @@ is_range := false, direct := false) -> RangeStruct:
 		for tile in _prop_tiles:
 			set_point_solid(tile, false)
 			_pass_tiles.append(tile)
-		for o_unit: Character in _unit_registry.values():
-			if unit is Ally != o_unit is Ally:
-				set_point_solid(o_unit.current_tile, false)
-				_unit_tiles.append(o_unit.current_tile)
 			
 	
 	var max_range_rect: Rect2i
@@ -153,8 +149,8 @@ is_range := false, direct := false) -> RangeStruct:
 							var line := Vector2(tile - unit_tile)
 							var is_blocked = false
 							
-							for i in range(line.length() + 1):
-								i *= 1 * sqrt(2)
+							for i in range(1, line.length()+ 1):
+								i = (i * sqrt(2))
 								var point := Vector2i((Vector2(unit_tile).lerp(Vector2(tile), min(float(i)/float(line.length()), 1))).round())
 								if region.has_point(point):
 									if is_point_solid(point):
@@ -163,6 +159,8 @@ is_range := false, direct := false) -> RangeStruct:
 							
 							if not is_blocked:
 								range_struct.range_tiles.append(tile)
+							else:
+								range_struct.blocked_tiles.append(tile)
 				elif tile in cells and id_path.size() == 0 and is_point_solid(tile):
 					set_point_solid(tile, false)
 					var check_path := get_id_path(unit_tile, tile)
@@ -170,45 +168,13 @@ is_range := false, direct := false) -> RangeStruct:
 						range_struct.blocked_tiles.append(tile)
 					set_point_solid(tile, true)
 		
-	#if is_range:
-		#if unit is Ally:
-			#for tile in _enemy_tiles:
-				#var dist: int = abs(tile.y - unit_tile.y) + abs(tile.x - unit_tile.x)
-				#var line := Vector2(tile - unit_tile)
-				#var is_blocked = false
-				#set_point_solid(tile, false)
-				#if direct:
-					#for i in range(line.length() + 1):
-						#i *= 1 * sqrt(2)
-						#var point := Vector2i((Vector2(unit_tile).lerp(Vector2(tile), min(float(i)/float(line.length()), 1))).round())
-						#if region.has_point(point) and is_point_solid(point):
-							#is_blocked = true
-							#break
-				#set_point_solid(tile, true)
-				#if dist <= max_distance and dist >= min_distance and not is_blocked:
-					#var tile_idx: int = range_struct.blocked_tiles.find(tile)
-					#if tile_idx != -1:
-						#range_struct.blocked_tiles.remove_at(tile_idx)
-						#range_struct.range_tiles.append(tile)
-		#else:
-			#for tile in _ally_tiles:
-				#var dist: int = abs(tile.y - unit_tile.y) + abs(tile.x - unit_tile.x)
-				#var line := Vector2(tile - unit_tile)
-				#var is_blocked = false
-				#set_point_solid(tile, false)
-				#if direct:
-					#for i in range(line.length() + 1):
-						#i *= 1 * sqrt(2)
-						#var point := Vector2i((Vector2(unit_tile).lerp(Vector2(tile), min(float(i)/float(line.length()), 1))).round())
-						#if region.has_point(point) and is_point_solid(point):
-							#is_blocked = true
-							#break
-				#set_point_solid(tile, true)
-				#if dist <= max_distance and dist >= min_distance and not is_blocked:
-					#var tile_idx: int = range_struct.blocked_tiles.find(tile)
-					#if tile_idx != -1:
-						#range_struct.blocked_tiles.remove_at(tile_idx)
-						#range_struct.range_tiles.append(tile)
+
+	if is_range and unit:
+		for o_unit: Character in _unit_registry.values():
+			#if unit is Ally != o_unit is Ally:
+			if o_unit.current_tile in range_struct.blocked_tiles:
+				range_struct.range_tiles.append(o_unit.current_tile)
+				range_struct.blocked_tiles.erase(o_unit.current_tile)
 
 	for tile in _pass_tiles:
 		if tile != unit_tile:
