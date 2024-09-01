@@ -115,11 +115,8 @@ func is_path_blocked(from_tile: Vector2i, to_tile: Vector2i, blocked_tiles: Arra
 	var path := destination - start
 	var path_length = path.length()
 		
-	if to_tile == Vector2i(12,11) or to_tile == Vector2i(12,12) or to_tile == Vector2i(13,12):
-		pass
-	
 	for i in range(1, path.length()):
-		var weight : float = i
+		var weight : float = i + .45
 		var lerp_pos: Vector2 = start.lerp(destination, weight / float(path.length()))
 		var point: Vector2i = Vector2i(Vector2(lerp_pos).round())
 		

@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dveqqeiul2lj3"
-path="res://.godot/imported/subway_station_tile_set.png-bebf07b7637a067bad9465184f34b805.ctex"
+path="res://.godot/imported/subway_station_tile_set.png-f950142aebf701a687763a64e66d76e6.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://scene/level/variant/subway_station/subway_station_tile_set.png"
-dest_files=["res://.godot/imported/subway_station_tile_set.png-bebf07b7637a067bad9465184f34b805.ctex"]
+source_file="res://scene/level/variant/subway_station/_sprite/subway_station_tile_set.png"
+dest_files=["res://.godot/imported/subway_station_tile_set.png-f950142aebf701a687763a64e66d76e6.ctex"]
 
 [params]
 

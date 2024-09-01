@@ -71,13 +71,13 @@ var animator: DirectionalAnimator = $ActionAnimator
 @onready
 var skill_animator: DirectionalAnimator = $SkillAnimator
 @onready
-var health_bar: TextureProgressBar = $CharacterSprite/HealthBar
+var health_bar: TextureProgressBar = $HealthBar
 @onready
-var hit_chance_label: Label = $CharacterSprite/HealthBar/HitChanceLabel
+var hit_chance_label: Label = $HealthBar/HitChanceLabel
 @onready
-var damage_bar: TextureProgressBar = $CharacterSprite/HealthBar/DamageBar
+var damage_bar: TextureProgressBar = $HealthBar/DamageBar
 @onready
-var _status_label_manager: StatusLabelManager = $CharacterSprite/StatusLabelManager
+var _status_label_manager: StatusLabelManager = $StatusLabelManager
 
 func _ready() -> void:
 	health_bar.hide()

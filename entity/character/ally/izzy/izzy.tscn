@@ -1,4 +1,4 @@
-[gd_scene load_steps=24 format=3 uid="uid://c3ow1ifjec62m"]
+[gd_scene load_steps=26 format=3 uid="uid://c3ow1ifjec62m"]
 
 [ext_resource type="PackedScene" uid="uid://cm7s3l5cikm6u" path="res://entity/character/ally/ally.tscn" id="1_abh6s"]
 [ext_resource type="Script" path="res://data/combat/skill.gd" id="2_d2041"]
@@ -9,6 +9,7 @@
 [ext_resource type="Texture2D" uid="uid://c4l71vu7ixwsl" path="res://ui/sticker/_sprite/sticker_basic_attack.png" id="4_sniu6"]
 [ext_resource type="Resource" uid="uid://fneqo5f1qdrk" path="res://entity/character/ally/izzy/_special/push_skill.tres" id="6_j04wh"]
 [ext_resource type="Texture2D" uid="uid://bel6ycldg65i6" path="res://entity/character/ally/izzy/_sprite/izzy_idle_up.png" id="6_wmewt"]
+[ext_resource type="Shader" path="res://entity/character/_material/character_sprite.gdshader" id="8_07m0v"]
 [ext_resource type="Texture2D" uid="uid://bmng0nysy3gjd" path="res://entity/character/ally/izzy/_sprite/izzy_combat_idle_up.png" id="15_0j56j"]
 [ext_resource type="Texture2D" uid="uid://pbfod4mftla6" path="res://entity/character/ally/izzy/_sprite/izzy_combat_idle_down.png" id="16_3ocq5"]
 
@@ -33,6 +34,12 @@ status_effects = Array[ExtResource("3_jkw71")]([SubResource("Resource_xdj1t")])
 aoe = Array[Vector2i]([Vector2i(0, 0)])
 range_type = 0
 direct = true
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_10s6d"]
+resource_local_to_scene = true
+shader = ExtResource("8_07m0v")
+shader_parameter/highlighted = false
+shader_parameter/border_color = Color(0.968627, 0.968627, 0.960784, 1)
 
 [sub_resource type="Animation" id="Animation_tjtew"]
 length = 0.001
@@ -528,6 +535,7 @@ basic_skill = SubResource("Resource_v85yj")
 special = ExtResource("6_j04wh")
 
 [node name="CharacterSprite" parent="." index="0"]
+material = SubResource("ShaderMaterial_10s6d")
 position = Vector2(0, 3)
 texture = ExtResource("3_sk6vo")
 offset = Vector2(0, -16)
