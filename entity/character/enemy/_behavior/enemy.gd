@@ -21,9 +21,9 @@ var custom_priority: float = 0
 func _ready() -> void:
 	super._ready()
 
-func take_damage(skill: Skill, direction: Vector2, hit_chance: float, hit_signal: Signal, multiplier: float = 1) -> void:
+func take_damage(skill: Skill, direction: Vector2, hit_chance: float, hit_signal: Signal, multiplier: float = 1, request_reaction := true) -> void:
 	if GameState.battle_timer.value < GameState.battle_timer.max_value * .25:
 		multiplier *= 2
 	elif GameState.battle_timer.value > GameState.battle_timer.max_value * .75:
 		multiplier *= .5
-	super.take_damage(skill, direction, hit_chance, hit_signal, multiplier)
+	super.take_damage(skill, direction, hit_chance, hit_signal, multiplier, request_reaction)

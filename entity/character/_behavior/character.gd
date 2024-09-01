@@ -5,6 +5,7 @@ signal died
 signal target_hit
 signal action_processed
 signal damage_taken
+signal reaction_queued(processed: Signal)
 
 const SNAP_DISTANCE := 2.4
 const TIME_PER_MOVE := .03
@@ -20,6 +21,8 @@ var character_name: String
 var turn_portrait_scene: PackedScene
 
 @export_category("Gameplay")
+@export
+var facing: Vector2i = Vector2i.DOWN
 @export
 var init_state: GDScript
 @export
@@ -57,12 +60,12 @@ var accuracy: int:
 
 
 var health: int
-var facing: Vector2i
 var ready_for_battle := false
 var current_tile: Vector2i
 var status: Array[StatusEffect]
 var attack_state: Combat.AttackState
 var improvised_weapon: ImprovisedWeapon
+var processing_action := false
 
 @onready
 var sprite: Sprite2D = $CharacterSprite
@@ -123,8 +126,9 @@ func drop_weapon() -> void:
 	#TODO play drop animation on skill animator
 
 
-func take_damage(skill: Skill, direction: Vector2, hit_chance: float, hit_signal: Signal, multiplier: float = 1) -> void:
+func take_damage(skill: Skill, direction: Vector2, hit_chance: float, hit_signal: Signal, multiplier: float = 1, request_reaction:=true) -> void:
 	health_bar.show()
+	processing_action = true
 	await hit_signal
 	var hit_connected: bool
 	
@@ -152,11 +156,15 @@ func take_damage(skill: Skill, direction: Vector2, hit_chance: float, hit_signal
 	_status_label_manager.display_statuses()
 	await _status_label_manager.statuses_displayed
 	
+	
 	if health <= 0:
 		died.emit()
 		queue_free()
+		action_processed.emit()
+	elif request_reaction:
+		EventBus.reaction_requested.emit(self)
 	health_bar.hide()
-	action_processed.emit()
+	processing_action = false
 
 
 func _process_status_effect(effect: StatusEffect) -> void:

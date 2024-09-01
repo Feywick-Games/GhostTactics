@@ -8,14 +8,17 @@ var current_direction : String = "down"
 # have this degree of cardinality.
 
 # alt_ext can be used when dependent other animations
-func play_directional(anim: String, direction:= Vector2.ZERO, eight_direction:bool = false, alt_ext := "",
+func play_directional(anim: String, direction:= Vector2.ZERO, queue_anim := false, eight_direction:bool = false, alt_ext := "",
 custom_blend: float = -1,custom_speed: float = 1.0, from_end: bool = false) -> void:
 	var anim_direction_str = get_current_direction(direction, eight_direction)
 	anim_direction_str += alt_ext
 	
 	current_direction = anim_direction_str
 	
-	play(anim + "_" + anim_direction_str, custom_blend, custom_speed, from_end)
+	if not queue_anim:
+		play(anim + "_" + anim_direction_str, custom_blend, custom_speed, from_end)
+	else:
+		queue(anim + "_" + anim_direction_str)
 
 
 func get_current_direction(direction: Vector2, eight_direction:= false) -> String:

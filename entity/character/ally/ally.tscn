@@ -27,29 +27,17 @@ turn_portrait_scene = ExtResource("3_ugt4g")
 init_state = ExtResource("3_8jy3i")
 turn_state = ExtResource("4_4us3o")
 
-[node name="CharacterSprite" parent="." index="0"]
+[node name="CharacterSprite" parent="." index="2"]
 material = SubResource("ShaderMaterial_3xvm1")
 position = Vector2(0, 9)
 texture = ExtResource("2_momam")
 offset = Vector2(0, -20)
 
-[node name="HealthBar" parent="CharacterSprite" index="0"]
-offset_left = -17.0
-offset_top = -63.0
-offset_right = 16.0
-offset_bottom = -51.0
-
-[node name="HitChanceLabel" parent="CharacterSprite/HealthBar" index="1"]
-offset_left = -16.0
-offset_top = -48.0
-offset_right = 24.0
-offset_bottom = -25.0
-
-[node name="CollisionShape2D" parent="." index="1"]
-position = Vector2(-0.5, -2)
-shape = SubResource("RectangleShape2D_p01wl")
-
 [node name="NavigationAgent2D" type="NavigationAgent2D" parent="." index="3"]
 target_desired_distance = 32.0
 avoidance_enabled = true
 radius = 20.0
+
+[node name="CollisionShape2D" parent="." index="4"]
+position = Vector2(-0.5, -2)
+shape = SubResource("RectangleShape2D_p01wl")

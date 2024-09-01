@@ -15,11 +15,6 @@ enum Status {
 	INJURED
 }
 
-enum Reaction {
-	PINCER,
-	REBOUND
-}
-
 enum RangeShape {
 	DIAMOND,
 	CROSS

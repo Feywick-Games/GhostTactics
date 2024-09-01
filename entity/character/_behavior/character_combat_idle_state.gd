@@ -10,19 +10,46 @@ var _highlighted_status_effects: Array[StatusEffect]
 var _highlighted_direction: Vector2i
 var _highlighter_is_ally: bool
 var _damage_taken := false
+var _reaction_state: ReactionState
+var _is_processing := false
+var _reactions_to_process: int
 
 func enter() -> void:
 	_character = state_machine.state_owner as Character
 	EventBus.turn_started.connect(_on_turn_started)
 	EventBus.encounter_ended.connect(_on_encounter_ended)
 	EventBus.tiles_highlighted.connect(_on_tiles_highlighted)
+	EventBus.reaction_requested.connect(_on_reaction_requested)
+	_character.reaction_queued.connect(_on_reaction_queued)
 	_character.damage_taken.connect(_on_damage_taken)
 	if _character.is_animated:
 		_character.animator.play_directional("combat_idle", Vector2.ZERO)
 
 
+
+func _on_reaction_queued(process_signal: Signal) -> void:
+	_reactions_to_process += 1
+	process_signal.connect(_on_reaction_processed)
+
+
+func _on_reaction_processed() -> void:
+	_reactions_to_process -= 1
+
+
+func _on_reaction_requested(unit: Character) -> void:
+	var last_reaction_state: ReactionState = null
+	for reaction: Skill in _character.reactions:
+		var reaction_state: ReactionState = reaction.state.new(reaction, last_reaction_state, _character, unit)
+		
+		if reaction_state.can_use():
+			_reaction_state = reaction_state
+			last_reaction_state = reaction_state
+			unit.reaction_queued.emit(_reaction_state.processed)
+
+
 func _on_encounter_ended() -> void:
 	_encounter_ended = true
+
 
 func _on_turn_started(unit: Character) -> void:
 	if unit == _character:
@@ -99,7 +126,14 @@ func update(_delta: float) -> State:
 		return _character.init_state.new()
 	elif _turn_started:
 		return _character.turn_state.new()
-	#if not _highlighted_tiles.is_empty():
+	elif _reaction_state:
+		return _reaction_state
+	elif _character.processing_action and not _is_processing:
+		_is_processing = true
+	elif not _character.processing_action and _is_processing and _reactions_to_process == 0:
+		_is_processing = false
+		_character.action_processed.emit() 
+	
 	_display_health()
 		
 	return

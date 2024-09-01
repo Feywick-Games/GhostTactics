@@ -79,7 +79,7 @@ position = Vector2(-10, 0)
 tile_set = ExtResource("3_ndi1j")
 
 [node name="Wendigo" parent="." instance=ExtResource("4_sgqih")]
-position = Vector2(77, 205)
+position = Vector2(-98, 218)
 
 [node name="Wendigo3" parent="." instance=ExtResource("4_sgqih")]
 position = Vector2(22, 150)
@@ -88,7 +88,7 @@ position = Vector2(22, 150)
 position = Vector2(86, 167)
 
 [node name="Izzy" parent="." instance=ExtResource("5_0a6gs")]
-position = Vector2(-69, 245)
+position = Vector2(-64, 203)
 follow_order = 0
 
 [node name="Chaz" parent="." instance=ExtResource("6_i4enw")]
@@ -98,7 +98,7 @@ basic_skill = SubResource("Resource_j27ow")
 special = ExtResource("11_k006v")
 
 [node name="Mei" parent="." instance=ExtResource("12_jgucg")]
-position = Vector2(-71, 216)
+position = Vector2(-117, 228)
 follow_order = 1
 basic_skill = SubResource("Resource_hfxwl")
 

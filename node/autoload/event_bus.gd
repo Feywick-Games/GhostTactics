@@ -1,6 +1,6 @@
 extends Node
 
-signal encounter_started()
+signal encounter_started
 signal encounter_ended
 signal room_transitioned(room: Room, loaded: bool)
 signal cam_follow_requested(leader: Node2D)
@@ -10,6 +10,6 @@ signal display_requested(show_display: bool)
 
 signal turn_started(unit: Character)
 signal turn_ended(unit_name: String)
-signal reactions_requested(unit: Character, is_ally: bool)
+signal reaction_requested(unit: Character)
 signal timed_out
 signal timer_stopped

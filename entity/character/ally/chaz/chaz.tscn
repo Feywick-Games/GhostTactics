@@ -1,9 +1,11 @@
-[gd_scene load_steps=18 format=3 uid="uid://r5sdcdlxfmjr"]
+[gd_scene load_steps=20 format=3 uid="uid://r5sdcdlxfmjr"]
 
 [ext_resource type="PackedScene" uid="uid://cm7s3l5cikm6u" path="res://entity/character/ally/ally.tscn" id="1_telll"]
 [ext_resource type="Texture2D" uid="uid://ctrrubge6r45p" path="res://entity/character/ally/chaz/_sprite/chaz_idle_down.png" id="2_4tvf7"]
 [ext_resource type="Shader" path="res://entity/character/_material/character_sprite.gdshader" id="2_ey6y0"]
+[ext_resource type="Script" path="res://data/combat/skill.gd" id="2_qq2rq"]
 [ext_resource type="Texture2D" uid="uid://bf5ryjrutpfj1" path="res://entity/character/ally/chaz/_sprite/chaz_combat_idle_down.png" id="3_2e3h7"]
+[ext_resource type="Resource" uid="uid://dhfa1k013dq5o" path="res://entity/character/_skill/cheap_shot.tres" id="3_2xm6s"]
 [ext_resource type="Texture2D" uid="uid://b5n7mlhj67tan" path="res://entity/character/ally/chaz/_sprite/chaz_combat_idle_up.png" id="4_cwwrv"]
 [ext_resource type="Texture2D" uid="uid://c01os2oy5ipq0" path="res://entity/character/ally/chaz/_sprite/chaz_idle_up.png" id="5_l0hun"]
 
@@ -500,18 +502,13 @@ _data = {
 [node name="Chaz" instance=ExtResource("1_telll")]
 is_animated = true
 character_name = "Chaz"
+reactions = Array[ExtResource("2_qq2rq")]([ExtResource("3_2xm6s")])
 
-[node name="CharacterSprite" parent="." index="0"]
+[node name="CharacterSprite" parent="." index="2"]
 material = SubResource("ShaderMaterial_543c8")
 texture = ExtResource("2_4tvf7")
 
-[node name="HealthBar" parent="CharacterSprite" index="0"]
-offset_left = 0.0
-offset_top = 0.0
-offset_right = 33.0
-offset_bottom = 12.0
-
-[node name="ActionAnimator" parent="." index="2"]
+[node name="ActionAnimator" parent="." index="5"]
 libraries = {
 "": SubResource("AnimationLibrary_wpweh")
 }
