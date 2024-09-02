@@ -28,7 +28,6 @@ func _on_animation_finished(_anim: String) -> void:
 	_animation_complete = true
 
 
-
 func can_use() -> bool:
 	if not _target.status.filter(func(x): return x.status == Combat.Status.HIT).is_empty():
 		var directions: Array[Vector2i] = [Vector2i.LEFT, Vector2i.RIGHT, Vector2i.UP, Vector2i.DOWN]
@@ -42,7 +41,7 @@ func can_use() -> bool:
 			
 			if direction == _target.facing and (direction == _character.facing or _character.facing == Vector2i.ZERO):
 				return true
-		
+	
 	return false
 
 

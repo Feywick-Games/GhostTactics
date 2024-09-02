@@ -1,5 +1,6 @@
-[gd_scene load_steps=9 format=3 uid="uid://bhfdokg7y4yll"]
+[gd_scene load_steps=10 format=3 uid="uid://bhfdokg7y4yll"]
 
+[ext_resource type="Script" path="res://ui/_behavior/combat_ui.gd" id="1_d34a4"]
 [ext_resource type="Script" path="res://ui/turn_display/_behavior/turn_display.gd" id="1_xgp2v"]
 [ext_resource type="Texture2D" uid="uid://dnkx7jyewlkxh" path="res://ui/battle_timer/battle_timer_under.png" id="2_sbk1j"]
 [ext_resource type="Texture2D" uid="uid://caqbtr4v8posy" path="res://ui/battle_timer/battle_timer_over.png" id="3_fndsw"]
@@ -10,6 +11,7 @@
 [ext_resource type="Texture2D" uid="uid://c1xbsgyj5cgwq" path="res://ui/sticker/_sprite/sticker_push_punch.png" id="8_ibp8q"]
 
 [node name="CombatUI" type="CanvasLayer"]
+script = ExtResource("1_d34a4")
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 texture_filter = 1
@@ -85,3 +87,27 @@ editor_only = false
 [node name="SpecialSticker" type="TextureRect" parent="MarginContainer3/StickerLayout"]
 layout_mode = 2
 texture = ExtResource("8_ibp8q")
+
+[node name="MarginContainer4" type="MarginContainer" parent="."]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -20.0
+offset_top = -40.0
+offset_right = 20.0
+grow_horizontal = 2
+grow_vertical = 0
+size_flags_horizontal = 4
+size_flags_vertical = 8
+theme_override_constants/margin_bottom = 64
+
+[node name="SkillLabel" type="Label" parent="MarginContainer4"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.964706, 0.964706, 0.964706, 1)
+theme_override_colors/font_outline_color = Color(0.121569, 0.105882, 0.172549, 1)
+theme_override_constants/outline_size = 7
+text = "Cheap Shot"
+horizontal_alignment = 1

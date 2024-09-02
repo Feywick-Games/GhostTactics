@@ -17,9 +17,13 @@ var _prop_layer: TileMapLayer = $Props
 @onready
 var _improvised_weapon_layer: TileMapLayer = $ImprovisedWeapon
 
+var grid: Grid
+
+@onready
+var combat_ui: CombatUI = $CombatUI
 @onready
 var map: TileMapLayer = $Map
-var grid: Grid
+
 
 func _ready() -> void:
 	GameState.current_level = self

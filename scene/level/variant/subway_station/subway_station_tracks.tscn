@@ -71,7 +71,7 @@ tile_set = ExtResource("2_7h7cu")
 
 [node name="Props" type="TileMapLayer" parent="."]
 y_sort_enabled = true
-tile_map_data = PackedByteArray("AAAFAAgAAgADAAoAAAAFAAkAAgACAAoAAAAFAA0AAgADAAoAAAAFAA4AAgACAAoAAAAJAAsAAgADAAoAAAAJAAwAAgACAAoAAAAJAAUAAgADAAoAAAAJAAYAAgACAAoAAAAHAAgAAgAAAAkAAAAFAAQAAgACAAoAAAAFAAMAAgADAAoAAAA=")
+tile_map_data = PackedByteArray("AAAFAAkAAgACAAoAAAAFAA0AAgADAAoAAAAFAA4AAgACAAoAAAAJAAsAAgADAAoAAAAJAAwAAgACAAoAAAAJAAUAAgADAAoAAAAJAAYAAgACAAoAAAAHAAgAAgAAAAkAAAAFAAQAAgACAAoAAAAFAAMAAgADAAoAAAAFAAgAAgADAAoAAAA=")
 tile_set = ExtResource("2_7h7cu")
 
 [node name="ImprovisedWeapon" type="TileMapLayer" parent="."]
@@ -79,7 +79,7 @@ position = Vector2(-10, 0)
 tile_set = ExtResource("3_ndi1j")
 
 [node name="Wendigo" parent="." instance=ExtResource("4_sgqih")]
-position = Vector2(-98, 218)
+position = Vector2(67, 207)
 
 [node name="Wendigo3" parent="." instance=ExtResource("4_sgqih")]
 position = Vector2(22, 150)
@@ -87,12 +87,18 @@ position = Vector2(22, 150)
 [node name="Wendigo2" parent="." instance=ExtResource("4_sgqih")]
 position = Vector2(86, 167)
 
+[node name="Wendigo4" parent="." instance=ExtResource("4_sgqih")]
+position = Vector2(176, 177)
+
+[node name="Wendigo5" parent="." instance=ExtResource("4_sgqih")]
+position = Vector2(99, 134)
+
 [node name="Izzy" parent="." instance=ExtResource("5_0a6gs")]
-position = Vector2(-64, 203)
+position = Vector2(-49, 243)
 follow_order = 0
 
 [node name="Chaz" parent="." instance=ExtResource("6_i4enw")]
-position = Vector2(-55, 187)
+position = Vector2(-100, 262)
 follow_order = 1
 basic_skill = SubResource("Resource_j27ow")
 special = ExtResource("11_k006v")

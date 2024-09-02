@@ -16,7 +16,7 @@ func _init(skill: Skill, target_tile: Vector2i) -> void:
 
 func enter() -> void:
 	_character = state_machine.state_owner as Character
-
+	GameState.current_level.combat_ui.display_skill_text(_skill.name)
 
 func update(_delta: float) -> State:
 	if _exiting:
