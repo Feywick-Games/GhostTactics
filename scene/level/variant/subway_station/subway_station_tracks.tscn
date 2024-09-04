@@ -1,10 +1,11 @@
-[gd_scene load_steps=19 format=4 uid="uid://7ayix768h0gh"]
+[gd_scene load_steps=20 format=4 uid="uid://7ayix768h0gh"]
 
 [ext_resource type="Script" path="res://scene/level/_behavior/level.gd" id="1_ub6j7"]
 [ext_resource type="TileSet" uid="uid://c53pqkcffyymf" path="res://scene/level/variant/subway_station/_sprite/subway_station_tile_set.tres" id="2_7h7cu"]
 [ext_resource type="TileSet" uid="uid://bg1ldnkshjcy8" path="res://entity/weapon/_sprite/improvised_weapon_tileset.tres" id="3_ndi1j"]
 [ext_resource type="PackedScene" uid="uid://oisc6bjs6p6w" path="res://entity/character/enemy/wendigo/wendigo.tscn" id="4_sgqih"]
 [ext_resource type="PackedScene" uid="uid://c3ow1ifjec62m" path="res://entity/character/ally/izzy/izzy.tscn" id="5_0a6gs"]
+[ext_resource type="PackedScene" uid="uid://cvxylcvrvrkbl" path="res://entity/character/enemy/shadow_hand/shadow_hand.tscn" id="5_5pryk"]
 [ext_resource type="PackedScene" uid="uid://r5sdcdlxfmjr" path="res://entity/character/ally/chaz/chaz.tscn" id="6_i4enw"]
 [ext_resource type="Script" path="res://data/combat/skill.gd" id="7_wvt8d"]
 [ext_resource type="Script" path="res://entity/character/_behavior/basic_skill_state.gd" id="8_henma"]
@@ -78,17 +79,14 @@ tile_set = ExtResource("2_7h7cu")
 position = Vector2(-10, 0)
 tile_set = ExtResource("3_ndi1j")
 
-[node name="Wendigo" parent="." instance=ExtResource("4_sgqih")]
-position = Vector2(67, 207)
-
 [node name="Wendigo3" parent="." instance=ExtResource("4_sgqih")]
 position = Vector2(22, 150)
 
-[node name="Wendigo2" parent="." instance=ExtResource("4_sgqih")]
-position = Vector2(86, 167)
-
 [node name="Wendigo4" parent="." instance=ExtResource("4_sgqih")]
 position = Vector2(176, 177)
+
+[node name="ShadowHand" parent="." instance=ExtResource("5_5pryk")]
+position = Vector2(90, 215)
 
 [node name="Wendigo5" parent="." instance=ExtResource("4_sgqih")]
 position = Vector2(99, 134)
@@ -130,3 +128,6 @@ visible = false
 position = Vector2(390, 117)
 rotation = -2.61799
 color = Color(0.306923, 0.306923, 0.306923, 1)
+
+[node name="ShadowHand2" parent="." instance=ExtResource("5_5pryk")]
+position = Vector2(69, 178)
