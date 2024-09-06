@@ -92,13 +92,7 @@ func _process(delta: float) -> void:
 
 func reset_map() -> void:
 	for tile in grid.cells:
-		if tile + Vector2i.UP in grid.cells:
-			map.set_cell(tile)
-			#map.set_cell(tile, 0, Vector2.ZERO)
-		#else:
-			#map.set_cell(tile)
-			#map.set_cell(tile, 0 , Vector2.RIGHT)
-
+		map.set_cell(tile)
 
 func draw_range(tiles: Array[Vector2i], atlas_coords: Vector2i) -> void:
 	for tile in tiles:
