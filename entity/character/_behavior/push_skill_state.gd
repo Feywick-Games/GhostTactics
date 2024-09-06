@@ -23,7 +23,7 @@ var _astar: AStarGrid2D
 func enter() -> void:
 	super.enter()
 	_target_unit = GameState.current_level.grid.get_unit_from_tile(_target_tile)
-	var _push_range = [_target_tile]
+	_push_range = [_target_tile]
 	_direction =  Vector2i(Vector2(_target_tile - _character.current_tile).normalized().round())
 	for effect: StatusEffect in _skill.status_effects:
 		if effect.status == Combat.Status.PUSHED:

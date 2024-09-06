@@ -29,6 +29,8 @@ var aoe: Array[Vector2i] = [Vector2i.ZERO]
 var range_type: Combat.RangeType = Combat.RangeType.MELEE
 @export
 var direct := true
+@export
+var is_animated := false
 
 var cool_down_status: int
 

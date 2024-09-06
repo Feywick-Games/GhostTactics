@@ -29,5 +29,5 @@ func _hit_targets(aoe: Array[Vector2i], range_type: Combat.RangeType) -> void:
 			unit.action_processed.connect(end_turn)
 			_action_to_process += 1
 			unit.take_damage(_skill, _direction, _character.accuracy, _character.target_hit)
-	
-	_character.notify_impact()
+	if not _skill.is_animated:
+		_character.notify_impact()
