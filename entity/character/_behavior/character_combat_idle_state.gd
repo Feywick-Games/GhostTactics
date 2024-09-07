@@ -54,6 +54,8 @@ func _on_turn_started(unit: Character) -> void:
 	_damage_taken = false
 	if _character.health_bar.visible:
 		_character.health_bar.hide()
+	for reaction: Reaction in _character.reactions:
+		reaction.processed = false
 
 
 
