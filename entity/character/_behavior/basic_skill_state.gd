@@ -28,6 +28,8 @@ func _hit_targets(aoe: Array[Vector2i], range_type: Combat.RangeType) -> void:
 		if unit:
 			unit.action_processed.connect(end_turn)
 			_action_to_process += 1
-			unit.take_damage(_skill, _direction, _character.accuracy, _character.target_hit)
+			var damage_state := DamageState.new(_skill, _direction, _character.accuracy, _character.target_hit)
+			unit.state_requested.emit(damage_state)
 	if not _skill.is_animated:
+		await _character.get_tree().create_timer(1).timeout
 		_character.notify_impact()

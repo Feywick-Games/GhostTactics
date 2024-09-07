@@ -2,15 +2,16 @@ class_name ReactionState
 extends State
 
 var _character: Character
-var _reaction: Skill
+var _reaction: Reaction
 var _target: Character
-var _next_state: ReactionState
 var _exiting := false
 
+func enter() -> void:
+	GameState.current_level.combat_ui.display_skill_text(_reaction.name)
 
-func _init(reaction: Skill, next_state: ReactionState, character: Character, target: Character) -> void:
+
+func _init(reaction: Skill, character: Character, target: Character) -> void:
 	_reaction = reaction
-	_next_state = next_state
 	_character = character
 	_target = target
 
@@ -20,11 +21,12 @@ func update(_delta: float) -> State:
 		return CharacterCombatIdleState.new()
 	
 	if _exiting:
-		if _next_state:
-			return _next_state
-		else:
-			return CharacterCombatIdleState.new()
+		return CharacterCombatIdleState.new()
 	return
+
+
+func exit() -> void:
+	_reaction.processed = true
 
 
 func can_use() -> bool:

@@ -11,8 +11,10 @@ func enter() -> void:
 	var direction: Vector2i = _target.current_tile - _character.current_tile
 	_character.animator.play_directional(_reaction.character_animation)
 	_character.animator.animation_finished.connect(_on_animation_finished)
-	_target.take_damage(_reaction, direction, INF, _character.target_hit, 1, false)
-	_character.notify_impact()
+	var damage_state := DamageState.new(_reaction, direction, INF, _character.target_hit, 1, false)
+	_target.state_requested.emit(damage_state)
+	if not _reaction.is_animated:
+		_character.notify_impact()
 
 
 func update(delta: float) -> State:

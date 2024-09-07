@@ -1,7 +1,7 @@
 class_name BattleTimer
 extends TextureProgressBar
 
-var _running: float = 0
+var running := false
 
 func _ready() -> void:
 	EventBus.turn_started.connect(_on_turn_started)
@@ -14,7 +14,7 @@ func _ready() -> void:
 
 
 func _on_timer_stopped() -> void:
-	_running = false
+	running = false
 
 
 func _on_encounter_ended() -> void:
@@ -25,18 +25,18 @@ func _on_turn_started(unit: Character) -> void:
 	if unit is Ally:
 		show()
 		value = 0
-		_running = true
+		running = true
 	else:
 		hide()
 	
 func _on_turn_ended() -> void:
-	_running = false
+	running = false
 	
 	
 func _process(delta: float) -> void:
-	if _running:
+	if running:
 		value += delta
 		
 	if value == max_value:
 		EventBus.timed_out.emit()
-		_running = false
+		running = false

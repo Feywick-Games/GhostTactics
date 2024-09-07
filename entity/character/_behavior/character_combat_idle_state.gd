@@ -13,6 +13,7 @@ var _damage_taken := false
 var _reaction_state: ReactionState
 var _is_processing := false
 var _reactions_to_process: int
+var _requested_state: State
 
 func enter() -> void:
 	_character = state_machine.state_owner as Character
@@ -20,31 +21,27 @@ func enter() -> void:
 	EventBus.encounter_ended.connect(_on_encounter_ended)
 	EventBus.tiles_highlighted.connect(_on_tiles_highlighted)
 	EventBus.reaction_requested.connect(_on_reaction_requested)
-	_character.reaction_queued.connect(_on_reaction_queued)
-	_character.damage_taken.connect(_on_damage_taken)
+	_character.state_requested.connect(_on_state_requested)
 	if _character.is_animated:
 		_character.animator.play_directional("combat_idle", Vector2.ZERO)
 
 
-
-func _on_reaction_queued(process_signal: Signal) -> void:
-	_reactions_to_process += 1
-	process_signal.connect(_on_reaction_processed)
-
-
-func _on_reaction_processed() -> void:
-	_reactions_to_process -= 1
+func _on_state_requested(state: State) -> void:
+	_requested_state = state
 
 
 func _on_reaction_requested(unit: Character) -> void:
-	var last_reaction_state: ReactionState = null
+	if unit.processing_action:
+		return
+	
 	for reaction: Skill in _character.reactions:
-		var reaction_state: ReactionState = reaction.state.new(reaction, last_reaction_state, _character, unit)
-		
-		if reaction_state.can_use():
-			_reaction_state = reaction_state
-			last_reaction_state = reaction_state
-			unit.reaction_queued.emit(_reaction_state.processed)
+		if not reaction.processed:
+			var reaction_state: ReactionState = reaction.state.new(reaction, _character, unit)
+			
+			if reaction_state.can_use():
+				_reaction_state = reaction_state
+				unit.reacting = true
+				break
 
 
 func _on_encounter_ended() -> void:
@@ -59,9 +56,6 @@ func _on_turn_started(unit: Character) -> void:
 		_character.health_bar.hide()
 
 
-func _on_damage_taken() -> void:
-	_damage_taken = true
-
 
 func _on_tiles_highlighted(tiles: Array[Vector2i], status_effects: Array[StatusEffect], 
 accuracy: int, direction: Vector2i, is_ally: bool) -> void:
@@ -73,7 +67,7 @@ accuracy: int, direction: Vector2i, is_ally: bool) -> void:
 	if not _character.current_tile in _highlighted_tiles and _character.health_bar.visible:
 		_character.health_bar.hide()
 
-
+# TODO move to own state
 func _display_health() -> void:
 	if _character.current_tile in _highlighted_tiles:
 		_character.health_bar.show()
@@ -81,7 +75,6 @@ func _display_health() -> void:
 		(_character.sprite.material as ShaderMaterial).set_shader_parameter("highlighted", true)
 	elif _character.hit_chance_label.visible or _character.damage_bar.value != _character.health_bar.value:
 		_character.hit_chance_label.hide()
-		_character.damage_bar.value = _character.health_bar.value
 		(_character.sprite.material as ShaderMaterial).set_shader_parameter("highlighted", false)
 	if not _damage_taken:
 		var multiplier: int = 1
@@ -126,13 +119,16 @@ func update(_delta: float) -> State:
 		return _character.init_state.new()
 	elif _turn_started:
 		return _character.turn_state.new()
+	elif _requested_state:
+		return _requested_state
 	elif _reaction_state:
 		return _reaction_state
 	elif _character.processing_action and not _is_processing:
 		_is_processing = true
-	elif not _character.processing_action and _is_processing and _reactions_to_process == 0:
+	elif not _character.processing_action and _is_processing:
 		_is_processing = false
-		_character.action_processed.emit() 
+		if not _character.reacting:
+			_character.action_processed.emit() 
 	
 	_display_health()
 		

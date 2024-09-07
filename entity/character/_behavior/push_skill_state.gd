@@ -1,6 +1,8 @@
 class_name PushSkillState
 extends SkillState
 
+signal collided
+
 const TIME_PER_INCREMENT: float = .3
 const TIME_TO_EXIT: float = 1.0
 
@@ -8,7 +10,6 @@ var _push_range: Array[Vector2i]
 var _time_since_increment: float = 0
 var _direction: Vector2i
 var increment: int = 0
-var pushing := false
 var _max_push_distance: int = 0
 var _target_unit: Character
 var _time_since_exiting: float = 0
@@ -59,60 +60,42 @@ func _draw_range() -> void:
 		GameState.current_level.select_tile((_direction * _max_push_distance) + _target_tile)
 
 
-func _push(delta: float) -> void:
-	_target_unit.velocity = Vector2.ZERO
-	if not _tile_path.is_empty():
-		_tile_path = _target_unit.process_movement(delta, _tile_path)
-	else:
-		GameState.current_level.grid.update_unit_registry(_target_unit.current_tile, _target_unit)
-		if increment ==  _max_push_distance and _max_is_collision:
-			# guaranteed as impact was precalculated
-			var skill: Skill = _character.special.duplicate()
-			_target_unit.take_damage(_skill, _direction, INF, _character.target_hit, 2.0)
-			if _o_target:
-				_o_target.take_damage(_skill, _direction, INF, _character.target_hit)
-		else:
-			_target_unit.take_damage(_skill, _direction, INF, _character.target_hit)
-		_target_unit.action_processed.connect(end_turn)
-		_character.notify_impact()
-		_has_acted = true
-
-
 func update(delta: float) -> State:
 	var parent_state: State = super.update(delta)
 	if parent_state:
 		return parent_state
 	if not _has_acted:
-		if not pushing:
-			if Input.is_action_pressed("accept"):
-				_time_since_increment += delta
-				
-				if _time_since_increment > TIME_PER_INCREMENT:
-					_time_since_increment = 0
-					increment += 1
-					if increment > _max_push_distance:
-						var unit = GameState.current_level.grid.get_unit_from_tile(_target_tile)
-						unit.take_damage(_skill, _character.facing,  _character.accuracy, _character.target_hit)
+		if Input.is_action_pressed("accept"):
+			_time_since_increment += delta
+			
+			if _time_since_increment > TIME_PER_INCREMENT:
+				_time_since_increment = 0
+				increment += 1
+				if increment > _max_push_distance:
+					var unit = GameState.current_level.grid.get_unit_from_tile(_target_tile)
+					var damage_state := DamageState.new(_skill, _character.facing,  _character.accuracy, _character.target_hit)
+					unit.state_requested.emit(damage_state)
+					if not _skill.is_animated: 
 						_character.notify_impact()
-						unit.action_processed.connect(end_turn)
-						_has_acted = true
-					else:
-						_push_range.append(_target_tile + (_direction * increment))
-						_draw_range()
-				
-			# TODO account for push animation
-			else:
-				var is_hit = _target_unit.is_hit(_character.accuracy)
-				if is_hit:
-					EventBus.cam_follow_requested.emit(_target_unit)
-					pushing = true
-					_tile_path = _tile_path.slice(0, increment + 1)
-				else:
-					_target_unit.take_damage(_skill, _direction, 0, _character.target_hit, 0)
-					_target_unit.action_processed.connect(end_turn)
-					_target_unit.notify_impact()
+					unit.action_processed.connect(end_turn)
 					_has_acted = true
-					
-		elif not _exiting:
-			_push(delta)
+				else:
+					_push_range.append(_target_tile + (_direction * increment))
+					_draw_range()
+			
+		# TODO account for push animation
+		else:
+			var is_hit = _target_unit.is_hit(_character.accuracy)
+			if is_hit:
+				EventBus.cam_follow_requested.emit(_target_unit)
+				_tile_path = _tile_path.slice(0, increment + 1)
+				var push_damage_state := PushDamageState.new(_tile_path, _o_target, _skill, _direction, INF, _character.target_hit)
+				_target_unit.state_requested.emit(push_damage_state)
+			else:
+				var damage_state := DamageState.new(_skill, _direction, 0, _character.target_hit, 0)
+				_target_unit.state_requested.emit(damage_state)
+			if not _skill.is_animated:
+				_character.notify_impact()
+			_target_unit.action_processed.connect(end_turn)
+			_has_acted = true
 	return

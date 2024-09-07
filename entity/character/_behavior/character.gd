@@ -5,7 +5,7 @@ signal died
 signal target_hit
 signal action_processed
 signal damage_taken
-signal reaction_queued(processed: Signal)
+signal state_requested(state: State)
 
 const SNAP_DISTANCE := 2.4
 const TIME_PER_MOVE := .03
@@ -32,7 +32,7 @@ var basic_skill: Skill
 @export
 var special: Skill
 @export
-var reactions: Array[Skill]
+var reactions: Array[Reaction]
 
 @export_category("Unit Stats")
 @export
@@ -65,7 +65,11 @@ var current_tile: Vector2i
 var status: Array[StatusEffect]
 var attack_state: Combat.AttackState
 var improvised_weapon: ImprovisedWeapon
+# TODO remove
 var processing_action := false
+var reacting := false
+
+var _state_machine: StateMachine
 
 @onready
 var sprite: Sprite2D = $CharacterSprite
@@ -80,13 +84,13 @@ var hit_chance_label: Label = $HealthBar/HitChanceLabel
 @onready
 var damage_bar: TextureProgressBar = $HealthBar/DamageBar
 @onready
-var _status_label_manager: StatusLabelManager = $StatusLabelManager
+var status_label_manager: StatusLabelManager = $StatusLabelManager
 
 func _ready() -> void:
 	health_bar.hide()
 	EventBus.display_requested.connect(_on_display_requested)
-	var state_machine := StateMachine.new(self, init_state.new())
-	add_child(state_machine)
+	_state_machine = StateMachine.new(self, init_state.new())
+	add_child(_state_machine)
 
 
 func start_encounter() -> void:
@@ -126,48 +130,8 @@ func drop_weapon() -> void:
 	#TODO play drop animation on skill animator
 
 
-func take_damage(skill: Skill, direction: Vector2, hit_chance: float, hit_signal: Signal, multiplier: float = 1, request_reaction:=true) -> void:
-	health_bar.show()
-	processing_action = true
-	await hit_signal
-	var hit_connected: bool
-	
-	if is_equal_approx(direction.normalized().dot(Vector2(facing).normalized()), -1) and facing != Vector2i.ZERO:
-		hit_connected = true
-		multiplier += .5
-	else:
-		hit_connected = is_hit(hit_chance)
-	
 
-	if hit_connected:
-		for effect: StatusEffect in skill.status_effects:
-			effect.multiplier = multiplier
-			status.append(effect)
-			_process_status_effect(effect)
-			_status_label_manager.add_status_effect(effect)
-	else:
-		_status_label_manager.add_status_effect(null)
-	status = status
-
-	health_bar.value = health
-	damage_bar.value = health_bar.value
-	damage_taken.emit()
-	
-	_status_label_manager.display_statuses()
-	await _status_label_manager.statuses_displayed
-	
-	
-	if health <= 0:
-		died.emit()
-		queue_free()
-		action_processed.emit()
-	elif request_reaction:
-		EventBus.reaction_requested.emit(self)
-	health_bar.hide()
-	processing_action = false
-
-
-func _process_status_effect(effect: StatusEffect) -> void:
+func process_status_effect(effect: StatusEffect) -> void:
 	if effect.status == Combat.Status.HIT:
 		health -= effect.value * effect.multiplier
 	elif effect.status == Combat.Status.SLOWED:
@@ -201,7 +165,7 @@ func end_turn() -> void:
 	status = status.filter(func(x: StatusEffect): return x.duration > 0)
 	
 	for effect: StatusEffect in status:
-		_process_status_effect(effect)
+		process_status_effect(effect)
 	
 	EventBus.tiles_highlighted.emit([] as Array[Vector2i], [] as Array[StatusEffect], 0, Vector2i.ZERO, false)
 

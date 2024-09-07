@@ -878,8 +878,8 @@ tracks/4/keys = {
 }]
 }
 
-[sub_resource type="Animation" id="Animation_f11ki"]
-resource_name = "ranged_attack_right"
+[sub_resource type="Animation" id="Animation_hwar7"]
+resource_name = "ranged_attack_left"
 length = 1.65
 step = 0.15
 tracks/0/type = "value"
@@ -892,7 +892,7 @@ tracks/0/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 1,
-"values": [ExtResource("13_0305r")]
+"values": [ExtResource("14_3eyv0")]
 }
 tracks/1/type = "value"
 tracks/1/imported = false
@@ -945,8 +945,8 @@ tracks/4/keys = {
 }]
 }
 
-[sub_resource type="Animation" id="Animation_hwar7"]
-resource_name = "ranged_attack_left"
+[sub_resource type="Animation" id="Animation_f11ki"]
+resource_name = "ranged_attack_right"
 length = 1.65
 step = 0.15
 tracks/0/type = "value"
@@ -959,7 +959,7 @@ tracks/0/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 1,
-"values": [ExtResource("14_3eyv0")]
+"values": [ExtResource("13_0305r")]
 }
 tracks/1/type = "value"
 tracks/1/imported = false
@@ -1106,6 +1106,9 @@ special_priority = 0.488
 is_animated = true
 basic_skill = SubResource("Resource_fbgx3")
 special = SubResource("Resource_j7mgy")
+
+[node name="StatusLabelManager" parent="." index="1"]
+visible = false
 
 [node name="CharacterSprite" parent="." index="2"]
 material = SubResource("ShaderMaterial_2vkjv")

@@ -31,11 +31,10 @@ func _ready() -> void:
 
 
 func display_statuses() -> void:
-	show()
 	for i in range(_queued_statuses.size()):
 		_started_animations += 1
 		_play_status_effect(_queued_statuses[i])
-		animator.play()
+	animator.play()
 
 
 func _play_status_effect(effect: StatusEffect) -> void:
