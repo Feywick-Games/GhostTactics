@@ -9,6 +9,8 @@ var _character: Character
 
 func enter() -> void:
 	_character = state_machine.state_owner as Character
+	if _character.owner and not _character.owner.is_node_ready():
+		await _character.owner.ready
 	_character.current_tile = GameState.current_level.grid.get_nearest_available_tile(_character.global_position)
 	GameState.current_level.grid.update_unit_registry(_character.current_tile, _character)
 	_target_position = GameState.current_level.tile_to_world(_character.current_tile)

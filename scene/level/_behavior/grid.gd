@@ -191,6 +191,13 @@ is_range := false, direct := false, force_remove_unit_tiles := false) -> RangeSt
 	return range_struct
 
 
+func get_character_path(from: Vector2i, to: Vector2i) -> Array[Vector2i]:
+	set_point_solid(from, false)
+	var out := get_id_path(from, to)
+	set_point_solid(from, true)
+	return out
+
+
 func get_path_ignore_passables(from: Vector2i, to: Vector2i) -> Array[Vector2i]:
 	var _pass_tiles: Array[Vector2i]
 	var _unit_tiles: Array[Vector2i]

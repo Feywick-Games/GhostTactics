@@ -24,10 +24,16 @@ config/icon="res://ui/meta/_sprite/game_icon.png"
 [autoload]
 
 GameState="*res://node/autoload/game_state.gd"
+DialogueManager="*uid://c3rodes2l3gxb"
 
 [debug]
 
 gdscript/warnings/untyped_declaration=1
+
+[dialogue_manager]
+
+editor/advanced/custom_test_scene_path="uid://ugd552efvil0"
+runtime/balloon_path="uid://cyifjsqmi4e1"
 
 [display]
 
@@ -40,6 +46,10 @@ window/stretch/mode.editor="canvas_items"
 window/stretch/scale_mode.editor="fractional"
 window/stretch/aspect.editor="keep"
 window/size/mode.editor=0
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/dialogue_manager/plugin.cfg")
 
 [global_group]
 
@@ -168,6 +178,10 @@ inspect={
 , Object(InputEventJoypadButton,"resource_local_to_scene":false,"resource_name":"","device":-1,"button_index":9,"pressure":0.0,"pressed":true,"script":null)
 ]
 }
+
+[internationalization]
+
+locale/translations_pot_files=PackedStringArray("res://scene/level/level1/_dialogue/level1-1.dialogue")
 
 [layer_names]
 

@@ -1,6 +1,7 @@
 [gd_scene format=4 uid="uid://bun0r2rjrur3q"]
 
 [ext_resource type="Script" uid="uid://7pypr8grgl4t" path="res://scene/level/_behavior/level.gd" id="1_4lpuc"]
+[ext_resource type="Resource" uid="uid://bhiv0gpnsu8d3" path="res://scene/level/level1/_dialogue/level1-1.dialogue" id="2_q2kky"]
 [ext_resource type="Script" uid="uid://8xawka3fldcr" path="res://node/camera/tracking_camera.gd" id="2_y8b5h"]
 [ext_resource type="TileSet" uid="uid://ds2bj4u4yhws6" path="res://scene/level/_sprite/alley_tile_set.tres" id="3_borxu"]
 [ext_resource type="Script" uid="uid://cfuxemb15nlab" path="res://node/spawn/spawn_point.gd" id="4_c8jqg"]
@@ -8,42 +9,18 @@
 [ext_resource type="PackedScene" uid="uid://c3ow1ifjec62m" path="res://entity/character/ally/izzy/izzy.tscn" id="6_43j0x"]
 [ext_resource type="PackedScene" uid="uid://r5sdcdlxfmjr" path="res://entity/character/ally/chaz/chaz.tscn" id="8_paurp"]
 [ext_resource type="PackedScene" uid="uid://bxmucc7oqfyuj" path="res://entity/character/enemy/after_hours/after_hours.tscn" id="10_2vukj"]
-[ext_resource type="PackedScene" uid="uid://bldhlyqoqot1v" path="res://entity/character/enemy/final_exams/final_exams.tscn" id="11_vquvu"]
-
-[sub_resource type="Resource" id="Resource_phexs"]
-script = ExtResource("5_2givp")
-character_scene = ExtResource("6_43j0x")
-facing = Vector2i(1, 0)
-metadata/_custom_type_script = "uid://ujs5udtg6jxg"
-
-[sub_resource type="Resource" id="Resource_yuh5r"]
-script = ExtResource("5_2givp")
-character_scene = ExtResource("8_paurp")
-facing = Vector2i(-1, 0)
-metadata/_custom_type_script = "uid://ujs5udtg6jxg"
-
-[sub_resource type="Resource" id="Resource_s57jr"]
-script = ExtResource("5_2givp")
-trigger = 2
-value = 3
-character_scene = ExtResource("10_2vukj")
-facing = Vector2i(1, 0)
-metadata/_custom_type_script = "uid://ujs5udtg6jxg"
 
 [sub_resource type="Resource" id="Resource_hwcfh"]
 script = ExtResource("5_2givp")
+value = 2
 character_scene = ExtResource("10_2vukj")
-metadata/_custom_type_script = "uid://ujs5udtg6jxg"
-
-[sub_resource type="Resource" id="Resource_8lb0g"]
-script = ExtResource("5_2givp")
-trigger = 1
-character_scene = ExtResource("11_vquvu")
+facing = Vector2i(1, 0)
 metadata/_custom_type_script = "uid://ujs5udtg6jxg"
 
 [node name="Alley" type="Node2D" unique_id=2146508345]
 y_sort_enabled = true
 script = ExtResource("1_4lpuc")
+cutscene = ExtResource("2_q2kky")
 metadata/_edit_horizontal_guides_ = [60.0, -120.0]
 metadata/_edit_vertical_guides_ = [600.0, 710.0]
 
@@ -79,24 +56,28 @@ y_sort_enabled = true
 position = Vector2(10, 0)
 tile_set = ExtResource("3_borxu")
 
-[node name="IzzySpawnPoint" type="Node2D" parent="." unique_id=132906090]
-position = Vector2(535, 135)
-script = ExtResource("4_c8jqg")
-is_ally = true
-spawn_data = Array[ExtResource("5_2givp")]([SubResource("Resource_phexs")])
-metadata/_custom_type_script = "uid://cfuxemb15nlab"
+[node name="Izzy" parent="." unique_id=907728875 instance=ExtResource("6_43j0x")]
+position = Vector2(625, 105)
 
-[node name="ChazSpawnPoint" type="Node2D" parent="." unique_id=736651583]
-position = Vector2(535, 165)
-script = ExtResource("4_c8jqg")
-is_ally = true
-spawn_data = Array[ExtResource("5_2givp")]([SubResource("Resource_yuh5r")])
-metadata/_custom_type_script = "uid://cfuxemb15nlab"
+[node name="Chaz" parent="." unique_id=1270059331 instance=ExtResource("8_paurp")]
+position = Vector2(655, 105)
+
+[node name="AfterHoursWorker" parent="." unique_id=1334997669 instance=ExtResource("10_2vukj")]
+position = Vector2(715, 255)
+
+[node name="WeekendWarrior" parent="." unique_id=634276335 instance=ExtResource("10_2vukj")]
+position = Vector2(745, 255)
 
 [node name="SpawnPoint" type="Node2D" parent="." unique_id=1799894307]
-position = Vector2(715, 225)
+position = Vector2(625, 105)
 script = ExtResource("4_c8jqg")
-spawn_data = Array[ExtResource("5_2givp")]([SubResource("Resource_s57jr"), SubResource("Resource_hwcfh"), SubResource("Resource_8lb0g")])
+spawn_data = Array[ExtResource("5_2givp")]([SubResource("Resource_hwcfh")])
+metadata/_custom_type_script = "uid://cfuxemb15nlab"
+
+[node name="SpawnPoint2" type="Node2D" parent="." unique_id=2109645037]
+position = Vector2(385, 255)
+script = ExtResource("4_c8jqg")
+spawn_data = Array[ExtResource("5_2givp")]([SubResource("Resource_hwcfh")])
 metadata/_custom_type_script = "uid://cfuxemb15nlab"
 
 [node name="Node" type="Node" parent="." unique_id=1339333240]

@@ -5,6 +5,8 @@ const GRID_TILE_MAP_SCENE : PackedScene = preload("res://scene/level/grid_tile_m
 const GRID_DRAW_TIME: float = 1
 
 @export
+var cutscene: DialogueResource
+@export
 var failure_scene : PackedScene = load("res://scene/title_screen/title_screen.tscn")
 @export
 var success_scene : PackedScene = load("res://scene/title_screen/title_screen.tscn")
@@ -48,20 +50,11 @@ func _ready() -> void:
 	var x : float = Global.GAME_SIZE.x /2.0
 	var y : float = Global.GAME_SIZE.y /2.0
 	tracking_cam.bounds = tracking_cam.bounds.grow_individual(-x,-y,-x,-y)
-	
-	await get_tree().create_timer(2).timeout
-	_start_encounter()
-	
-	
-
-
-
-func _start_encounter() -> void:
 	grid = Grid.new()
 	grid.populate(_floor_layer, _prop_layers)
 	map.intialize(grid)
 	map.set_up(true)
-	var state_machine := StateMachine.new(self, LevelSpawnState.new()) 
+	var state_machine := StateMachine.new(self, LevelCutsceneState.new()) 
 	add_child(state_machine)
 
 

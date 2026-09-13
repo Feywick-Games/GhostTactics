@@ -2,6 +2,7 @@ class_name Character
 extends Node2D
 
 signal skill_text_requested(skill_name: String)
+signal spoke
 
 const SNAP_DISTANCE : float = 1.0
 const TIME_PER_MOVE := .03
@@ -61,6 +62,8 @@ var damage_bar: TextureProgressBar = $HealthBar/DamageBar
 var status_label_manager: StatusLabelManager = $StatusLabelManager
 @onready
 var sfx_player: AudioStreamPlayer2D = $SfxPlayer
+@onready
+var dialogue_animator: AnimationPlayer = $DialolgueSprite/AnimationPlayer
 
 func _ready() -> void:
 	sub_pixel_position = global_position
@@ -274,13 +277,13 @@ func update_ranges(movement_tiles: RangeStruct) -> RangeStruct:
 	return out
 
 
-func process_movement(delta: float, tile_path: Array[Vector2i], animation := "move_idle", skip_facing := false) -> Array[Vector2i]:
+func process_movement(delta: float, tile_path: Array[Vector2i], animation := "move_idle", skip_facing := false, speed_modifier : float= 1) -> Array[Vector2i]:
 	if not tile_path.is_empty():
 		var path_position :=  GameState.current_level.tile_to_world(tile_path[0])
 		var map_position := GameState.current_level.tile_to_world(current_tile)
 		if path_position.distance_to(global_position) > SNAP_DISTANCE:
 			var dir: Vector2 = (path_position - global_position).normalized()
-			sub_pixel_position += dir * Global.PLAYER_SPEED * delta
+			sub_pixel_position += dir * Global.PLAYER_SPEED * delta * speed_modifier
 			global_position = sub_pixel_position.round()
 			var anim_dir := Vector2(tile_path[0] - current_tile).normalized()
 			if not animation.is_empty():
@@ -407,19 +410,20 @@ func play_actor_status(rear: bool, mini_game := false, perfect := false, ignore_
 
 func play_dialogue(anim: String = "") -> void:
 	var dialogue_sprite: Sprite2D = $DialolgueSprite
-	var dialogue_animation_player: AnimationPlayer = $DialolgueSprite/AnimationPlayer
 	if anim != "":
+		dialogue_sprite.show()
 		if facing == Vector2i.RIGHT:
 			dialogue_sprite.position.x = -abs(dialogue_sprite.position.x)
 			dialogue_sprite.flip_h = false
 		elif facing == Vector2i.LEFT:
 			dialogue_sprite.flip_h = true
 			dialogue_sprite.position.x = abs(dialogue_sprite.position.x)
-		dialogue_animation_player.play("speak")
-		dialogue_animation_player.queue(anim)
+		dialogue_animator.play("speak")
+		dialogue_animator.queue(anim)
+		dialogue_animator.animation_finished.connect(func(_x: String) -> void: dialogue_animator.animation_finished.connect(func(_z: String) -> void: spoke.emit()))
 	else:
 		dialogue_sprite.hide()
-		dialogue_animation_player.stop()
+		dialogue_animator.stop()
 		
 		
 func is_dialogue_playing() -> bool:

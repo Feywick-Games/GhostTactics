@@ -22,7 +22,7 @@ func change_scene(scene: PackedScene) -> void:
 	tween.play()
 	await tween.finished
 	tween.stop()
-	_current_scene.queue_free()
+	_current_scene.free()
 	
 	if _combat_ui:
 		_combat_ui.queue_free()

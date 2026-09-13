@@ -1,0 +1,29 @@
+~ start
+$> camera_follow("Izzy")
+$> AfterHoursWorker.animate("idle", Vector2i(1,0))
+$> WeekendWarrior.animate("idle", Vector2i(-1,0))
+$> Izzy.move(Vector2i(0,5), 0.2)
+$> Chaz.move(Vector2i(0,5), 0.2)
+Izzy: We are NEVER gigging for your cousin. EVER. AGAIN.
+Chaz: It wasn't all that bad. A few people were listening.
+Chaz: And the beer was free.
+Izzy: AND we shoulnd't even be playing little acoustic sets. If it's not all five of us, it isn't really Panic Sex Drive.
+Chaz: Whoa, is that our name now?
+Chaz: It's terrible. You're in great form.
+$> Chaz.wait_for_movement()
+$> Izzy.animate("move_idle", Vector2i(1,0))
+$> Izzy.emote("exclamation_one_shot", true)
+$> Izzy.animate("idle", Vector2i(1,0))
+$> camera_center_on_group(["Izzy", "AfterHoursWorker"])
+Izzy: Hey you see that guy!
+$> Chaz.animate("move_idle", Vector2i(1,0))
+Chaz: The dudes in the alley?
+$> Izzy.emote("exclamation_one_shot", true)
+Izzy: Yeah! that jerk-off is the one who kept spilling beer on me!
+$> AfterHoursWorker.animate("move_idle", Vector2i(-1,0))
+$> AfterHoursWorker.emote("exclamation_one_shot", true)
+After Hours Worker: Who You calling a jerk-off, jerk-off!
+$> WeekendWarrior.move(Vector2i(-1,-1), 1, true)
+Weekend Warrior: You bozos looking for a tussle!
+$> WeekendWarrior.wait_for_movement()
+=> END
